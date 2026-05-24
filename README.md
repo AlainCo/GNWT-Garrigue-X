@@ -58,6 +58,13 @@ $$P(I \mid B, E) = P(I \mid B)$$
 **Justification Technique :** C'est le principe d'**anti-fusion d'identité**. Le niveau supérieur ($N+1$) ne traite jamais les données brutes de $N$ — seulement son API statistique (le *résumé d'ignition*). Ceci garantit la modularité stricte du composant jusqu'à la flotte complète, et préserve l'identité de chaque niveau comme entité cognitive propre. Un Rafale conscient est perçu par le groupe comme un objet externe opaque — exactement comme vous percevez votre foie comme "allant bien" sans accéder aux hépatocytes.
 
 ---
+### B. La Conscience à Deux Étages : GNWT + RPT comme facettes d'un même mécanisme
+
+**Fondement Théorique :** Bernard Baars (1988) et Stanislas Dehaene (*A neuronal network model of global workspace*, 2001) pour la *Global Neuronal Workspace Theory* (GNWT) ; Victor Lamme (2006, *Recurrent Processing Theory*, RPT) ; travaux d'intégration du consortium COGITATE et surtout Storm et al. (*An integrative, multiscale view on neural theories of consciousness*, Neuron, 2024).
+
+**Le Concept :** Longtemps présentées comme concurrentes, GNWT et RPT décrivent en réalité **deux phases temporelles et fonctionnelles complémentaires** d’un même processus de traitement conscient, comme le soulignent Storm et al. dans leur synthèse multiscale :
+
+
 
 ### B. La Conscience à Deux Étages : GNWT + RPT comme facettes d'un même mécanisme
 
@@ -70,18 +77,21 @@ Bernard Baars (1988) et
 **Le Concept :** Ces deux théories, souvent présentées comme concurrentes, décrivent en réalité **deux étages temporels d'un même processus** :
 
 ```
-Stage 1-2 : Feedforward rapide     →  extraction brute, traitement non-conscient
-Stage 3    : Récurrence LOCALE     →  [RPT] perception riche, non-rapportable
-                                       "voir sans savoir qu'on voit"
-Stage 4    : Ignition + BROADCAST  →  [GNWT] accès conscient, rapportable, intégré
-                                       "savoir qu'on voit et pouvoir en parler"
+Stage 1-2 : Feedforward rapide          → extraction brute, traitement non-conscient
+Stage 3    : Récurrence LOCALE          → [RPT] perception riche, vie intérieure locale
+              "voir sans savoir qu'on voit" (Phenomenal Consciousness)
+Stage 4    : Ignition + BROADCAST global → [GNWT] accès conscient, rapportable, intégré
+              "savoir qu'on voit et pouvoir en parler" (Access Consciousness)
 ```
 
-La RPT décrit la **vie intérieure de chaque module** — ses boucles feedback locales qui raffinent le traitement avant de décider de remonter quoi que ce soit. La GNWT décrit ce qui survient quand le signal consolidé franchit un seuil de saillance et se propage à l'ensemble du workspace global.
 
-**Conséquence architecturale critique :** Le seuil RPT→GNWT se situe à la frontière **N=3 → N=4** dans notre hiérarchie. En-dessous : les modules traitent en continu (RPT) sans broadcast global. À partir de N=4 : les modules ont un vrai workspace central, des ignitions, et peuvent "rapporter" leur état. Ce n'est pas une frontière arbitraire — c'est là que la complexité fonctionnelle justifie le coût computationnel du broadcast.
+La **RPT** rend compte de la **vie intérieure riche** de chaque module grâce aux boucles de rétroaction locales (recurrent processing). Elle explique la phenomenal consciousness (PC) — l’expérience subjective brute, même non rapportable. La **GNWT** décrit ce qui se passe quand un signal consolidé franchit un seuil de saillance et se propage largement dans le workspace global, permettant l’**access consciousness** (AC) : intégration, rapport, arbitrage et contrôle volontaire.
 
-**Justification Technique :** Un réacteur d'avion résout ses micro-pannes en RPT locale (boucles Mamba). Si le dommage dépasse sa capacité de correction, il génère un **Résumé d'Ignition** vectoriel vers le haut. Le Rafale (N=4) capte ce signal dans son workspace central GNWT, reconfigure sa loi de vol globale, et l'information remonte à la flotte sous forme d'une contrainte opérationnelle — pas d'un dump brut de données moteur.
+**Conséquence architecturale critique :** Dans notre hiérarchie, le seuil RPT→GNWT se situe naturellement à la frontière **N=3 → N=4**. En-dessous : traitement continu en RPT locale (vie intérieure des sous-systèmes, sans broadcast global). À partir de N=4 : workspace central, ignitions, et capacité de « rapporter » un résumé compressé vers le niveau supérieur.
+
+Cette séparation n’est pas arbitraire — elle reflète à la fois les contraintes computationnelles (coût du broadcast) et les mécanismes biologiques identifiés par la littérature récente. Comme le note Storm et al., les théories ne s’opposent pas mais opèrent à des échelles complémentaires : locale (RPT) et globale (GNWT).
+
+**Justification Technique :** Un réacteur d’avion (N=2-3) résout ses micro-pannes en boucles RPT locales (Mamba). Si le dommage dépasse sa capacité, il génère un **Résumé d’Ignition** vectoriel vers le haut. Le Rafale (N=4) capte ce signal dans son workspace GNWT, reconfigure sa loi de vol, et ne remonte qu’un résumé abstrait au groupe — préservant ainsi les couvertures de Markov tout en permettant une conscience d’accès fonctionnelle à chaque niveau pertinent.
 
 ---
 
@@ -627,7 +637,7 @@ Cette section propose des **pistes concrètes** pour faire avancer le projet. *C
  | **GNWT** | [Dehaene & Changeux, *Experimental and Theoretical Approaches to Conscious Processing* (2011)](https://doi.org/10.1016/j.neuron.2011.03.018) |
  | **RPT** | [Lamme, *Towards a true neural stance on consciousness* (2006)](https://doi.org/10.1016/j.tics.2006.09.001) |
  | **Intégration GNWT+RPT** | [Doerig et al., *An integrative, multiscale view on consciousness theories* (2024)](https://osf.io/preprints/psyarxiv/9byzu) *(Intègre GNWT, RPT, IIT, PP, NREP)* |
- | **Intégration GNWT + RPT** | [Storm et al., *An integrative, multiscale view on neural theories of consciousness* (2024)](https://doi.org/10.1016/j.neuron.2024.02.004) *(Neuron)* |
+ | **Intégration GNWT + RPT (multiscale)** | [Storm et al., *An integrative, multiscale view on neural theories of consciousness* (2024)](https://doi.org/10.1016/j.neuron.2024.02.004) |
  | **Écosystèmes d'intelligence (Active Inference)** | [Friston et al., *Designing ecosystems of intelligence from first principles* (2024)](https://doi.org/10.1177/26339137231222481) *(Collective Intelligence)* |
  | **Mémoire épisodique continue (MeMo)** | [Quek, Lee, Leong, Verma et al., *MeMo: Memory as a Model* (2026)](https://arxiv.org/abs/2605.15156) |
  | **JEPA** | [LeCun, *A Path Towards Autonomous Machine Intelligence* (2022)](https://arxiv.org/abs/2207.04898) |
