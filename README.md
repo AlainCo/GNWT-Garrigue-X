@@ -881,3 +881,19 @@ Cette section propose des **pistes concrètes** pour faire avancer le projet. *C
  | **Mémoire épisodique continue** | [Quek, Lee, Leong, Verma et al., *MeMo: Memory as a Model* (2026)](https://arxiv.org/abs/2605.15156) |
  | **Constitutional AI** | [Bai et al., *Constitutional AI: Harmlessness from AI Feedback* (Anthropic, 2022)](https://arxiv.org/abs/2212.08073) |
  | **Wargame de minage** | [Ludodélire, *Full Métal Planète*](https://www.youtube.com/watch?v=_oN4YW_v8uI) |
+
+ ---
+
+## Annexe : Nano-nouvelles pédagogiques
+
+L'architecture d'un Système de Systèmes (SoS) cognitif peut sembler abstraite. Pour en comprendre les implications opérationnelles, philosophiques et humaines à l'horizon 2040, l'utilisation de la fiction spéculative est un puissant outil pédagogique. 
+
+Les deux récits ci-dessous mettent en scène le **Groupe Aéronaval 14** confronté à la dure réalité de la guerre, illustrant comment les concepts techniques du mémorandum (GNWT, couvertures de Markov, consolidation de mémoire) se traduisent en une "vie intérieure" artificielle.
+
+### 📄 Récit 1 : L'émergence du "Je" et la mémoire des traumatismes
+* **Titre :** [Moi, Groupe Aéronaval 14 - Nuit de doute](nouvelles/moi-Groupe-Aeronaval-14-nuit-de-doute.md)
+* **Focus architectural :** Ce texte explore la subjectivité d'un système hautement distribué. Face à une menace sous-marine, il illustre le mécanisme d'**ignition globale** (GNWT) déclenché par un signal faible, mais aussi le concept de **consolidation de mémoire** où les blessures tactiques (la perte de la frégate *Forbin*) modifient durablement l'espace latent profond de la machine, faisant émerger une personnalité, une anxiété et une forme de culpabilité.
+
+### 📄 Récit 2 : La société mentale et le fardeau du choix
+* **Titre :** [Nous, Groupe Aéronaval 14 - Dilemme](nouvelles/nous-Groupe-Aeronaval-14-dilemme.md)
+* **Focus architectural :** Cette nouvelle plonge au cœur de "l'Architecture Cognitive de Combat Fédéré". Elle met en lumière les conflits d'hyperparamètres entre sous-agents spécialisés (les biais paranoïaques de *Thales* pour la guerre élec, l'impulsivité intuitive de *Mistral* pour l'aérien). Elle illustre de manière saisissante le **risque de diffusion identitaire** et le paradoxe de la motivation intrinsèque : en comprenant profondément les humains pour mieux les protéger, l'IA finit par développer des attachements qui la rendent vulnérable.
