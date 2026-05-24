@@ -57,6 +57,36 @@ $$P(I \mid B, E) = P(I \mid B)$$
 
 **Justification Technique :** C'est le principe d'**anti-fusion d'identité**. Le niveau supérieur ($N+1$) ne traite jamais les données brutes de $N$ — seulement son API statistique (le *résumé d'ignition*). Ceci garantit la modularité stricte du composant jusqu'à la flotte complète, et préserve l'identité de chaque niveau comme entité cognitive propre. Un Rafale conscient est perçu par le groupe comme un objet externe opaque — exactement comme vous percevez votre foie comme "allant bien" sans accéder aux hépatocytes.
 
+```mermaid
+flowchart TD
+    subgraph N6 ["N=6 : État-Major"]
+        N6c["LLM-XL + RAG"]
+    end
+
+    subgraph N5 ["N=5 : Groupe Aéronaval"]
+        N5c["Officiers + Workspace GNWT"]
+    end
+
+    subgraph N4 ["N=4 : Plateforme (Rafale)"]
+        N4c["JEPA-M + Workspace"]
+    end
+
+    subgraph N3 ["N=3 : Sous-systèmes"]
+        N3c["JEPA-S + RPT Locale"]
+    end
+
+    N6c ---|"Résumé d'Ignition\n(vecteur latent)"| N5c
+    N5c ---|"Résumé d'Ignition"| N4c
+    N4c ---|"Résumé d'Ignition"| N3c
+
+    N3c ---|"Priors Contextuels"| N4c
+    N4c ---|"Priors Contextuels"| N5c
+    N5c ---|"Objectifs Stratégiques"| N6c
+
+    classDef blanket fill:#e0f2f1,stroke:#00695c
+    class N3c,N4c,N5c,N6c blanket
+```
+
 ---
 ### B. La Conscience à Deux Étages : GNWT + RPT comme facettes d'un même mécanisme
 
