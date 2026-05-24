@@ -236,14 +236,14 @@ Le niveau N=5 n'est pas un module monolithique mais une **équipe d'instances sp
                     ║  Méta-workspace       ║
                     ║  Narrative de mission ║
                     ╚═══════════╤═══════════╝
-          ┌──────────┬──────────┼──────────┬──────────┐
-    ╔═════╧════╗ ╔═══╧══════╗ ╔╧═════════╗ ╔╧═════════╗ ╔╧═════════╗
-    ║SCIENCE   ║ ║SOIN      ║ ║INGÉNIEUR ║ ║TACTIQUE  ║ ║RENS.     ║
-    ║Systemizer║ ║Empathique║ ║Travallom.║ ║Persévér. ║ ║Rêveur    ║
-    ║          ║ ║          ║ ║          ║ ║          ║ ║          ║
-    ║JEPA-L    ║ ║JEPA-L    ║ ║JEPA-L    ║ ║JEPA-L    ║ ║JEPA-L    ║
-    ║MeMo prop.║ ║MeMo prop.║ ║MeMo prop.║ ║MeMo prop.║ ║MeMo prop.║
-    ╚══════════╝ ╚══════════╝ ╚══════════╝ ╚══════════╝ ╚══════════╝
+          ┌──────────┬──────────┼────────────┬────────────┐
+    ╔═════╧════╗ ╔═══╧══════╗  ╔╧═════════╗ ╔╧═════════╗ ╔╧═════════╗
+    ║SCIENCE   ║ ║SOIN      ║  ║INGÉNIEUR ║ ║TACTIQUE  ║ ║RENS.     ║
+    ║Systemizer║ ║Empathique║  ║Travallom.║ ║Persévér. ║ ║Rêveur    ║
+    ║          ║ ║          ║  ║          ║ ║          ║ ║          ║
+    ║JEPA-L    ║ ║JEPA-L    ║  ║JEPA-L    ║ ║JEPA-L    ║ ║JEPA-L    ║
+    ║MeMo prop.║ ║MeMo prop.║  ║MeMo prop.║ ║MeMo prop.║ ║MeMo prop.║
+    ╚══════════╝ ╚══════════╝  ╚══════════╝ ╚══════════╝ ╚══════════╝
 
     ← résumés d'ignition seulement (pas d'états internes partagés) →
     ← chaque MeMo est propre = identité préservée = anti-fusion →
@@ -320,13 +320,13 @@ Pour valider cette architecture sans les coûts d'infrastructure du domaine aér
 ```
      [COORDINATEUR (Capitaine)]
       ↑ résumés  ↓ priors
-┌──────────┬──────────┐
-│CARTOGRAPHE│LOGISTE   │
-│(Science) │(Ingénieur)│
+┌───────────┬───────────┐
+│CARTOGRAPHE│LOGISTE    │
+│(Science)  │(Ingénieur)│
 │Saillance :│Saillance :│
 │anomalies  │ressources │
 │topologie  │pannes     │
-└──────────┴──────────┘
+└───────────┴───────────┘
 ```
 
 ---
