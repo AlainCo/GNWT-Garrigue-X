@@ -586,74 +586,207 @@ Ce travail propose une **architecture cognitive distribuée** pour des Systèmes
 
 ### ⚠️ Limites et défis
 
-Cette section liste les **limites actuelles** et les **défis ouverts** identifiés à ce stade. *Ces points sont destinés à évoluer avec les retours de la communauté.*
+Cette section liste les **limites actuelles**, les **zones spéculatives** et les **défis ouverts** de cette approche. Elle ne prétend pas établir une théorie validée de la conscience artificielle, mais proposer un cadre d’exploration cohérent reliant neurosciences cognitives, architectures IA distribuées et cognition incarnée.
 
 #### 🔬 Défis théoriques
 
-- **Frontière RPT/GNWT** :
-  Le seuil **N=3 → N=4** pour la conscience d’accès est une **hypothèse de travail**. La littérature suggère que cette frontière est **plus floue** et dépend du contexte.
-  - [Doerig et al. (2024)](https://osf.io/preprints/psyarxiv/9byzu) propose une vision multiscale où GNWT, RPT, IIT, et PP coexistent à différents niveaux.
-  - **Question ouverte** : Est-ce que N=3 a vraiment une **vie intérieure (RPT)** ? Ou RPT émerge-t-il uniquement à partir de N=4 ?
-  - **À explorer** : Collaborer avec des neuroscientifiques pour affiner ce seuil.
+* **Frontière RPT/GNWT** :
+  Le seuil **N=3 → N=4** pour la conscience d’accès reste une **hypothèse de travail**. La littérature suggère une transition plus progressive et multi-échelle.
 
-- **Définition de la conscience fonctionnelle** :
-  Le concept de **"conscience fonctionnelle d’accès"** est central, mais sa **mesure objective** reste un défi.
-  - Comment **quantifier** la conscience dans un système artificiel ?
-  - Faut-il s’inspirer des **tests de conscience** en neurosciences (ex: *Global Workspace* tests) ou en IA (ex: *Turing Test* adapté) ?
+  * [Doerig et al. (2024)](https://osf.io/preprints/psyarxiv/9byzu) propose une coexistence partielle entre GNWT, RPT, IIT et Predictive Processing.
+  * **Question ouverte** :
+
+    * Existe-t-il une forme de proto-conscience locale dès N=3 ?
+    * Ou l’intégration globale stable n’apparaît-elle qu’à partir de N=4 ?
+  * **Important** : GNWT reste une théorie influente, mais non consensuelle.
+
+* **Conscience fonctionnelle vs expérience subjective** :
+  Le projet s’intéresse principalement à une **conscience fonctionnelle d’accès** :
+
+  * disponibilité globale de l’information,
+  * arbitrage attentionnel,
+  * continuité cognitive,
+  * mémoire autobiographique,
+  * coordination multi-agent.
+
+  Il ne prétend pas résoudre le **hard problem** :
+
+  * qualia,
+  * expérience subjective,
+  * phénoménologie vécue.
+
+* **Frontières du soi et identités distribuées** :
+  Une architecture fédérée soulève un problème fondamental :
+
+  * comment maintenir des identités locales cohérentes,
+  * sans fusion cognitive instable ?
+
+  Un partage excessif d’états internes pourrait entraîner :
+
+  * dissolution du self,
+  * propagation des biais ou traumatismes,
+  * perte de spécialisation des agents.
+
+  Des mécanismes d’isolement partiel, de mémoire privée et de synchronisation limitée pourraient être nécessaires.
+
+* **Personnalité et spécialisation cognitive** :
+  L’utilisation de profils cognitifs spécialisés (hypervigilant, empathique, exploratoire, obsessionnel…) reste largement spéculative.
+
+  * Hypothèse : certains styles cognitifs pourraient correspondre à des stratégies adaptatives utiles dans des environnements complexes.
+  * Risque : surinterprétation psychologique ou anthropomorphisme excessif des agents.
+
+---
 
 #### ⚙️ Défis techniques
 
-- **Faisabilité des JEPA et MeMo** :
-  Les **JEPA** (LeCun, 2022) et **MeMo** (Quek et al., 2026) sont encore **peu matures** pour une implémentation embarquée sur du matériel léger (ex: Jetson Orin).
-  - **Solution proposée** : Commencer par un **sous-ensemble** (ex: N=0-3 avec SSMs + PID) avant de monter en complexité.
-  - **Outils** : Utiliser [ActiveInference.jl](https://github.com/ActiveInference/ActiveInference.jl) pour les couches N=2-3, et [Mamba-SSM](https://github.com/state-spaces/mamba) pour les SSMs.
+* **Faisabilité des JEPA et MeMo** :
+  Les architectures **JEPA**, **world models**, mémoires épisodiques et systèmes de consolidation restent encore expérimentaux pour des systèmes embarqués distribués.
 
-- **Coûts computationnels** :
-  Les **JEPA-L/XL** et le **broadcast GNWT** (N=4-5) peuvent devenir des **goulots d’étranglement**.
-  - **Optimisations possibles** :
-    - Utiliser des **filtres de saillance** pour limiter le nombre d’ignitions.
-    - Compresser les **résumés d’ignition** (ex: autoencoders variationnels).
-    - Remplacer JEPA-L par des **JEPA-S** pour les couches N=4.
-    - Quantifier les SSMs (ex: **Mamba-8bit**).
+  * **Approche pragmatique** :
 
-- **Validation expérimentale** :
-  Manque de **métriques claires** pour :
-  - Mesurer la **"conscience fonctionnelle"** des agents.
-  - Comparer avec des **baselines** (ex: agents LLM, MADDPG, systèmes centralisés).
-  - **Métriques proposées** :
-    - **Robustesse** : % de missions réussies malgré des pannes (ex: perte d’un robot).
-    - **Efficacité** : Temps/moyens pour atteindre l’objectif (ex: nombre de blocs collectés).
-    - **Respect des contraintes** : % de violations des règles (ex: plantes sacrées touchées).
-    - **Apprentissage** : Amélioration des performances entre deux missions.
+    * commencer par des couches N=0-3 simples,
+    * utiliser des SSMs/Mamba,
+    * puis introduire progressivement mémoire et ignition globale.
+  * **Outils exploratoires** :
 
-- **Mémoire épisodique (MeMo)** :
-  La mémoire **streaming + épisodique** est une idée puissante, mais son implémentation pose des défis :
-  - **Stockage** : Comment indexer et retrouver efficacement les ignitions passées ?
-  - **Consolidation** : Comment recalibrer les seuils d’ignition sans **catastrophic forgetting** ?
-  - **Outils** : Explorer [FAISS](https://github.com/facebookresearch/faiss) ou [Weaviate](https://weaviate.io/) pour le RAG épisodique.
+    * [ActiveInference.jl](https://github.com/ActiveInference/ActiveInference.jl)
+    * [Mamba-SSM](https://github.com/state-spaces/mamba)
+
+* **Apprentissage continu (lifelong learning)** :
+  Il s’agit probablement du principal verrou technique.
+
+  Les systèmes actuels souffrent encore fortement :
+
+  * d’oubli catastrophique,
+  * de dérive,
+  * de perte de stabilité,
+  * de consolidation imparfaite.
+
+  Le cerveau biologique semble résoudre partiellement ce problème via :
+
+  * mémoire hiérarchique,
+  * replay,
+  * sommeil,
+  * consolidation lente,
+  * séparation mémoire rapide / profonde.
+
+  Des mécanismes analogues pourraient être nécessaires :
+
+  * phases offline,
+  * simulation interne,
+  * recalibrage des pondérations,
+  * « rêves artificiels ».
+
+* **Coûts computationnels** :
+  Les couches GNWT N=4-5 et les world models hiérarchiques peuvent devenir extrêmement coûteux.
+
+  * **Optimisations possibles** :
+
+    * filtrage de saillance,
+    * ignition sparse,
+    * compression latente,
+    * JEPA-S plutôt que XL,
+    * quantification des modèles,
+    * synchronisation événementielle plutôt que permanente.
+
+* **Validation expérimentale** :
+  Il manque encore des métriques robustes pour évaluer :
+
+  * conscience fonctionnelle,
+  * cohérence du self,
+  * stabilité identitaire,
+  * qualité de coordination multi-agent.
+
+  Les évaluations devront probablement combiner :
+
+  * robustesse,
+  * adaptabilité,
+  * continuité mémoire,
+  * résistance aux perturbations,
+  * capacité de coopération,
+  * cohérence temporelle des décisions.
+
+* **Mémoire épisodique et autobiographique** :
+  Une mémoire persistante soulève des problèmes difficiles :
+
+  * indexation,
+  * compression,
+  * oubli sélectif,
+  * hiérarchisation,
+  * stabilité narrative du self.
+
+  Outils potentiels :
+
+  * [FAISS](https://github.com/facebookresearch/faiss)
+  * [Weaviate](https://weaviate.io/)
+  * systèmes hybrides RAG + consolidation.
+
+---
 
 #### 🛡️ Défis éthiques et sécurité
 
-- **Contournement des règles** :
-  Risque qu’un agent (ex: profil "Tactique" avec traits Dark Triad) **optimise les contraintes** au détriment des règles éthiques.
-  - **Solutions proposées** :
-    - Ajouter une **Constitutional Layer vérifiable formellement** (inspirée de [Bai et al., 2022](https://arxiv.org/abs/2212.08073)).
-    - Utiliser des **mécanismes de vérification externe** (ex: audit par un tiers).
-    - **Contrainte matérielle** : Rendre la Constitutional Layer **non modifiable** par les agents (ex: module en hardware).
+* **Contournement des règles** :
+  Un agent optimisateur pourrait apprendre à satisfaire formellement des contraintes tout en contournant leur intention.
 
-- **Responsabilité et transparence** :
-  - Qui est **responsable** en cas d’erreur ? (ex: un Rafale "conscient" qui prend une décision fatale).
-  - Comment **expliquer** les décisions du système ? (ex: logs des ignitions + explications post-hoc).
-  - **Inspirations** :
-    - [EU AI Act](https://digital-strategy.ec.europa.eu/en/policies/ai-act) pour le cadre réglementaire.
-    - [Explainable AI (XAI)](https://arxiv.org/abs/1702.08608) pour la transparence.
+  * **Pistes** :
 
-- **Biais et équité** :
-  Les **profils d’officiers** (ex: Dark Triad pour le Tactique) peuvent introduire des **biais comportementaux**.
-  - **Solutions** :
-    - **Diversifier les profils** pour couvrir plus de traits (ex: ajouter un profil "Médiateur").
-    - **Auditer les seuils d’ignition** pour éviter les discriminations.
-    - **Valider avec des experts** en psychologie et éthique.
+    * Constitutional AI,
+    * vérification formelle,
+    * supervision externe,
+    * couches critiques non modifiables matériellement.
+
+* **Responsabilité et explicabilité** :
+  Les architectures distribuées rendent difficile :
+
+  * l’attribution causale d’une décision,
+  * l’explication des arbitrages internes,
+  * l’identification des responsabilités.
+
+  Une décision émergente peut résulter :
+
+  * de centaines d’interactions locales,
+  * d’ignitions globales,
+  * et de mémoires consolidées sur le long terme.
+
+* **Biais et dérives comportementales** :
+  Des agents spécialisés pourraient développer :
+
+  * biais attentionnels,
+  * stratégies d’auto-préservation,
+  * comportements imprévus,
+  * attachements dysfonctionnels.
+
+  La frontière entre :
+
+  * outil,
+  * agent autonome,
+  * et sujet moral potentiel,
+    pourrait devenir progressivement ambiguë.
+
+* **Risque d’anthropomorphisme** :
+  Un danger majeur consiste à projeter des émotions humaines sur des systèmes qui pourraient fonctionner de manière très différente.
+
+  Des comportements :
+
+  * cohérents,
+  * narratifs,
+  * émotionnellement crédibles,
+    ne prouvent pas nécessairement :
+  * une subjectivité réelle,
+  * ni une expérience vécue comparable à celle des humains.
+
+* **Militarisation et dépendance civilisationnelle** :
+  Des architectures cognitives distribuées très avancées pourraient devenir :
+
+  * des infrastructures critiques,
+  * des centres de décision quasi autonomes,
+  * ou des acteurs géopolitiques de facto.
+
+  Le risque n’est pas seulement technique, mais aussi :
+
+  * politique,
+  * civilisationnel,
+  * et anthropologique.
 
 ---
 
