@@ -613,7 +613,7 @@ Cette section propose des **pistes concrètes** pour faire avancer le projet. *C
  | Respect des contraintes| % de violations des règles                 | 0%            |
  | Apprentissage          | Amélioration entre deux missions           | +10%/mission |
 
---
+---
 
 ## Annexe : Lectures de Référence (sélection non exhaustive)
 
