@@ -198,44 +198,68 @@ Oudeyer (*Intrinsic Motivation Systems for Autonomous Learning*, 2007).
 
 ---
 
+
 ### G. La Mémoire Épisodique Continue (MeMo / Continuous Online Training)
 
-**Fondement Théorique :**
-[Quek et al., *MeMo: Memory as a Model* (2026)](https://arxiv.org/abs/2605.15156) ;
-[Kirkpatrick et al., *Overcoming Catastrophic Forgetting in Neural Networks* (2017)](https://arxiv.org/abs/1612.00796) ;
+**Fondement Théorique :**  
+[Quek et al., *MeMo: Memory as a Model* (2026)](https://arxiv.org/abs/2605.15156) ;  
+[Kirkpatrick et al., *Overcoming Catastrophic Forgetting* (2017)](https://arxiv.org/abs/1612.00796) ;  
 [Walker, *The Role of Sleep in Cognition and Emotion* (2017)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5357011/).
 
-**Le Concept :** La mémoire épisodique n’est pas un simple historique de logs, mais un **flux continu de tenseurs compressés** qui capture uniquement les moments significatifs (ignitions). Chaque événement important est stocké sous forme d’un **vecteur épisodique** riche (état latent JEPA + métadonnées : saillance, timestamp, module source, outcome, score de surprise).
+**Le Concept :** La mémoire épisodique n’est pas un simple journal de logs, mais un **flux continu de vecteurs latents compressés** qui capture uniquement les moments de forte saillance (ignitions). Chaque événement significatif devient un **souvenir épisodique** riche : état latent JEPA + métadonnées contextuelles.
 
-**Architecture MeMo adaptée au SoS :**
+**Exemple concret : Anomalie Catapulte**
 
+```mermaid
+flowchart TD
+    subgraph Mission ["Phase 1 : Mission Temps Réel"]
+        A["T=14h23\nIgnition N=4 (Rafale)"] 
+        B["Anomalie catapulte détectée\nsaillance = 0.87"]
+        C["Capture MeMo\n→ Vecteur épisodique"]
+    end
+
+    Mission -->|"Transfert des boîtes noires"| Sommeil
+
+    subgraph Sommeil ["Phase 2 : Sommeil & Rêverie"]
+        D["Generative Replay JEPA\n(Simulations de variantes)"]
+        E["Recalibration seuils d'ignition\n(Module PISTE)"]
+        F["Consolidation\n→ Mémoire Long Terme (RAG)"]
+    end
+
+    Sommeil -->|"Mise à jour + Consolidation"| Consultation
+
+    subgraph Consultation ["Phase 3 : Consultation Ultérieure\n(T+30 jours)"]
+        G["Nouvelle anomalie similaire détectée"]
+        H["RAG épisodique retrouve\nle souvenir T=14h23"]
+        I["Proposition proactive\n→ Workaround 'catapulte_B'"]
+    end
+
+    classDef ignition fill:#fff3e0,stroke:#f57f17,stroke-width:2px
+    classDef replay fill:#f3e5f5,stroke:#8e24aa
+    class A,B,G ignition
+    class D replay
 ```
-[Ignition N=4 à T=14h23]
-  -> tag : PISTE / anomalie catapulte / saillance=0.87
-  -> outcome : mission_abort = false, workaround = "catapulte_B"
-  -> compressé en vecteur épisodique -> RAG épisodique
 
-[Consolidation nocturne]
-  -> rejouer les ignitions du jour dans l'espace latent JEPA
-  -> recalibrer les seuils d'ignition du module PISTE
-  -> sédimenter dans la mémoire longue durée si outcome = validé
-
-[Consultation ultérieure]
-  -> PISTE détecte une anomalie similaire à T+30j
-  -> RAG épisodique retourne le contexte compressé de T=14h23
-  -> le workaround "catapulte_B" est proposé proactivement
+**Détail du vecteur épisodique stocké :**
+```yaml
+Ignition_ID: 2026-05-24_1423_Leader3
+Module: PISTE_N4
+Saillance: 0.87
+État latent JEPA: [0.42, -0.17, 0.91, ..., 0.63]
+Tags: [anomalie_catapulte, asymétrie_poussée, dégradé]
+Outcome: mission_abort=false
+Workaround: catapulte_B
+Contexte: vent_25kt, pont_mouillé, leader_formation
 ```
 
-**Justification Technique :** C'est la différence entre un système qui *performe* et un système qui *apprend de ses erreurs*. La mémoire épisodique est aussi le support de l'identité durable de chaque officier — sa biographie d'ignitions est ce qui le rend unique et reconnaissable, même après une mise à jour des poids.
+**Justification Technique :** C’est la différence fondamentale entre un système qui *performe* et un système qui **apprend vraiment** de son expérience. La mémoire épisodique MeMo devient également le support de l’**identité durable** de chaque module ou officier — sa biographie personnelle d’ignitions constitue son "moi" computationnel, préservé même après des mises à jour des poids.
 
 **Mécanisme MeMo :**
+- **Mission** : Capture en streaming des ignitions (N=3 → N=6)
+- **Rêverie** : Generative Replay dans l’espace latent JEPA
+- **Débriefing** : Consolidation et sédimentation dans la mémoire long terme (RAG épisodique)
 
-- Pendant la mission : capture en streaming des ignitions (N=3 → N=6)
-- Pendant la phase de rêve : **Generative Replay** dans l’espace latent JEPA
-- Pendant le débriefing : consolidation et sédimentation dans la mémoire long terme (RAG)
-
-Cela permet à la fois **l’apprentissage continu** et la **préservation de l’identité** de chaque module/officier (sa biographie d’ignitions constitue son "moi" computationnel).
-
+Ce mécanisme permet à la fois l’apprentissage continu sans *catastrophic forgetting* et la préservation d’une identité propre à chaque entité du SoS.
 
     
 ---
