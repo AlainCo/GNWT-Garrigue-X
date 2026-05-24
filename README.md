@@ -373,6 +373,25 @@ Pour valider cette architecture sans les coûts d'infrastructure du domaine aér
 
 ### B. Matériel et Stack Technologique
 
+```mermaid
+flowchart TD
+    subgraph Vecteurs ["Vecteurs (Agents)"]
+        UAV["UAV Éclaireurs\n(Pixhawk + RPi5)"]
+        UGV["UGV Rovers\n(Jetson Orin N=4)"]
+    end
+
+    subgraph QG ["Station de Base (N=5/6)"]
+        JEPA["I-JEPA\n(World Model)"]
+        Agents["LangGraph\n(Officiers : Coordinateur, Cartographe, Logiste)"]
+        MeMo["MeMo Streaming"]
+        LLM["Llama-3 + RAG"]
+        Const["Constitutional Layer\n(Plantes Sacrées)"]
+    end
+
+    Vecteurs <-->|"Résumés d'Ignition + Télémetrie"| QG
+    QG -->|"Commandes + Priors"| Vecteurs
+```
+
 #### 1. Les Vecteurs (Les Agents)
 
 **Aériens (UAV — Éclaireurs) :** Quadricoptères légers open-source (Contrôleur Pixhawk + Raspberry Pi 5). Capteurs : Caméra standard + Flux optique. Rôle : Cartographie latente, repérage des blocs, envoi de résumés topologiques au QG.
