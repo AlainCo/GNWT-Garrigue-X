@@ -44,7 +44,10 @@ Pour prouver la viabilité de cette architecture auprès de nos pairs, chaque d�
 
 ### A. L'Indépendance Conditionnelle : Les Couvertures de Markov Imbriquées
 
-**Fondement Théorique :** Judea Pearl (*Probabilistic Reasoning in Intelligent Systems*, 1988) pour les réseaux bayésiens ; Kirchhoff, Parr, Palacios, Friston, Kiverstein (*The Markov blankets of life: autonomy, active inference and the free energy principle*, 2018) pour la biologie théorique ; Ciaunica, Levin, Rosas, Friston et al. (*Nested Selves: Self-Organization and Shared Markov Blankets in Prenatal Development in Humans*, 2023) pour la généralisation aux systèmes collectifs.
+**Fondement Théorique :**
+Judea Pearl (*Probabilistic Reasoning in Intelligent Systems*, 1988) pour les réseaux bayésiens ;
+[Kirchhoff, Parr, Palacios, **Friston**, Kiverstein, *The Markov blankets of life: autonomy, active inference and the free energy principle* (2018)](https://royalsocietypublishing.org/doi/10.1098/rsif.2017.0792) pour la biologie théorique ;
+[Ciaunica, Levin, Rosas, **Friston** et al., *Nested Selves: Self-Organization and Shared Markov Blankets in Prenatal Development in Humans* (2023)](https://onlinelibrary.wiley.com/doi/10.1111/tops.12717) pour la généralisation aux systèmes collectifs.
 
 **Le Concept :** La couverture de Markov désigne la membrane statistique séparant les états internes ($I$) d'un système des états externes ($E$) de son environnement. Elle est composée d'états sensoriels (entrées) et actifs (sorties). L'équation fondamentale d'indépendance s'écrit :
 
@@ -58,7 +61,11 @@ $$P(I \mid B, E) = P(I \mid B)$$
 
 ### B. La Conscience à Deux Étages : GNWT + RPT comme facettes d'un même mécanisme
 
-**Fondement Théorique :** Fondement Théorique : Bernard Baars (1988) et Dehaene & Changeux (*Experimental and Theoretical Approaches to Conscious Processing*, 2011) pour la *Global Neuronal Workspace Theory* (GNWT) ; Victor Lamme (*Towards a true neural stance on consciousness*, 2006) pour la *Recurrent Processing Theory* (RPT) ; Doerig et al. (*An integrative, multiscale view on consciousness theories*, 2024) pour l’intégration GNWT+RPT+IIT.
+**Fondement Théorique :**
+Bernard Baars (1988) et
+[Dehaene & Changeux, *Experimental and Theoretical Approaches to Conscious Processing* (2011)](https://doi.org/10.1016/j.neuron.2011.03.018) pour la *Global Neuronal Workspace Theory* (GNWT) ;
+[Victor Lamme, *Towards a true neural stance on consciousness* (2006)](https://doi.org/10.1016/j.tics.2006.09.001) pour la *Recurrent Processing Theory* (RPT) ;
+[Doerig et al., *An integrative, multiscale view on consciousness theories* (2024)](https://osf.io/preprints/psyarxiv/9byzu) pour l’intégration GNWT+RPT+IIT.
 
 **Le Concept :** Ces deux théories, souvent présentées comme concurrentes, décrivent en réalité **deux étages temporels d'un même processus** :
 
@@ -80,7 +87,9 @@ La RPT décrit la **vie intérieure de chaque module** — ses boucles feedback 
 
 ### C. La Prédiction Abstraite : Les Modèles du Monde Latents (JEPA)
 
-**Fondement Théorique :** Fondement Théorique : Yann LeCun (*A Path Towards Autonomous Machine Intelligence*, 2022) ; Hafner et al. (*Mastering Atari with Discrete World Models*, DreamerV3, 2023).
+**Fondement Théorique :**
+[Yann LeCun, *A Path Towards Autonomous Machine Intelligence* (2022)](https://arxiv.org/abs/2207.04898) ;
+[Hafner et al., *Mastering Atari with Discrete World Models* (2023)](https://arxiv.org/abs/2301.04104).
 
 **Le Concept :** Contrairement aux modèles génératifs pixel par pixel, la *Joint Embedding Predictive Architecture* (JEPA) apprend à prédire des **représentations abstraites** (vecteurs latents) du monde en ignorant le bruit inutile. Sa nature prédictive *always-on* permet un monitoring sémantique continu — le modèle maintient un flux sémantique permanent qui n'est "verbalisé" que lors d'une ignition.
 
@@ -92,7 +101,10 @@ La RPT décrit la **vie intérieure de chaque module** — ses boucles feedback 
 
 ### D. Les Architectures Légères pour le Temps Réel : SSMs (Mamba, RWKV, xLSTM)
 
-**Fondement Théorique :** Fondement Théorique : Gu & Dao (*Mamba: Linear-Time Sequence Modeling with Selective State Spaces*, 2023) ; Peng et al. (*RWKV: Reinventing RNNs for the Transformer Era*, 2023) ; Beck et al. (*xLSTM: Extended Long Short-Term Memory*, 2024).
+**Fondement Théorique :**
+[Gu & Dao, *Mamba: Linear-Time Sequence Modeling with Selective State Spaces* (2023)](https://arxiv.org/abs/2312.00752) ;
+[Peng et al., *RWKV: Reinventing RNNs for the Transformer Era* (2023)](https://arxiv.org/abs/2305.13048) ;
+[Beck et al., *xLSTM: Extended Long Short-Term Memory* (2024)](https://arxiv.org/abs/2402.13695).
 
 **Le Concept :** Les *State Space Models* (SSMs) offrent une alternative aux Transformers pour les couches basses (N=0 à N=3), avec des propriétés cruciales pour l'embarqué :
 
@@ -111,7 +123,12 @@ La RPT décrit la **vie intérieure de chaque module** — ses boucles feedback 
 
 ### E. La Psychopathologie Computationnelle et Profils Fonctionnels
 
-**Fondement Théorique :** Fondement Théorique : Friston (*Computational psychiatry: from synapses to sentience*, 2022) ; Teufel & Fletcher (*The promises and pitfalls of applying computational models to neurological and psychiatric disorders*, 2016) ; Nettle (*Personality: What makes you the way you are*, 2007) pour le modèle Big Five évolutif ; Baron-Cohen (*Autism: the empathizing-systemizing (E-S) theory*, 2009) ; Bakiaj et al. (*Unmasking the Dark Triad: A Data Fusion Machine Learning Approach to Characterize the Neural Bases of Narcissistic, Machiavellian and Psychopathic Traits*, 2025).
+**Fondement Théorique :**
+[Friston, *Computational psychiatry: from synapses to sentience* (2022)](https://www.nature.com/articles/s41380-022-01743-z) ;
+[Teufel & Fletcher, *The promises and pitfalls of applying computational models to neurological and psychiatric disorders* (2016)](https://doi.org/10.1093/brain/aww209) ;
+[Nettle, *Personality: What makes you the way you are* (2007)](https://global.oup.com/academic/product/personality-9780192804711) pour le modèle Big Five évolutif ;
+[Baron-Cohen, *Autism: the empathizing-systemizing (E-S) theory* (2009)](https://doi.org/10.1016/j.tins.2008.10.005) ;
+[Bakiaj, Pantoja Muñoz, Bizzego, Grecucci, *Unmasking the Dark Triad: A Data Fusion Machine Learning Approach to Characterize the Neural Bases of Narcissistic, Machiavellian and Psychopathic Traits* (2025)](https://onlinelibrary.wiley.com/doi/10.1111/ejn.16674).
 
 **Le Concept :** Les traits de personnalité sont modélisés comme des **ajustements d'hyperparamètres** dans le traitement des probabilités d'erreur. Ce ne sont pas des "modes" qu'on active, mais des biais structurels dans les fonctions de saillance et les seuils d'ignition.
 
@@ -134,7 +151,10 @@ La RPT décrit la **vie intérieure de chaque module** — ses boucles feedback 
 
 ### F. L'Exploration par la Curiosité et l'Apprentissage par le Jeu
 
-**Fondement Théorique :** Jürgen Schmidhuber (*Formal Theory of Creativity, Fun, and Happiness*, 2010) ; Oudeyer & Kaplan (*What is Intrinsic Motivation? A Typology of Computational Approaches*, 2007) ; Oudeyer (*Intrinsic Motivation Systems for Autonomous Learning*, 2007).
+**Fondement Théorique :**
+Jürgen Schmidhuber (*Formal Theory of Creativity, Fun, and Happiness*, 2010) ;
+[Oudeyer & Kaplan, *What is Intrinsic Motivation? A Typology of Computational Approaches* (2007)](https://doi.org/10.3389/neuro.12.006.2007) ;
+Oudeyer (*Intrinsic Motivation Systems for Autonomous Learning*, 2007).
 
 **Le Concept :** La curiosité est une **fonction de récompense intrinsèque** basée sur le gain d'information (réduction de l'entropie prédictive). L'agent est récompensé quand il explore des zones où son modèle du monde est encore imprécis — ni trop simples (ennuyeuses), ni trop chaotiques (incompréhensibles). La zone d'apprentissage optimale est celle où le *progrès d'apprentissage* est maximal.
 
@@ -146,7 +166,10 @@ La RPT décrit la **vie intérieure de chaque module** — ses boucles feedback 
 
 ### G. La Mémoire Épisodique Continue (MeMo / Continuous Online Training)
 
-**Fondement Théorique :** Quek et al. (*MeMo: Memory as a Model*, 2026) ; Kirkpatrick et al. (*Overcoming Catastrophic Forgetting in Neural Networks*, 2017) ; Walker (*The Role of Sleep in Cognition and Emotion*, 2017).
+**Fondement Théorique :**
+[Quek et al., *MeMo: Memory as a Model* (2026)](https://arxiv.org/abs/2605.15156) ;
+[Kirkpatrick et al., *Overcoming Catastrophic Forgetting in Neural Networks* (2017)](https://arxiv.org/abs/1612.00796) ;
+[Walker, *The Role of Sleep in Cognition and Emotion* (2017)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5357011/).
 
 **Le Concept :** La mémoire vive du système — au-delà du contexte classique d'un LLM — est un module de **streaming continu de tenseurs** qui capte et compresse les états significatifs au fil de la mission. Chaque *ignition* est taguée avec ses métadonnées (timestamp, module source, score de saillance, outcome ultérieur) et stockée dans une mémoire épisodique persistante.
 
