@@ -326,6 +326,23 @@ flowchart TD
 
 ### Scénario de Panne en Combat :
 
+```mermaid
+flowchart TD
+    A["N=0/1 : Tuyère endommagée\n(PID + MLP nano)"] 
+    --> B["N=2/3 : Détection & RPT Locale\n(Mamba)"]
+
+    B -->|"Résumé d'Ignition\n[sévérité=0.73 | workaround=true]"| C["N=4 : Rafale\n(Workspace GNWT)"]
+
+    C --> D["Reconfiguration loi de vol\n+ MeMo consultation"]
+    D -->|"Résumé d'Ignition compressé"| E["N=5 : Groupe\n(Officier Tactique)"]
+
+    E --> F["CAPITAINE arbitre\n+ Broadcast au groupe"]
+    F --> G["N=6 : Amiral\n(Traduction LLM)"]
+
+    classDef ignition fill:#fff3e0,stroke:#f57f17
+    class B,C,D,E ignition
+```
+
 **1. N=0/N=1 :** Un éclat de missile endommage la tuyère droite. Le PID augmenté par MLP nano modifie instantanément les angles d'injection en **4 millisecondes** pour éviter l'extinction du moteur. Aucun signal ne remonte — c'est géré localement, en dessous du seuil RPT.
 
 **2. N=2/N=3 :** Le modèle Mamba du moteur enregistre une anomalie croissante. Ses boucles RPT locales tournent, tentent de consolider une évaluation. Après stabilisation, elles génèrent un **Résumé d'Ignition vectoriel** : *[anomalie_propulsion | sévérité=0.73 | type=asymétrie_poussée | workaround_disponible=true]*. Pas de dump de données brutes — un vecteur sémantique compressé.
