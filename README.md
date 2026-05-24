@@ -88,6 +88,7 @@ flowchart TD
 ```
 
 ---
+
 ### B. La Conscience à Deux Étages : GNWT + RPT comme facettes d'un même mécanisme
 
 **Fondement Théorique :** Bernard Baars (1988) et Stanislas Dehaene (*A neuronal network model of global workspace*, 2001) pour la *Global Neuronal Workspace Theory* (GNWT) ; Victor Lamme (2006, *Recurrent Processing Theory*, RPT) ; travaux d'intégration du consortium COGITATE et surtout Storm et al. (*An integrative, multiscale view on neural theories of consciousness*, Neuron, 2024).
@@ -542,6 +543,7 @@ Le tout en garrigue. Sous le soleil. Sans air conditionné.
 *Harry Tuttle, plombier.*
 
 ---
+
 ## Discussion
 
 ### 🌟 Contributions et originalité
