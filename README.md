@@ -605,20 +605,19 @@ Cette section propose des **pistes concrètes** pour faire avancer le projet. *C
 
 - **Métriques** :
   Définir un **tableau de bord** avec :
-   Métrique               | Méthode de mesure                          | Cible          |
+  
+ |  Métrique               | Méthode de mesure                          | Cible          |
  |------------------------|--------------------------------------------|----------------|
  | Robustesse             | % de missions réussies malgré des pannes  | > 90%          |
  | Efficacité             | Temps pour atteindre l’objectif           | < T_ref       |
  | Respect des contraintes| % de violations des règles                 | 0%            |
  | Apprentissage          | Amélioration entre deux missions           | +10%/mission |
 
-
-*Dernière mise à jour : 24/05/2026. Cette section évoluera avec les retours de la communauté.*
-
 --
+
 ## Annexe : Lectures de Référence (sélection non exhaustive)
 
-  **Domaine** | **Référence clé** |
+ | **Domaine** | **Référence clé** |
  |-------------|-------------------|
  | **Couvertures de Markov** | [Kirchhoff, Parr, Palacios, **Friston**, Kiverstein, *The Markov blankets of life: autonomy, active inference and the free energy principle* (2018)](https://royalsocietypublishing.org/doi/10.1098/rsif.2017.0792) |
  | **Couvertures imbriquées** | [Ciaunica, Levin, Rosas, **Friston** et al., *Nested Selves: Self-Organization and Shared Markov Blankets in Prenatal Development in Humans* (2023)](https://onlinelibrary.wiley.com/doi/10.1111/tops.12717) |
