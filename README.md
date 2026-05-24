@@ -30,7 +30,7 @@ L'architecture repose sur un principe central : **la conscience fonctionnelle d'
 
 **Type :** Bouteille à la mer / Loisir / Spéculation / Recherche de gens compétents
 
-**Remerciements :** Merci à ChatGPT, Claude, Gemini, Perplexity, Le Chat Mistral, à Youtube et ses créateurs, au Collège de France, à Google, Wikipedia... J'en oublie.
+**Remerciements :** Merci à ChatGPT, Claude, Gemini, Perplexity, Le Chat Mistral, Grok, à Youtube et ses créateurs, au Collège de France, à Google, Wikipedia... J'en oublie.
 
 [![Licence Creative Commons](https://licensebuttons.net/l/by/4.0/88x31.png)](http://creativecommons.org/licenses/by/4.0/)
 
@@ -620,11 +620,16 @@ Cette section propose des **pistes concrètes** pour faire avancer le projet. *C
  | **Domaine** | **Référence clé** |
  |-------------|-------------------|
  | **Couvertures de Markov** | [Kirchhoff, Parr, Palacios, **Friston**, Kiverstein, *The Markov blankets of life: autonomy, active inference and the free energy principle* (2018)](https://royalsocietypublishing.org/doi/10.1098/rsif.2017.0792) |
+ | **Couvertures de Markov collectives & Nested Selves** | [Ciaunica, Levin, Rosas, Friston et al., *Nested Selves* (2023)](https://onlinelibrary.wiley.com/doi/10.1111/tops.12717) |
+ | **Couvertures de Markov & Group-Level Models** | [Thestrup Waade, Lundbak Olesen, Friston et al., *As One and Many* (2025)](https://doi.org/10.3390/e27020143) |
  | **Couvertures imbriquées** | [Ciaunica, Levin, Rosas, **Friston** et al., *Nested Selves: Self-Organization and Shared Markov Blankets in Prenatal Development in Humans* (2023)](https://onlinelibrary.wiley.com/doi/10.1111/tops.12717) |
  | **Couvertures collectives** | [Thestrup Waade, Lundbak Olesen, Ehrenreich Laursen, Nehrer, Heins, **Friston**, Mathys, *As One and Many: Relating Individual and Emergent Group-Level Generative Models in Active Inference* (2025)](https://doi.org/10.3390/e27020143) |
  | **GNWT** | [Dehaene & Changeux, *Experimental and Theoretical Approaches to Conscious Processing* (2011)](https://doi.org/10.1016/j.neuron.2011.03.018) |
  | **RPT** | [Lamme, *Towards a true neural stance on consciousness* (2006)](https://doi.org/10.1016/j.tics.2006.09.001) |
- | **GNWT+RPT intégration** | [Doerig et al., *An integrative, multiscale view on consciousness theories* (2024)](https://osf.io/preprints/psyarxiv/9byzu) *(Intègre GNWT, RPT, IIT, PP, NREP)* |
+ | **Intégration GNWT+RPT ** | [Doerig et al., *An integrative, multiscale view on consciousness theories* (2024)](https://osf.io/preprints/psyarxiv/9byzu) *(Intègre GNWT, RPT, IIT, PP, NREP)* |
+ | **Intégration GNWT + RPT** | [Storm et al., *An integrative, multiscale view on neural theories of consciousness* (2024)](https://doi.org/10.1016/j.neuron.2024.02.004) *(Neuron)* |
+ | **Écosystèmes d'intelligence (Active Inference)** | [Friston et al., *Designing ecosystems of intelligence from first principles* (2024)](https://doi.org/10.1177/26339137231222481) *(Collective Intelligence)* |
+ | **Mémoire épisodique continue (MeMo)** | [Quek, Lee, Leong, Verma et al., *MeMo: Memory as a Model* (2026)](https://arxiv.org/abs/2605.15156) |
  | **JEPA** | [LeCun, *A Path Towards Autonomous Machine Intelligence* (2022)](https://arxiv.org/abs/2207.04898) |
  | **World Models** | [Hafner et al., *Mastering Atari with Discrete World Models* (DreamerV3, 2023)](https://arxiv.org/abs/2301.04104) |
  | **SSM / Mamba** | [Gu & Dao, *Mamba: Linear-Time Sequence Modeling with Selective State Spaces* (2023)](https://arxiv.org/abs/2312.00752) |
