@@ -235,6 +235,19 @@ Oudeyer (*Intrinsic Motivation Systems for Autonomous Learning*, 2007).
 
 ## 2. Architecture Cible Générale : Exemple du GAN 2040
 
+```mermaid
+flowchart TD
+    direction TB
+
+    Bas["Niveaux Bas (N=0 à N=3)\nDonnées brutes + RPT locale"] 
+    -->|"Résumé d'Ignition\n(Compressé, Abstrait)"| Haut["Niveaux Hauts (N=4 à N=6)\nGNWT + Conscience d'accès"]
+
+    Haut -->|"Priors Contextuels + Contraintes\n(Objectifs, Règles, Contextes)"| Bas
+
+    style Bas fill:#ffebee
+    style Haut fill:#e3f2fd
+```
+
 Cette pile décrit l'infrastructure cognitive du Groupe Aéronaval (GAN) en **2040**. Les informations transitent de bas en haut sous forme de **Résumés d'Ignition Compressés** (vecteurs latents abstraits, pas de données brutes), et de haut en bas sous forme de **Priors Contextuels** (contraintes sur les espaces de représentation des niveaux inférieurs).
 
 **Principe fondamental :** Chaque frontière verticale est une **Couverture de Markov**. N+1 est aveugle aux états internes de N. Le broadcast GNWT est *intra-niveau* ; la communication *inter-niveau* est uniquement via les résumés d'ignition compressés.
