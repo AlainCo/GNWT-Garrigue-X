@@ -436,7 +436,186 @@ Le tout en garrigue. Sous le soleil. Sans air conditionné.
 *Harry Tuttle, plombier.*
 
 ---
+## Discussion
 
+### 🌟 Contributions et originalité
+
+Ce travail propose une **architecture cognitive distribuée** pour des Systèmes de Systèmes (SoS) autonomes, inspirée des mécanismes neurobiologiques et conçue pour être **robuste, scalable et capable d’apprentissage continu**. Voici ses principales contributions :
+
+- **Approche anti-réductionniste** :
+  Rejet des architectures LLM monolithiques au profit d’une **hiérarchie fonctionnelle** (N=0 à N=6), où chaque niveau est une entité cognitive autonome séparée par des **couvertures de Markov**. Cette approche s’inspire directement des travaux de [Kirchhoff et al. (2018)](https://royalsocietypublishing.org/doi/10.1098/rsif.2017.0792) et [Friston](https://www.nature.com/articles/s41380-022-01743-z), tout en généralisant le concept aux systèmes collectifs ([Ciaunica et al., 2023](https://onlinelibrary.wiley.com/doi/10.1111/tops.12717), [Thestrup Waade et al., 2025](https://doi.org/10.3390/e27020143)).
+
+- **Intégration théorique de GNWT et RPT** :
+  Proposition d’une **unification des théories de la conscience** en deux étages d’un même processus :
+  - **RPT (Recurrent Processing Theory)** : Vie intérieure locale (boucles de feedback) pour les niveaux N=3.
+  - **GNWT (Global Neuronal Workspace Theory)** : Broadcast global et accès conscient pour les niveaux N≥4.
+  Cette intégration s’appuie sur [Doerig et al. (2024)](https://osf.io/preprints/psyarxiv/9byzu), qui explore une vision multiscale des théories de la conscience.
+
+- **Stack technologique réaliste** :
+  Utilisation de **SSMs (Mamba, RWKV)** pour les couches basses (N=0-3), **JEPA** pour les niveaux intermédiaires (N=4-5), et **LLM** pour le niveau stratégique (N=6). Cette stack est **adaptée aux contraintes matérielles** (latence, RAM, déterminisme) et s’appuie sur des travaux récents :
+  - [Gu & Dao (2023)](https://arxiv.org/abs/2312.00752) pour les SSMs.
+  - [LeCun (2022)](https://arxiv.org/abs/2207.04898) pour les JEPA.
+  - [Hafner et al. (2023)](https://arxiv.org/abs/2301.04104) pour les modèles de monde.
+
+- **Modélisation des profils cognitifs** :
+  Définition de **6 rôles d’officiers** (Science, Soin, Ingénieur, Tactique, Renseignement, Capitaine), chacun avec :
+  - Un **profil de personnalité** ancré dans la psychologie computationnelle ([Friston, 2022](https://www.nature.com/articles/s41380-022-01743-z), [Nettle, 2007](https://global.oup.com/academic/product/personality-9780192804711), [Baron-Cohen, 2009](https://doi.org/10.1016/j.tins.2008.10.005)).
+  - Un **domaine de saillance** et des **seuils d’ignition** spécifiques.
+  - Une **mémoire épisodique propre** (MeMo) pour préserver l’identité de chaque agent.
+
+- **Cycle d’apprentissage biomimétique** :
+  Proposition d’un **cycle en 3 phases** inspiré des mécanismes biologiques :
+  1. **Mission** : Apprentissage en temps réel (poids gelés, adaptation dynamique).
+  2. **Sommeil/Rêverie** : Rejeu des ignitions dans l’espace latent JEPA pour consolidation.
+  3. **Débriefing/Jeu** : Analyse sémantique + wargame pour générer de la diversité.
+  Ce cycle s’inspire des travaux sur la **consolidation mémorielle** ([Walker, 2017](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5357011/)) et le *generative replay* ([Hafner et al., 2023](https://arxiv.org/abs/2301.04104)).
+
+- **MVP concret et testable** :
+  Proposition du projet **GARRIGUE-X** (robots en garrigue) pour valider l’architecture à moindre coût. Le MVP teste :
+  - La **robustesse aux pannes** (anti-fusion d’identité).
+  - La **coopération distribuée** (échanges de résumés d’ignition).
+  - Le **respect des contraintes constitutionnelles** (plantes sacrées = règles non négociables).
+
+---
+
+### ⚠️ Limites et défis
+
+Cette section liste les **limites actuelles** et les **défis ouverts** identifiés à ce stade. *Ces points sont destinés à évoluer avec les retours de la communauté.*
+
+#### 🔬 Défis théoriques
+
+- **Frontière RPT/GNWT** :
+  Le seuil **N=3 → N=4** pour la conscience d’accès est une **hypothèse de travail**. La littérature suggère que cette frontière est **plus floue** et dépend du contexte.
+  - [Doerig et al. (2024)](https://osf.io/preprints/psyarxiv/9byzu) propose une vision multiscale où GNWT, RPT, IIT, et PP coexistent à différents niveaux.
+  - **Question ouverte** : Est-ce que N=3 a vraiment une **vie intérieure (RPT)** ? Ou RPT émerge-t-il uniquement à partir de N=4 ?
+  - **À explorer** : Collaborer avec des neuroscientifiques pour affiner ce seuil.
+
+- **Définition de la conscience fonctionnelle** :
+  Le concept de **"conscience fonctionnelle d’accès"** est central, mais sa **mesure objective** reste un défi.
+  - Comment **quantifier** la conscience dans un système artificiel ?
+  - Faut-il s’inspirer des **tests de conscience** en neurosciences (ex: *Global Workspace* tests) ou en IA (ex: *Turing Test* adapté) ?
+
+#### ⚙️ Défis techniques
+
+- **Faisabilité des JEPA et MeMo** :
+  Les **JEPA** (LeCun, 2022) et **MeMo** (Quek et al., 2026) sont encore **peu matures** pour une implémentation embarquée sur du matériel léger (ex: Jetson Orin).
+  - **Solution proposée** : Commencer par un **sous-ensemble** (ex: N=0-3 avec SSMs + PID) avant de monter en complexité.
+  - **Outils** : Utiliser [ActiveInference.jl](https://github.com/ActiveInference/ActiveInference.jl) pour les couches N=2-3, et [Mamba-SSM](https://github.com/state-spaces/mamba) pour les SSMs.
+
+- **Coûts computationnels** :
+  Les **JEPA-L/XL** et le **broadcast GNWT** (N=4-5) peuvent devenir des **goulots d’étranglement**.
+  - **Optimisations possibles** :
+    - Utiliser des **filtres de saillance** pour limiter le nombre d’ignitions.
+    - Compresser les **résumés d’ignition** (ex: autoencoders variationnels).
+    - Remplacer JEPA-L par des **JEPA-S** pour les couches N=4.
+    - Quantifier les SSMs (ex: **Mamba-8bit**).
+
+- **Validation expérimentale** :
+  Manque de **métriques claires** pour :
+  - Mesurer la **"conscience fonctionnelle"** des agents.
+  - Comparer avec des **baselines** (ex: agents LLM, MADDPG, systèmes centralisés).
+  - **Métriques proposées** :
+    - **Robustesse** : % de missions réussies malgré des pannes (ex: perte d’un robot).
+    - **Efficacité** : Temps/moyens pour atteindre l’objectif (ex: nombre de blocs collectés).
+    - **Respect des contraintes** : % de violations des règles (ex: plantes sacrées touchées).
+    - **Apprentissage** : Amélioration des performances entre deux missions.
+
+- **Mémoire épisodique (MeMo)** :
+  La mémoire **streaming + épisodique** est une idée puissante, mais son implémentation pose des défis :
+  - **Stockage** : Comment indexer et retrouver efficacement les ignitions passées ?
+  - **Consolidation** : Comment recalibrer les seuils d’ignition sans **catastrophic forgetting** ?
+  - **Outils** : Explorer [FAISS](https://github.com/facebookresearch/faiss) ou [Weaviate](https://weaviate.io/) pour le RAG épisodique.
+
+#### 🛡️ Défis éthiques et sécurité
+
+- **Contournement des règles** :
+  Risque qu’un agent (ex: profil "Tactique" avec traits Dark Triad) **optimise les contraintes** au détriment des règles éthiques.
+  - **Solutions proposées** :
+    - Ajouter une **Constitutional Layer vérifiable formellement** (inspirée de [Bai et al., 2022](https://arxiv.org/abs/2212.08073)).
+    - Utiliser des **mécanismes de vérification externe** (ex: audit par un tiers).
+    - **Contrainte matérielle** : Rendre la Constitutional Layer **non modifiable** par les agents (ex: module en hardware).
+
+- **Responsabilité et transparence** :
+  - Qui est **responsable** en cas d’erreur ? (ex: un Rafale "conscient" qui prend une décision fatale).
+  - Comment **expliquer** les décisions du système ? (ex: logs des ignitions + explications post-hoc).
+  - **Inspirations** :
+    - [EU AI Act](https://digital-strategy.ec.europa.eu/en/policies/ai-act) pour le cadre réglementaire.
+    - [Explainable AI (XAI)](https://arxiv.org/abs/1702.08608) pour la transparence.
+
+- **Biais et équité** :
+  Les **profils d’officiers** (ex: Dark Triad pour le Tactique) peuvent introduire des **biais comportementaux**.
+  - **Solutions** :
+    - **Diversifier les profils** pour couvrir plus de traits (ex: ajouter un profil "Médiateur").
+    - **Auditer les seuils d’ignition** pour éviter les discriminations.
+    - **Valider avec des experts** en psychologie et éthique.
+
+---
+
+### 🚀 Perspectives et travaux futurs
+
+Cette section propose des **pistes concrètes** pour faire avancer le projet. *Ces idées sont ouvertes à la discussion et aux contributions.*
+
+#### 🛠️ Implémentation incrémentale
+- **Phase 1 (0-3 mois)** :
+  - Implémenter **N=0-3** (contrôle + perception) avec :
+    - **SSMs** (Mamba/RWKV) pour les couches N=1-2.
+    - **PID + MLP nano** pour N=0-1.
+    - **JEPA-S** pour N=3 (si ressources disponibles).
+  - **Matériel** : Utiliser des **Jetson Nano** pour les robots et un **PC fixe** pour le QG.
+  - **Objectif** : Valider la **robustesse aux pannes** et la **communication entre niveaux**.
+
+- **Phase 2 (3-6 mois)** :
+  - Ajouter **N=4** (conscience de plateforme) avec :
+    - **JEPA-M** pour le workspace global.
+    - **MeMo v1** (mémoire épisodique simplifiée).
+  - **Objectif** : Tester le **cycle d’apprentissage** (Mission → Rêverie).
+
+- **Phase 3 (6-12 mois)** :
+  - Implémenter **N=5-6** (commandement et dialogue) avec :
+    - **LLM** (ex: Llama-3-8B) pour l’interface humaine.
+    - **Constitutional Layer** pour les contraintes éthiques.
+  - **Objectif** : Valider le **MVP complet** (GARRIGUE-X).
+
+#### 🔬 Collaborations et recherche
+- **Neurosciences** :
+  - Affiner les **seuils RPT/GNWT** avec des experts en conscience (ex: collaborer avec des labs travaillant sur [Doerig et al., 2024](https://osf.io/preprints/psyarxiv/9byzu)).
+  - Explorer les **mécanismes de l’inférence active** pour les couches N=2-3 ([Friston, 2022](https://www.nature.com/articles/s41380-022-01743-z)).
+
+- **Robotique et IA** :
+  - Collaborer avec des équipes travaillant sur :
+    - Les **SSMs embarqués** (ex: [Mamba-SSM](https://github.com/state-spaces/mamba)).
+    - Les **JEPA légers** (ex: adapter [LeCun (2022)](https://arxiv.org/abs/2207.04898) pour du matériel contraint).
+    - Les **systèmes multi-agents** (ex: [LangGraph](https://github.com/langchain-ai/langgraph)).
+
+- **Éthique et droit** :
+  - Travailler avec des **juristes spécialisés en IA** pour concevoir la Constitutional Layer.
+  - Participer à des **groupes de travail** sur l’IA éthique (ex: [Partnership on AI](https://www.partnershiponai.org/)).
+
+#### 📊 Benchmarking et évaluation
+- **Baselines** :
+  Comparer votre architecture avec :
+  - **Agents LLM** (ex: [CrewAI](https://github.com/joaomdmoura/crewAI), [AutoGen](https://github.com/microsoft/autogen)).
+  - **Systèmes multi-agents classiques** (ex: [MADDPG](https://arxiv.org/abs/1706.02275)).
+  - **Architectures centralisées** (ex: un seul LLM contrôlant tous les robots).
+
+- **Environnements de test** :
+  - **GARRIGUE-X** (terrain réel, robots physiques).
+  - **Simulations** (ex: [Gazebo](https://gazebosim.org/), [PyBullet](https://pybullet.org/)) pour tester des scénarios complexes.
+  - **Autres domaines** : Logistique industrielle, véhicules autonomes, jeux vidéo (ex: [StarCraft II](https://www.starcraft2.com/) pour les stratégies multi-agents).
+
+- **Métriques** :
+  Définir un **tableau de bord** avec :
+   Métrique               | Méthode de mesure                          | Cible          |
+ |------------------------|--------------------------------------------|----------------|
+ | Robustesse             | % de missions réussies malgré des pannes  | > 90%          |
+ | Efficacité             | Temps pour atteindre l’objectif           | < T_ref       |
+ | Respect des contraintes| % de violations des règles                 | 0%            |
+ | Apprentissage          | Amélioration entre deux missions           | +10%/mission |
+
+
+*Dernière mise à jour : 24/05/2026. Cette section évoluera avec les retours de la communauté.*
+
+--
 ## Annexe : Lectures de Référence (sélection non exhaustive)
 
   **Domaine** | **Référence clé** |
