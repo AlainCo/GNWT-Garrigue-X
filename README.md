@@ -64,18 +64,6 @@ $$P(I \mid B, E) = P(I \mid B)$$
 
 **Le Concept :** Longtemps présentées comme concurrentes, GNWT et RPT décrivent en réalité **deux phases temporelles et fonctionnelles complémentaires** d’un même processus de traitement conscient, comme le soulignent Storm et al. dans leur synthèse multiscale :
 
-
-
-### B. La Conscience à Deux Étages : GNWT + RPT comme facettes d'un même mécanisme
-
-**Fondement Théorique :**
-Bernard Baars (1988) et
-[Dehaene & Changeux, *Experimental and Theoretical Approaches to Conscious Processing* (2011)](https://doi.org/10.1016/j.neuron.2011.03.018) pour la *Global Neuronal Workspace Theory* (GNWT) ;
-[Victor Lamme, *Towards a true neural stance on consciousness* (2006)](https://doi.org/10.1016/j.tics.2006.09.001) pour la *Recurrent Processing Theory* (RPT) ;
-[Doerig et al., *An integrative, multiscale view on consciousness theories* (2024)](https://osf.io/preprints/psyarxiv/9byzu) pour l’intégration GNWT+RPT+IIT.
-
-**Le Concept :** Ces deux théories, souvent présentées comme concurrentes, décrivent en réalité **deux étages temporels d'un même processus** :
-
 ```
 Stage 1-2 : Feedforward rapide          → extraction brute, traitement non-conscient
 Stage 3    : Récurrence LOCALE          → [RPT] perception riche, vie intérieure locale
