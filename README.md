@@ -205,7 +205,7 @@ Oudeyer (*Intrinsic Motivation Systems for Autonomous Learning*, 2007).
 [Kirkpatrick et al., *Overcoming Catastrophic Forgetting in Neural Networks* (2017)](https://arxiv.org/abs/1612.00796) ;
 [Walker, *The Role of Sleep in Cognition and Emotion* (2017)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5357011/).
 
-**Le Concept :** La mémoire vive du système — au-delà du contexte classique d'un LLM — est un module de **streaming continu de tenseurs** qui capte et compresse les états significatifs au fil de la mission. Chaque *ignition* est taguée avec ses métadonnées (timestamp, module source, score de saillance, outcome ultérieur) et stockée dans une mémoire épisodique persistante.
+**Le Concept :** La mémoire épisodique n’est pas un simple historique de logs, mais un **flux continu de tenseurs compressés** qui capture uniquement les moments significatifs (ignitions). Chaque événement important est stocké sous forme d’un **vecteur épisodique** riche (état latent JEPA + métadonnées : saillance, timestamp, module source, outcome, score de surprise).
 
 **Architecture MeMo adaptée au SoS :**
 
@@ -228,6 +228,13 @@ Oudeyer (*Intrinsic Motivation Systems for Autonomous Learning*, 2007).
 
 **Justification Technique :** C'est la différence entre un système qui *performe* et un système qui *apprend de ses erreurs*. La mémoire épisodique est aussi le support de l'identité durable de chaque officier — sa biographie d'ignitions est ce qui le rend unique et reconnaissable, même après une mise à jour des poids.
 
+**Mécanisme MeMo :**
+
+- Pendant la mission : capture en streaming des ignitions (N=3 → N=6)
+- Pendant la phase de rêve : **Generative Replay** dans l’espace latent JEPA
+- Pendant le débriefing : consolidation et sédimentation dans la mémoire long terme (RAG)
+
+Cela permet à la fois **l’apprentissage continu** et la **préservation de l’identité** de chaque module/officier (sa biographie d’ignitions constitue son "moi" computationnel).
 
 
     
@@ -438,23 +445,53 @@ flowchart TD
 
 ### C. Le Cycle d'Apprentissage en 3 Phases (La Triple Boucle Biologique)
 
-Pour matérialiser l'apprentissage en continu de manière réaliste et théoriquement fondée :
+Le système suit un cycle inspiré de la biologie : **éveil → sommeil → débriefing**, qui garantit à la fois la stabilité en mission et l’adaptation continue.
+
 ```mermaid
 flowchart TD
-    A["Phase 1 : Mission Temps Réel\n(Poids gelés + RPT locale)"] 
-    --> B["Retour au stand\n(Chargement des boîtes noires)"]
+    subgraph Phase1 ["Phase 1 : Mission Temps Réel"]
+        A["Exécution\n(Poids gelés)"] 
+        B["RPT Locale + Ignitions"] 
+        C["Capture MeMo Streaming\n(Vecteurs épisodiques)"]
+    end
 
-    B --> C["Phase 2 : Sommeil & Rêverie\n(Generative Replay JEPA)"]
-    C --> D["Phase 3 : Débriefing + Wargame\n(Analyse sémantique + Surprises)"]
+    Phase1 -->|"Retour au stand\n(Transfert boîtes noires)"| Phase2
 
-    D --> A
+    subgraph Phase2 ["Phase 2 : Sommeil & Rêverie Artificielle"]
+        D["Generative Replay JEPA\n(Simulation de variantes)"]
+        E["Recalibration seuils d'ignition"]
+        F["Consolidation MeMo\n→ Mémoire Long Terme"]
+    end
 
-    style A fill:#e3f2fd
-    style C fill:#f3e5f5
-    style D fill:#e8f5e9
+    Phase2 -->|"Mise à jour des poids"| Phase3
+
+    subgraph Phase3 ["Phase 3 : Débriefing + Exploration"]
+        G["Analyse sémantique LLM\n(Rapport + patterns)"]
+        H["Wargame dans JEPA\n(Curiosité & Surprises)"]
+        I["Validation Humaine + Sédimentation RAG"]
+    end
+
+    Phase3 -->|"Prêts pour nouvelle mission"| Phase1
+
+    classDef mission fill:#e3f2fd
+    classDef sommeil fill:#f3e5f5
+    classDef debrief fill:#e8f5e9
+    class Phase1 mission
+    class Phase2 sommeil
+    class Phase3 debrief
 ```
 
-**Note sur la Constitutional Layer :** À chaque étape d'apprentissage, un module indépendant (à accès asymétrique — le système ne peut pas le modifier lui-même) vérifie que aucune mise à jour des poids ne déplace le vecteur "plante sacrée" vers une zone de moindre contrainte. C'est l'équivalent du droit des conflits armés câblé dans le système immunitaire cognitif.
+**Détail des phases :**
+
+**Phase 1 – Mission** : Les poids neuronaux sont gelés pour garantir la stabilité et la prédictibilité. Seules les boucles RPT locales s’adaptent en temps réel. Chaque ignition est capturée par MeMo avec son contexte et son score de saillance.
+
+**Phase 2 – Sommeil & Rêverie** : C’est le cœur de l’apprentissage continu. Le modèle JEPA rejoue les trajectoires significatives dans son espace latent (sans risque matériel). Il génère des variantes ("et si ?"), recalibre les seuils d’ignition, et consolide les expériences importantes dans la mémoire long terme via MeMo.
+
+**Phase 3 – Débriefing + Jeu** : Analyse sémantique par le LLM, identification de patterns, et surtout **exploration par curiosité** via des wargames auto-générés dans l’espace latent JEPA. Les tactiques prometteuses sont validées par l’humain puis injectées dans le RAG doctrinal.
+
+**Rôle de la Constitutional Layer :** À chaque phase (surtout pendant la rêverie et la consolidation), un module indépendant et non modifiable vérifie que les contraintes fondamentales (ex. : ne jamais endommager les plantes sacrées) restent intactes.
+
+Ce cycle transforme le système d’un simple exécutant en une entité qui **apprend vraiment** de son expérience, tout en maintenant une identité stable et une robustesse éthique.
 
 ---
 
