@@ -30,7 +30,7 @@ L'architecture repose sur un principe central : **la conscience fonctionnelle d'
 
 **Type :** Bouteille à la mer / Loisir / Spéculation / Recherche de gens compétents
 
-**Remerciements :** Merci à ChatGPT, Claude, Gemini, à Youtube et ses créateurs, au Collège de France, à Google, Wikipedia... J'en oublie.
+**Remerciements :** Merci à ChatGPT, Claude, Gemini, perplexity, à Youtube et ses créateurs, au Collège de France, à Google, Wikipedia... J'en oublie.
 
 [![Licence Creative Commons](https://licensebuttons.net/l/by/4.0/88x31.png)](http://creativecommons.org/licenses/by/4.0/)
 
@@ -418,19 +418,19 @@ Le tout en garrigue. Sous le soleil. Sans air conditionné.
 
 | Domaine | Référence clé |
 |---|---|
-| Couvertures de Markov | Friston et al., *The Markov blankets of life* (2018) |
-| Couvertures imbriquées | Kirchhoff, Parr, Friston et al., *Nested Selves* (2023) |
+| Couvertures de Markov | Friston et al., *The Markov blankets of life: autonomy, active inference and the free energy principle* (2018) |
+| Couvertures imbriquées | Ciaunica, Levin, Rosas, Friston et al., *Nested Selves: Self-Organization and Shared Markov Blankets in Prenatal Development in Humans* (2023) |
 | Couvertures collectives | Parr et al., *As One and Many* (2025) |
 | GNWT | Dehaene & Changeux, *Experimental and Theoretical Approaches to Conscious Processing* (2011) |
-| RPT | Lamme, *Recurrent processing theory of visual awareness* (2006) |
-| GNWT+RPT intégration | COGITATE Consortium (2023) |
+| RPT | Lamme, *Towards a true neural stance on consciousness* (2006) |
+| GNWT+RPT intégration | COGITATE Consortium, adversarial collaboration on consciousness theories |
 | JEPA | LeCun, *A Path Towards Autonomous Machine Intelligence* (2022) |
 | World Models | Hafner et al., *DreamerV3* (2023) |
-| SSM / Mamba | Gu & Dao, *Mamba: Linear-Time Sequence Modeling* (2023) |
-| Curiosité intrinsèque | Oudeyer & Kaplan, *Intrinsic Motivation Systems* (2007) |
+| SSM / Mamba | Gu & Dao, *Mamba: Linear-Time Sequence Modeling with Selective State Spaces* (2023) |
+| Curiosité intrinsèque | Oudeyer & Kaplan, *What is Intrinsic Motivation? A Typology of Computational Approaches* (2007) |
 | Psychologie computationnelle | Friston & Fletcher, *Computational Psychiatry* (2016) |
 | Dark Triad neural | David et al. (2024) |
 | Big Five évolutif | Nettle, *Personality: What makes you the way you are* (2007) |
-| TSA computationnel | Baron-Cohen, *The Empathizing–Systemizing Theory* (2002) |
+| TSA computationnel | Baron-Cohen, *Autism: the empathizing-systemizing (E-S) theory* (2009; theory origin 2002) |
 | Mémoire épisodique continue | Verma et al., *MeMo* (2024) |
 | Constitutional AI | Bai et al., Anthropic (2022) |
