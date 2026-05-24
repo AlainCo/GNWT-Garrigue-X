@@ -636,3 +636,4 @@ Cette section propose des **pistes concrètes** pour faire avancer le projet. *C
  | **TSA computationnel** | [Baron-Cohen, *Autism: the empathizing-systemizing (E-S) theory* (2009)](https://doi.org/10.1016/j.tins.2008.10.005) *(Théorie originelle : 2002)* |
  | **Mémoire épisodique continue** | [Quek, Lee, Leong, Verma et al., *MeMo: Memory as a Model* (2026)](https://arxiv.org/abs/2605.15156) |
  | **Constitutional AI** | [Bai et al., *Constitutional AI: Harmlessness from AI Feedback* (Anthropic, 2022)](https://arxiv.org/abs/2212.08073) |
+ | **Wargame de minage** | [Ludidélire, *Full Metal Planet](https://www.youtube.com/watch?v=_oN4YW_v8uI) |
