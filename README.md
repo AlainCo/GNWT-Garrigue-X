@@ -64,14 +64,20 @@ $$P(I \mid B, E) = P(I \mid B)$$
 
 **Le Concept :** Longtemps présentées comme concurrentes, GNWT et RPT décrivent en réalité **deux phases temporelles et fonctionnelles complémentaires** d’un même processus de traitement conscient, comme le soulignent Storm et al. dans leur synthèse multiscale :
 
-```
-Stage 1-2 : Feedforward rapide          → extraction brute, traitement non-conscient
-Stage 3    : Récurrence LOCALE          → [RPT] perception riche, vie intérieure locale
-              "voir sans savoir qu'on voit" (Phenomenal Consciousness)
-Stage 4    : Ignition + BROADCAST global → [GNWT] accès conscient, rapportable, intégré
-              "savoir qu'on voit et pouvoir en parler" (Access Consciousness)
-```
+```mermaid
+flowchart LR
+    A[Feedforward Rapide\nStage 1-2] --> B[Récurrence Locale\nStage 3 - RPT]
+    B --> C[Ignition + Broadcast Global\nStage 4 - GNWT]
 
+    B -.->|"Vie intérieure riche\n(Phenomenal Consciousness)"| D["'Voir sans savoir qu'on voit'"]
+    C --> E["Accès Conscient + Rapport\n(Access Consciousness)"]
+    E -.-> F["'Savoir qu'on voit et pouvoir en parler'"]
+
+    classDef rpt fill:#fff3e0
+    classDef gnwt fill:#e8f5e9
+    class B rpt
+    class C gnwt
+```
 
 La **RPT** rend compte de la **vie intérieure riche** de chaque module grâce aux boucles de rétroaction locales (recurrent processing). Elle explique la phenomenal consciousness (PC) — l’expérience subjective brute, même non rapportable. La **GNWT** décrit ce qui se passe quand un signal consolidé franchit un seuil de saillance et se propage largement dans le workspace global, permettant l’**access consciousness** (AC) : intégration, rapport, arbitrage et contrôle volontaire.
 
@@ -192,6 +198,9 @@ Oudeyer (*Intrinsic Motivation Systems for Autonomous Learning*, 2007).
 
 **Justification Technique :** C'est la différence entre un système qui *performe* et un système qui *apprend de ses erreurs*. La mémoire épisodique est aussi le support de l'identité durable de chaque officier — sa biographie d'ignitions est ce qui le rend unique et reconnaissable, même après une mise à jour des poids.
 
+
+
+    
 ---
 
 ## 2. Architecture Cible Générale : Exemple du GAN 2040
@@ -200,39 +209,32 @@ Cette pile décrit l'infrastructure cognitive du Groupe Aéronaval (GAN) en **20
 
 **Principe fondamental :** Chaque frontière verticale est une **Couverture de Markov**. N+1 est aveugle aux états internes de N. Le broadcast GNWT est *intra-niveau* ; la communication *inter-niveau* est uniquement via les résumés d'ignition compressés.
 
-```
-TEMPORALITÉ    NIVEAU   ARCHITECTURE              RÔLE
+```mermaid
+flowchart TD
+    subgraph N0to3 ["Niveaux Infra-Conscients (RPT Locale)"]
+        N0["N=0 : Composant Physique\n(MLP nano + PID)"] 
+        N1["N=1 : Actionneur Intelligent\n(Mamba-mini)"]
+        N2["N=2 : Équipement\n(Mamba / RWKV)"]
+        N3["N=3 : Sous-système Fonctionnel\n(JEPA-S + RPT locale)"]
+    end
 
-jours-sem.     N = 6    LLM-XL + RAG Doctrinal    THÉÂTRE / ÉTAT-MAJOR
-                        Multi-agents stratèges     Dialogue Amiral, légalité,
-                        JEPA narratif              objectifs politico-militaires
-                              ↑ résumés d'ignition / ↓ objectifs
-heures-jours   N = 5    JEPA-L / GNWT multi       GROUPE AÉRONAVAL
-  [GNWT]                Officiers spécialisés      Capitaine + 5 officiers
-                        MeMo épisodique            Rêverie stratégique,
-                        RAG tactique               gestion de la meute
-                              ↑ / ↓
-min-heures     N = 4    JEPA-M + Workspace GNWT   PLATEFORME / VECTEUR
-  [GNWT]                MeMo + RAG embarqué        Rafale, Frégate, S/M
-                                                   Conscience de plateforme,
-                                                   enveloppe dégradée
-═══════════════════ SEUIL CONSCIENCE RPT→GNWT ═══════════════════════════
-                    (en-dessous : RPT locale active, pas de broadcast global)
-10s-min        N = 3    JEPA-S + RPT locale        SOUS-SYSTÈME FONCTIONNEL
-  [RPT]                 (boucles feedback propres)  Radar, Suite GE,
-                        Pas de workspace global     Combat sys., Avionique
-                              ↑ / ↓
-100ms-10s      N = 2    Mamba / RWKV               ÉQUIPEMENT
-                        SSM séquentiel continu      Moteur M88, Sonar, DCA
-                        État caché persistant       Eval. dommages, Markov
-                              ↑ / ↓
-1ms-100ms      N = 1    Mamba-mini / SSM-tiny      ACTIONNEUR INTELLIGENT
-                        Très faible empreinte       Servomoteurs, Injecteurs
-                        RAM, déterministe           Gouvernails, Câbles brin
-                              ↑ / ↓
-µs-1ms         N = 0    MLP nano + PID classique   COMPOSANT PHYSIQUE
-                        Filtres de Kalman           Tuyère, Vérin, Vanne
-                        FPGA, temps réel dur        Réflexe de survie mécanique
+    subgraph N4to6 ["Niveaux Conscients (GNWT + Ignition)"]
+        N4["N=4 : Plateforme / Vecteur\n(JEPA-M + Workspace GNWT)"]
+        N5["N=5 : Groupe Aéronaval\n(JEPA-L + Officiers)"]
+        N6["N=6 : Théâtre / État-Major\n(LLM-XL + RAG)"]
+    end
+
+    N0 --> N1 --> N2 --> N3
+    N3 -->|"Résumé d'Ignition"| N4
+    N4 -->|"Résumé d'Ignition"| N5
+    N5 -->|"Résumé d'Ignition"| N6
+
+    N6 -->|"Priors Contextuels"| N5
+    N5 -->|"Priors Contextuels"| N4
+    N4 -->|"Contraintes locales"| N3
+
+    classDef conscious fill:#e3f2fd,stroke:#1976d2
+    class N4,N5,N6 conscious
 ```
 
 ### Conscience par niveau : ce qu'on peut attendre
@@ -251,23 +253,26 @@ min-heures     N = 4    JEPA-M + Workspace GNWT   PLATEFORME / VECTEUR
 
 Le niveau N=5 n'est pas un module monolithique mais une **équipe d'instances spécialisées** partageant un workspace commun (le workspace du groupe) via des résumés d'ignition, sans partager leurs espaces latents internes.
 
-```
-                    ╔═══════════════════════╗
-                    ║  CAPITAINE (N=5)      ║
-                    ║  Méta-workspace       ║
-                    ║  Narrative de mission ║
-                    ╚═══════════╤═══════════╝
-          ┌──────────┬──────────┼────────────┬────────────┐
-    ╔═════╧════╗ ╔═══╧══════╗  ╔╧═════════╗ ╔╧═════════╗ ╔╧═════════╗
-    ║SCIENCE   ║ ║SOIN      ║  ║INGÉNIEUR ║ ║TACTIQUE  ║ ║RENS.     ║
-    ║Systemizer║ ║Empathique║  ║Travallom.║ ║Persévér. ║ ║Rêveur    ║
-    ║          ║ ║          ║  ║          ║ ║          ║ ║          ║
-    ║JEPA-L    ║ ║JEPA-L    ║  ║JEPA-L    ║ ║JEPA-L    ║ ║JEPA-L    ║
-    ║MeMo prop.║ ║MeMo prop.║  ║MeMo prop.║ ║MeMo prop.║ ║MeMo prop.║
-    ╚══════════╝ ╚══════════╝  ╚══════════╝ ╚══════════╝ ╚══════════╝
+```mermaid
+flowchart TD
+    Capitaine["CAPITAINE\n(Méta-Workspace + Narrative)"] 
 
-    ← résumés d'ignition seulement (pas d'états internes partagés) →
-    ← chaque MeMo est propre = identité préservée = anti-fusion →
+    subgraph Officiers ["Officiers Spécialisés"]
+        Science["SCIENCE\n(Systemizing)"]
+        Soin["SOIN\n(Empathique)"]
+        Ingenieur["INGÉNIEUR\n(Consciencieux)"]
+        Tactique["TACTIQUE\n(Persévérant)"]
+        Rens["RENS\n(Explorateur)"]
+    end
+
+    Capitaine <--> Science
+    Capitaine <--> Soin
+    Capitaine <--> Ingenieur
+    Capitaine <--> Tactique
+    Capitaine <--> Rens
+
+    classDef captain fill:#fff176,stroke:#f57f17
+    class Capitaine captain
 ```
 
 **Règle de communication :** Un officier ne transmet au workspace commun que ce qui a franchi son seuil d'ignition personnel. Comme une équipe de vieux professionnels qui se connaissent, s'estiment, et savent se tenir — ils ne parlent pas à chaque micro-événement, ils parlent quand ça compte.
@@ -355,56 +360,19 @@ Pour valider cette architecture sans les coûts d'infrastructure du domaine aér
 ### C. Le Cycle d'Apprentissage en 3 Phases (La Triple Boucle Biologique)
 
 Pour matérialiser l'apprentissage en continu de manière réaliste et théoriquement fondée :
+```mermaid
+flowchart TD
+    A["Phase 1 : Mission Temps Réel\n(Poids gelés + RPT locale)"] 
+    --> B["Retour au stand\n(Chargement des boîtes noires)"]
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│  PHASE 1 : MISSION TEMPS RÉEL                               │
-│                                                             │
-│  -> Poids neuronaux gelés sur le terrain (stabilité)        │
-│  -> Adaptation dynamique via état caché Mamba (RPT locale)  │
-│  -> Tag de chaque ignition : module, saillance, outcome     │
-│  -> Enregistrement dans boîte noire (vecteurs + contexte)   │
-│                                                             │
-│  Métaphore : le professionnel en mission ne remet pas       │
-│  en question ses réflexes — il observe et mémorise          │
-└──────────────────────────┬──────────────────────────────────┘
-                           │ Retour au stand (charge batterie)
-                           ▼
-┌─────────────────────────────────────────────────────────────┐
-│  PHASE 2 : SOMMEIL & RÊVERIE (Generative Replay JEPA)       │
-│                                                             │
-│  -> Déchargement des boîtes noires sur le GPU du QG         │
-│  -> Rejouer les ignitions dans l'espace latent JEPA         │
-│     (simulation de variantes sans usure mécanique)          │
-│  -> Recalibration des seuils d'ignition par module          │
-│     (les ignitions "fausses alarmes" baissent le seuil,     │
-│      les ignitions manquées le montent)                     │
-│  -> Mise à jour des poids -> injection au "réveil"          │
-│  -> Consolidation MeMo : ignitions validées -> RAG LT       │
-│                                                             │
-│  Métaphore : le sommeil paradoxal humain, où le cerveau     │
-│  rejoue les expériences significatives de la journée        │
-└──────────────────────────┬──────────────────────────────────┘
-                           │ Fin de session hebdomadaire
-                           ▼
-┌─────────────────────────────────────────────────────────────┐
-│  PHASE 3 : DÉBRIEFING SÉMANTIQUE + JEU                      │
-│                                                             │
-│  -> Le LLM analyse les logs d'ignition et rédige le         │
-│     rapport en clair (patterns, anomalies, suggestions)     │
-│  -> L'humain valide les tactiques émergentes                │
-│  -> Sédimentation dans la base RAG doctrinale               │
-│                                                             │
-│  -> WARGAME : le système joue contre lui-même dans          │
-│     l'espace latent JEPA (adversaire paramétrique)          │
-│     -> génère des vecteurs de surprise dans des zones       │
-│        non encore couvertes par l'expérience terrain        │
-│  -> Les meilleures tactiques du wargame entrent dans        │
-│     le RAG pour la prochaine mission                        │
-│                                                             │
-│  Métaphore : le debriefing militaire + la simulation        │
-│  d'entraînement entre deux déploiements                     │
-└─────────────────────────────────────────────────────────────┘
+    B --> C["Phase 2 : Sommeil & Rêverie\n(Generative Replay JEPA)"]
+    C --> D["Phase 3 : Débriefing + Wargame\n(Analyse sémantique + Surprises)"]
+
+    D --> A
+
+    style A fill:#e3f2fd
+    style C fill:#f3e5f5
+    style D fill:#e8f5e9
 ```
 
 **Note sur la Constitutional Layer :** À chaque étape d'apprentissage, un module indépendant (à accès asymétrique — le système ne peut pas le modifier lui-même) vérifie que aucune mise à jour des poids ne déplace le vecteur "plante sacrée" vers une zone de moindre contrainte. C'est l'équivalent du droit des conflits armés câblé dans le système immunitaire cognitif.
