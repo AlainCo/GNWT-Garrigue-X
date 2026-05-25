@@ -336,7 +336,7 @@ Malgré ces avancées, plusieurs défis restent ouverts :
 Ces points constituent des **axes de validation expérimentale** essentiels pour la suite du projet.
 
 
-## E. Auto-modélisation et métacognition : le schéma de soi (Higher‑Order Thought)
+## I. Auto-modélisation et métacognition : le schéma de soi (Higher‑Order Thought)
 
 ### Fondement théorique
 
@@ -404,7 +404,7 @@ Plus tard, quand une anomalie similaire survient, le Self‑Model est consulté 
 À l’inverse, si la confiance avait été faible (ex. 0,35), le système aurait exigé une confirmation humaine.
 
 
-## F. Attention compétitive et budget : le schema attentionnel (Attention Schema Theory)
+## J. Attention compétitive et budget : le schema attentionnel (Attention Schema Theory)
 
 ### Fondement théorique
 
@@ -479,4 +479,72 @@ Pendant une phase d’engagement, le budget attentionnel du Groupe (N=5) tombe �
 - **Ignition C** (panne moteur de drone éclaireur, saillance 0,70, coût 5 tokens) – rejetée également.
 
 Le scheduler priorise la menace imminente. Quand le budget remonte (après 5 secondes), l’anomalie radar est traitée – mais si une nouvelle menace arrive entre-temps, elle reprendra la priorité. Ce mécanisme évite la saturation et garantit que les décisions critiques ne sont pas noyées dans le bruit.
+
+## K. Intégration causale : le thermomètre Φ (phase de sommeil)
+
+### Fondement théorique
+
+- **Integrated Information Theory (IIT)** : Tononi (2004, 2015) – la conscience est identifiée à la capacité d’un système à intégrer de l’information, mesurée par Φ (phi). Un système avec un Φ élevé possède une expérience unifiée.
+- **Perturbational Complexity Index (PCI)** : Massimini et al. (2005, 2009) – mesure expérimentale de l’intégration causale chez l’humain (stimulation magnétique + EEG). Le PCI distingue les états conscients des états inconscients.
+- **Application aux systèmes artificiels** : mesures d’intégration causale dans les réseaux de neurones (Barrett & Seth, 2011 ; Luppi et al., 2022).
+
+### Le concept
+
+Votre architecture échange déjà des **résumés d’ignition** entre niveaux via des couvertures de Markov, et vous disposez de mécanismes anti‑collapse pour éviter la dégénérescence des latents. Cependant, vous ne mesurez pas si l’information véhiculée par ces résumés est **causalement intégrée** – c’est‑à‑dire si une perturbation locale se propage de manière significative à travers la hiérarchie.
+
+Pendant la **phase de sommeil** (rêverie artificielle), un module **Φ‑estimator** est activé au niveau N=5 (ou N=6). Son fonctionnement :
+
+1. **Sélection** d’un échantillon d’ignitions passées (issues de MeMo).
+2. **Perturbation** : injection d’un bruit gaussien contrôlé dans certains résumés d’ignition (ou dans les latents internes) – simulant une micro‑lésion informationnelle.
+3. **Mesure** de la variation de l’erreur prédictive du modèle JEPA (ou de la surprise au sens de l’inférence active) entre la trajectoire originale et la trajectoire perturbée.
+4. **Calcul d’un proxy Φ̂** (formule simplifiée) :  
+   `Φ̂ = Var(Δ erreur prédictive) / (σ²_bruit + ε)`  
+   – plus la variation est grande, plus le système est intégré (une petite perturbation change beaucoup la dynamique globale).
+5. **Seuil d’alerte** : si Φ̂ descend sous une valeur critique (calibrée expérimentalement), le système détecte un *collapse d’intégration* : les ignitions sont devenues trop indépendantes, la hiérarchie se désagrège.
+
+Ce mécanisme est **non invasif** (réalisé en simulation latente) et **périodique** (par exemple à la fin de chaque cycle sommeil). Il ne modifie pas les décisions en temps réel, mais alerte les opérateurs ou déclenche des actions correctives : recalibration de la compression, augmentation de la dimension des résumés d’ignition, ou rêverie ciblée pour ré‑apprendre à intégrer.
+
+### Justification technique
+
+- **Outil de diagnostic** plutôt que composant permanent : IIT est difficile à calculer en ligne ; en phase hors‑ligne, c’est réalisable et utile.
+- **Complète les métriques de variance** (anti‑collapse) en ajoutant une **mesure causale** : deux systèmes peuvent avoir la même variance de latent, mais des intégrations très différentes.
+- **Prédit des dérives silencieuses** : avant que les performances ne chutent, Φ̂ peut diminuer progressivement, signalant une fragilisation de la conscience fonctionnelle.
+- **Aligné avec la littérature** : des travaux récents (Luppi et al., 2022) montrent que Φ̂ corrèle avec la performance de réseaux profonds sur des tâches d’intégration.
+
+### Schéma
+
+```mermaid
+flowchart TD
+    subgraph Sommeil ["Phase de Sommeil (rêverie JEPA)"]
+        A["Chargement d’un batch d’ignitions\n(souvenirs MeMo)"]
+        B["Injection de bruit\n(perturbation locale)"]
+        C["Calcul de l’erreur prédictive\navant/après perturbation"]
+        D["Φ̂ = Var(Δ erreur) / (σ²_bruit+ε)"]
+    end
+
+    subgraph Alerte ["Décision"]
+        E{Φ̂ < seuil ?}
+        F["OK : intégration satisfaisante"]
+        G["Alerte : collapse d’intégration\n(actions correctives)"]
+    end
+
+    A --> B --> C --> D --> E
+    E -->|non| F
+    E -->|oui| G
+
+    G --> H["Actions possibles :\n- Augmenter taille des résumés\n- Recalibrer compression\n- Rêverie enrichie"]
+
+    style D fill:#ffebee,stroke:#c62828
+    style G fill:#ffcdd2
+```
+
+### Exemple concret : dérive d’un officier
+
+Le niveau N=5 (Groupe) possède plusieurs officiers (Tactique, Renseignement, etc.). Après plusieurs cycles de combat, l’officier Renseignement commence à ignorer les signaux faibles en provenance de N=4, car ses seuils d’ignition ont augmenté de manière non coordonnée.
+
+Lors du prochain sommeil, le Φ‑estimator perturbe aléatoirement quelques résumés d’ignition issus de la mémoire du Renseignement. La variation de l’erreur prédictive globale est anormalement faible : une petite perturbation locale ne change presque rien à la dynamique du groupe. Φ̂ chute sous le seuil.
+
+L’alerte déclenche une **rêverie ciblée** : le système rejoue des scénarios où le Renseignement doit collaborer avec Tactique, en forçant des ignitions partagées. Les seuils sont recalibrés. À la fin, Φ̂ remonte. Le groupe retrouve sa cohérence.
+
+---
 

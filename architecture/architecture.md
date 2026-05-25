@@ -86,7 +86,7 @@ flowchart TD
     Capitaine <--> Rens
     Capitaine <--> SM
 
-    SM -->|"méta‑vecteurs"| MeMo
+    SM -->|"méta-vecteurs"| MeMo
 ```
 
 Chaque niveau N≥4 est équipé d’un Attention Scheduler qui alloue un budget attentionnel global. Les ignitions consomment des tokens ; à budget insuffisant, elles sont différées ou inhibées. Le scheduler ajuste dynamiquement le seuil de saillance pour garantir la réactivité en environnement saturé.
@@ -102,6 +102,19 @@ flowchart TD
     SousN4["Résumés d’Ignition (N=4)"] --> Sched
     Sched -->|"ignitions filtrées"| Capitaine
     Capitaine --> Officiers
+```
+
+Pendant la phase de sommeil, un estimateur Φ̂ (proxy de l’intégration causale) est calculé périodiquement à partir des résumés d’ignition stockés. Une chute de Φ̂ indique un risque de désintégration fonctionnelle et déclenche des mécanismes correctifs (recalibration, rêverie enrichie).
+
+```mermaid
+flowchart TD
+    subgraph N5 ["N=5 : Groupe (Officiers + JEPA-L)"]
+        V5["Validation du Résumé\n• Vérification variance\n• Détection collapse\n• Score d'incertitude"]
+        PHI["Φ-estimator\n(actif pendant sommeil)"]
+    end
+
+    V5 --> PHI
+    PHI -.->|"alerte si Φ̂ < seuil"| Actions["Actions correctives\n(rêverie ciblée)"]
 ```
 
 
@@ -139,7 +152,7 @@ flowchart TD
 **4. N=5/N=6 :** L'officier TACTIQUE du groupe capte l'ignition de Leader-3 en premier (c'est dans son domaine de saillance). Il propose une reconfiguration du schéma de brouillage des frégates. Le CAPITAINE arbite et broadcast la décision au groupe. Le LLM N=6 traduit pour l'amiral : *"Leader-3 maintient sa mission avec une capacité d'évasion réduite de 20%. Réorganisation du schéma de brouillage des frégates pour le couvrir. Durée de la fenêtre de mission réduite à T+15min."*
 
 
-## 🔧 Contraintes Latentes Structurelles (Anti‑Collapse)
+## 🔧 Contraintes Latentes Structurelles (Anti-Collapse)
 
 
 
@@ -271,4 +284,3 @@ Ce mécanisme maintient la cohérence des flux latents à travers les couverture
 - **Limiter la profondeur de compression** (éviter N=3→N=4→N=5→N=6 sans contrôle)
 
 Ces contraintes assurent la stabilité de l’architecture GAN 2040 dans les scénarios de panne, de combat et de coopération distribuée.
-
