@@ -84,7 +84,7 @@ Cette séparation n’est pas arbitraire — elle reflète à la fois les contra
 
 **Fondement Théorique :**
 [Yann LeCun, *A Path Towards Autonomous Machine Intelligence* (2022)](https://www.semanticscholar.org/paper/A-Path-Towards-Autonomous-Machine-Intelligence-LeCun-Courant/775f42ed458b8c5b0f2094ea4ff5b64c557b1a34) ;
-[Hafner et al., *Mastering Atari with Discrete World Models* (2023)](https://arxiv.org/abs/2301.04104).
+[Hafner et al., *Mastering Atari with Discrete World Models* (2021)](https://arxiv.org/abs/2010.02193).
 
 **Le Concept :** Contrairement aux modèles génératifs pixel par pixel, la *Joint Embedding Predictive Architecture* (JEPA) apprend à prédire des **représentations abstraites** (vecteurs latents) du monde en ignorant le bruit inutile. Sa nature prédictive *always-on* permet un monitoring sémantique continu — le modèle maintient un flux sémantique permanent qui n'est "verbalisé" que lors d'une ignition.
 
