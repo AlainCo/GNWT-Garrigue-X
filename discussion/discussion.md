@@ -38,6 +38,21 @@ Ce travail propose une **architecture cognitive distribuée** pour des Systèmes
   - La **coopération distribuée** (échanges de résumés d’ignition).
   - Le **respect des contraintes constitutionnelles** (plantes sacrées = règles non négociables).
 
+### 🧠 Positionnement Ontologique et Convergences Théoriques Avancées
+
+* **Réfutation du Monisme Cognitif :** Contrairement à la majorité des architectures d'agents contemporaines qui centralisent la décision dans un grand modèle de langage (LLM-centrisme), ce système se distingue par son refus du monisme cognitif. L'architecture postule qu'il n'existe aucun "centre" unique de la conscience. La conscience d'accès (GNWT) émerge uniquement de dynamiques hétérogènes et distribuées, ancrées sur des boucles de contrôle récurrentes locales (RPT). Le système ne se comporte pas comme un "chatbot qui simule la réflexion", mais comme une ontologie opérationnelle où le cognitif émerge organiquement de contraintes physiques et de processus de bas niveau.
+
+* **Le Verrou de la Robustesse Identitaire par Couvertures de Markov :** L'usage des couvertures de Markov comme membranes statistiques ne sert pas uniquement de filtre d'intégration de données ; il agit comme un mécanisme d'anti-effondrement identitaire. Dans un système de systèmes (SoS) hautement dynamique, la tendance entropique naturelle pousse à la fusion ou à la dissolution des frontières informationnelles. Maintenir une étanchéité stricte permet de préserver l'intégrité opérationnelle de chaque entité (*agency*), empêchant les hallucinations en cascade tout en autorisant une coopération par diffusion d'alertes abstraites.
+
+* **Alignement avec la Biologie Théorique (L'Axe Levin-Metzinger) :** Les perspectives de développement du système convergent fortement avec deux cadres conceptuels majeurs :
+
+1. **L'Agency Multi-Échelle (Michael Levin) :** L'indépendance scalaire (*scale-free*) de l'architecture fait directement écho aux travaux sur l'intelligence des tissus et la morphogenèse. Chaque niveau (du composant physique au groupement d'agents) poursuit des objectifs topologiques et fonctionnels propres à son échelle, tout en s'imbriquant dans le *Self* de niveau supérieur.
+
+2. **La Transparence du Modèle de Soi (Thomas Metzinger) :** La dynamique du workspace n'est pas une simple base de faits, mais une phénoménologie fonctionnelle. En générant un modèle de soi en temps réel (*Self-Model*), le système acquiert une capacité d'auto-monitoring et de contextualisation de ses propres biais (notamment ses profils psychopathologiques computationnels), essentielle pour l'arbitrage en situation dégradée.
+
+
+* **Perspective de Formalisation en Inférence Active Hiérarchique (Friston étendu) :** Une des trajectoires d'optimisation les plus prometteuses consiste à reformuler l'intégralité de l'architecture sous la forme d'un réseau d'Inférence Active Hiérarchique pure. Plutôt que de juxtaposer des formalismes distincts entre les couches basses et hautes, l'unification mathématique via la minimisation de l'énergie libre (généralisée aux structures collectives) permettrait d'harmoniser les flux descendants (priors contextuels) et ascendants (résumés d'ignition), transformant le système en un moteur de prédiction globale parfaitement fluide.
+
 ---
 
 ### ⚠️ Limites et défis
