@@ -80,17 +80,74 @@ Cette séparation n’est pas arbitraire — elle reflète à la fois les contra
 
 ---
 
-### C. La Prédiction Abstraite : Les Modèles du Monde Latents (JEPA)
+## C. Modèles du monde et inférence active hiérarchique (JEPA + Predictive Processing)
 
-**Fondement Théorique :**
-[Yann LeCun, *A Path Towards Autonomous Machine Intelligence* (2022)](https://www.semanticscholar.org/paper/A-Path-Towards-Autonomous-Machine-Intelligence-LeCun-Courant/775f42ed458b8c5b0f2094ea4ff5b64c557b1a34) ;
-[Hafner et al., *Mastering Atari with Discrete World Models* (2021)](https://arxiv.org/abs/2010.02193).
+### Fondement théorique
 
-**Le Concept :** Contrairement aux modèles génératifs pixel par pixel, la *Joint Embedding Predictive Architecture* (JEPA) apprend à prédire des **représentations abstraites** (vecteurs latents) du monde en ignorant le bruit inutile. Sa nature prédictive *always-on* permet un monitoring sémantique continu — le modèle maintient un flux sémantique permanent qui n'est "verbalisé" que lors d'une ignition.
+- **Joint Embedding Predictive Architecture (JEPA)** : LeCun (2022) – prédire des représentations abstraites (latentes) du monde plutôt que les observations brutes. Ignore le bruit inutile et favorise l’apprentissage de structures causales.
+- **Predictive Processing (PP)** : Friston, Clark (2013) – le cerveau est une machine à prédire qui minimise en permanence l’erreur de prédiction. La conscience émerge lorsque cette erreur ne peut être résorbée localement.
+- **Inférence active** : Friston et al. (2010) – un agent minimise son énergie libre en agissant sur le monde pour rendre ses prédictions vraies.
+- **Hiérarchies prédictives** : les niveaux supérieurs génèrent des prédictions (priors) qui contraignent les représentations des niveaux inférieurs ; l’erreur résiduelle remonte.
 
-**Pourquoi JEPA plutôt qu'un LLM pour le workspace global :** Un LLM est passif, réactif, dépendant du token. Il n'a pas de cycle temporel propre. JEPA opère dans un espace latent compact, prédit dans l'espace des représentations (pas dans l'espace pixel/token), peut tourner en continu, et s'auto-supervise — il apprend donc en continu sans annotations. C'est structurellement plus proche d'un thalamus que d'un cortex préfrontal verbal. **Le LLM est l'interface de sortie, pas le workspace.**
+### Le concept
 
-**Justification Technique :** C'est le moteur de la **rêverie artificielle** (*Generative Replay*). Le système simule des millions de trajectoires tactiques ou de configurations de pannes directement dans son imagination latente pendant ses phases de repos, éliminant l'usure mécanique et le risque de crash en apprentissage réel.
+Votre architecture utilise déjà **JEPA** comme moteur de prédiction latente et des **priors contextuels** descendants. L’inférence active hiérarchique unifie et renforce ces deux flux :
+
+- **Prédictions descendantes (top‑down)** : chaque niveau N+1 génère une **prédiction** du résumé d’ignition que le niveau N devrait produire. Cette prédiction est apprise par le JEPA du niveau supérieur (l’encodeur et le prédicteur).
+- **Erreur de prédiction ascendante (bottom‑up)** : le niveau N compare la prédiction reçue avec son ignition réelle (ou son latent interne). L’écart – la **surprise** – est un signal d’erreur qui remonte.
+- **Seuil d’ignition GNWT** : l’ignition (broadcast global) ne se produit que lorsque la surprise dépasse un **seuil adaptatif** (dépendant du budget attentionnel, du contexte, de l’historique). En dessous du seuil, l’erreur est résorbée localement par des mises à jour des latents (RPT).
+- **Minimisation de l’énergie libre** : l’ensemble du système apprend à réduire la somme des erreurs de prédiction à tous les niveaux, ce qui l’amène à affiner ses modèles du monde (JEPA) et à sélectionner des actions qui rendent le monde plus prévisible.
+
+Dans cette vision, les **priors contextuels** ne sont plus des vecteurs fixes envoyés de manière unidirectionnelle. Ce sont des **prédictions actives** : le niveau supérieur *anticipe* ce que le niveau inférieur devrait voir, et le niveau inférieur *ajuste* ses représentations pour coller à ces prédictions – ou remonte une erreur si l’écart est trop grand.
+
+> **Seuil adaptatif** : défini par `seuil = f(budget_attentionnel, confiance_Self_Model)`.  
+> - Budget haut + confiance haute → seuil élevé (peu d’ignitions).  
+> - Budget bas + confiance basse → seuil bas (réactivité maximale).  
+> Ce seuil est appris pendant la phase de sommeil via la minimisation de l’énergie libre.
+
+### Justification technique
+
+- **Unification théorique** : JEPA devient l’implémentation concrète de la prédiction dans une hiérarchie d’inférence active. On garde les avantages de JEPA (prédiction latente, robustesse au bruit) tout en bénéficiant du formalisme de l’inférence active (énergie libre, causalité descendante permanente).
+- **Résout le problème de la causalité descendante** pointé dans la discussion (§3.5) : les prédictions descendantes contraignent en continu les espaces perceptifs, et l’ignition n’intervient que quand la prédiction échoue.
+- **Améliore la stabilité et l’apprentissage** : l’erreur de prédiction est un signal dense pour l’apprentissage continu (phase de sommeil). Le système peut « rêver » en générant ses propres prédictions et en minimisant l’erreur sur des trajectoires simulées.
+- **Seuil d’ignition adaptatif** : la rareté attentionnelle (budget) et la confiance (self‑model) peuvent moduler le seuil, rendant le système moins bavard en conditions nominales et plus réactif en situation de surprise.
+
+### Schéma
+
+```mermaid
+flowchart TD
+    subgraph NiveauSup ["Niveau N+1 (ex. N=5 Groupe)"]
+        Pred["Prédiction du résumé\n(par JEPA-M)"]
+        Seuil["Seuil adaptatif\n(budget, confiance)"]
+    end
+
+    subgraph NiveauInf ["Niveau N (ex. N=4 Rafale)"]
+        Latent["Latent interne RPT/JEPA"]
+        Ignition["Résumé d’Ignition réel"]
+        Erreur["Erreur de prédiction\n(surprise)"]
+    end
+
+    Pred -->|"descend"| Erreur
+    Ignition -->|"entre"| Erreur
+    Erreur -->|"si écart < seuil"| MiseAJour["Mise à jour locale du latent\n(RPT, pas d’ignition)"]
+    Erreur -->|"si écart ≥ seuil"| GNWT["Ignition GNWT\n(broadcast global)"]
+
+    GNWT -->|"remonte au niveau supérieur"| Pred
+
+    style Pred fill:#e8f5e9,stroke:#43a047
+    style Erreur fill:#fff3e0,stroke:#f57f17
+    style GNWT fill:#ffebee,stroke:#c62828
+```
+
+
+
+### Exemple concret : anomalie catapulte revisitée
+
+**Situation nominale** : le JEPA-M du Rafale (N=4) prédit que son prochain résumé d’ignition sera `[état_nominal, poussée=1.0]`. Le niveau supérieur (N=5) envoie cette prédiction. Le Rafale compare avec son ignition réelle (idem). L’erreur est quasi nulle → pas d’ignition. Le système fonctionne en mode silencieux, économe en ressources.
+
+**Anomalie** : la tuyère est endommagée. Le Rafale génère une ignition réelle `[dégradé, asymétrie=0.73]`. La prédiction descendante (nominale) produit une erreur importante. Comme l’erreur dépasse le seuil adaptatif (par exemple 0.5), une **ignition GNWT** est déclenchée. Celle-ci remonte au niveau supérieur et met à jour la prédiction pour les cycles futurs (apprentissage).
+
+**Apprentissage** : pendant la phase de sommeil, le système rejoue cette séquence. Le JEPA apprend à prédire l’ignition dégradée à partir du contexte de l’anomalie. La prochaine fois qu’une asymétrie similaire apparaît, la prédiction descendante sera `[dégradé, asymétrie≈0.7]`, l’erreur restera faible, et aucune ignition ne sera nécessaire – sauf si l’anomalie s’aggrave.
 
 ---
 

@@ -1,5 +1,7 @@
 ## Architecture Cible Générale : Exemple du GAN 2040
 
+
+
 ```mermaid
 flowchart TD
     direction TB
@@ -7,15 +9,24 @@ flowchart TD
     Bas["Niveaux Bas (N=0 à N=3)\nDonnées brutes + RPT locale"] 
     -->|"Résumé d'Ignition\n(Compressé, Abstrait)"| Haut["Niveaux Hauts (N=4 à N=6)\nGNWT + Conscience d'accès"]
 
-    Haut -->|"Priors Contextuels + Contraintes\n(Objectifs, Règles, Contextes)"| Bas
+    Haut -->|"Prédictions (top-down) + Contraintes\n(Objectifs, Règles, Contextes)"| Bas
 
     style Bas fill:#ffebee
     style Haut fill:#e3f2fd
 ```
 
-Cette pile décrit l'infrastructure cognitive du Groupe Aéronaval (GAN) en **2040**. Les informations transitent de bas en haut sous forme de **Résumés d'Ignition Compressés** (vecteurs latents abstraits, pas de données brutes), et de haut en bas sous forme de **Priors Contextuels** (contraintes sur les espaces de représentation des niveaux inférieurs).
-
 **Principe fondamental :** Chaque frontière verticale est une **Couverture de Markov**. N+1 est aveugle aux états internes de N. Le broadcast GNWT est *intra-niveau* ; la communication *inter-niveau* est uniquement via les résumés d'ignition compressés.
+
+Cette pile décrit l'infrastructure cognitive du Groupe Aéronaval (GAN) en **2040**. Les informations transitent de bas en haut sous forme de **Résumés d'Ignition Compressés** (vecteurs latents abstraits, pas de données brutes), et de haut en bas sous forme de **Prédictions (top-down)** et pas de simples **Priors Contextuels** (contraintes sur les espaces de représentation des niveaux inférieurs).
+Les flux descendants ne sont plus de simples contraintes : ce sont des **prédictions actives** générées par le JEPA du niveau supérieur. Le niveau inférieur compare sa réalité à cette prédiction ; si l’écart (surprise) dépasse un seuil adaptatif (fonction du budget attentionnel et de la confiance du Self‑Model), une ignition GNWT est déclenchée. En dessous du seuil, l’écart est résorbé par une mise à jour locale des latents (RPT). Ce mécanisme réalise une inférence active hiérarchique, fondement de la conscience d’accès fonctionnelle.
+
+Chaque niveau conscient intègre également un Self-Model (métacognition), un Attention Scheduler (budget attentionnel) et, en phase de sommeil, un Φ-estimator (intégration causale) – voir dans les sections [Concepts Clés et Fondements Théoriques](../concepts/concepts.md).
+
+```mermaid
+flowchart LR
+    N5["N=5 : Groupe"] -->|"Prédiction du résumé attendu"| N4["N=4 : Rafale"]
+    N4 -->|"Ignition si erreur ≥ seuil"| N5
+```
 
 ```mermaid
 flowchart TD
@@ -33,16 +44,13 @@ flowchart TD
     end
 
     N0 --> N1 --> N2 --> N3
-    N3 -->|"Résumé d'Ignition"| N4
-    N4 -->|"Résumé d'Ignition"| N5
-    N5 -->|"Résumé d'Ignition"| N6
+    N3 -->|"Résumé d'Ignition\n(si erreur ≥ seuil)"| N4
+    N4 -->|"Résumé d'Ignition\n(si erreur ≥ seuil)"| N5
+    N5 -->|"Résumé d'Ignition\n(si erreur ≥ seuil)"| N6
 
-    N6 -->|"Priors Contextuels"| N5
-    N5 -->|"Priors Contextuels"| N4
-    N4 -->|"Contraintes locales"| N3
-
-    classDef conscious fill:#e3f2fd,stroke:#1976d2
-    class N4,N5,N6 conscious
+    N6 -->|"Prédictions (top‑down)"| N5
+    N5 -->|"Prédictions (top‑down)"| N4
+    N4 -->|"Prédictions (top‑down)"| N3
 ```
 
 ### Conscience par niveau : ce qu'on peut attendre
@@ -131,25 +139,34 @@ flowchart TD
     A["N=0/1 : Tuyère endommagée\n(PID + MLP nano)"] 
     --> B["N=2/3 : Détection & RPT Locale\n(Mamba)"]
 
-    B -->|"Résumé d'Ignition\n[sévérité=0.73 | workaround=true]"| C["N=4 : Rafale\n(Workspace GNWT)"]
+    B -->|"Latent interne mis à jour"| C["N=4 : Rafale\n(Workspace GNWT)"]
 
-    C --> D["Reconfiguration loi de vol\n+ MeMo consultation"]
-    D -->|"Résumé d'Ignition compressé"| E["N=5 : Groupe\n(Officier Tactique)"]
+    subgraph Comparateur ["Comparateur de surprise (N=4)"]
+        D1["Prédiction reçue de N=5\n(état nominal)"]
+        D2["Ignition réelle\n(dégradée)"]
+        D3["Erreur = |réel - prédiction|\n= 0.73"]
+        D4{Erreur ≥ seuil ?}
+    end
 
-    E --> F["CAPITAINE arbitre\n+ Broadcast au groupe"]
-    F --> G["N=6 : Amiral\n(Traduction LLM)"]
+    D3 --> D4
+    D4 -->|oui| E["Ignition GNWT déclenchée"]
+    D4 -->|non| F["Ajustement local RPT\n(sans broadcast)"]
 
-    classDef ignition fill:#fff3e0,stroke:#f57f17
-    class B,C,D,E ignition
+    E --> G["Reconfiguration loi de vol\n+ MeMo consultation"]
+    G -->|"Résumé d'Ignition compressé"| H["N=5 : Groupe\n(Officier Tactique)"]
+    H --> I["CAPITAINE arbitre\n+ Broadcast au groupe"]
+    I --> J["N=6 : Amiral\n(Traduction LLM)"]
 ```
 
 **1. N=0/N=1 :** Un éclat de missile endommage la tuyère droite. Le PID augmenté par MLP nano modifie instantanément les angles d'injection en **4 millisecondes** pour éviter l'extinction du moteur. Aucun signal ne remonte — c'est géré localement, en dessous du seuil RPT.
 
 **2. N=2/N=3 :** Le modèle Mamba du moteur enregistre une anomalie croissante. Ses boucles RPT locales tournent, tentent de consolider une évaluation. Après stabilisation, elles génèrent un **Résumé d'Ignition vectoriel** : *[anomalie_propulsion | sévérité=0.73 | type=asymétrie_poussée | workaround_disponible=true]*. Pas de dump de données brutes — un vecteur sémantique compressé.
 
-**3. N=4 :** L'Espace de Travail Global du Rafale capte l'ignition. Le module avionique reçoit le broadcast interne et reconfigure la loi de vol (vol asymétrique compensé). La mémoire épisodique MeMo embarquée consulte si une situation similaire a déjà été vécue. Le résumé qui remonte au N=5 : *[Leader-3 | dégradé | enveloppe_réduite_20% | mission_maintenue | autonomie_réduite_15min]*
+**3. N=4 – Comparaison prédiction/réalité** :  
+Le Rafale reçoit du niveau supérieur (N=5) une **prédiction** de son état attendu (ex. `[état_nominal, poussée=1.0]`). Parallèlement, ses boucles RPT locales produisent une **ignition réelle** `[dégradé, asymétrie=0.73]`. Le comparateur calcule l’erreur (0,73). Comme cette erreur dépasse le seuil dynamique (ex. 0,5), une **ignition GNWT** est déclenchée. Si l’erreur avait été inférieure au seuil, l’écart aurait été résorbé localement (mise à jour du latent RPT) sans broadcast.
 
-**4. N=5/N=6 :** L'officier TACTIQUE du groupe capte l'ignition de Leader-3 en premier (c'est dans son domaine de saillance). Il propose une reconfiguration du schéma de brouillage des frégates. Le CAPITAINE arbite et broadcast la décision au groupe. Le LLM N=6 traduit pour l'amiral : *"Leader-3 maintient sa mission avec une capacité d'évasion réduite de 20%. Réorganisation du schéma de brouillage des frégates pour le couvrir. Durée de la fenêtre de mission réduite à T+15min."*
+
+**4. N=5/N=6 :** L'officier TACTIQUE du groupe capte l'ignition de Leader-3 en premier (c'est dans son domaine de saillance). Il propose une reconfiguration du schéma de brouillage des frégates. Le CAPITAINE arbite et broadcast la décision au groupe. Le LLM N=6 traduit pour l'amiral : *"Leader-3 maintient sa mission avec une capacité d'évasion réduite de 20%. Réorganisation du schéma de brouillage des frégates pour le couvrir. Durée de la fenêtre de mission réduite à T+15min."* (la prédiction de N=5 est mise à jour via apprentissage)
 
 
 ## 🔧 Contraintes Latentes Structurelles (Anti-Collapse)
@@ -284,3 +301,24 @@ Ce mécanisme maintient la cohérence des flux latents à travers les couverture
 - **Limiter la profondeur de compression** (éviter N=3→N=4→N=5→N=6 sans contrôle)
 
 Ces contraintes assurent la stabilité de l’architecture GAN 2040 dans les scénarios de panne, de combat et de coopération distribuée.
+
+
+
+## Impact sur `architecture.md`
+
+1. **Renommer les flèches descendantes** : dans tous les diagrammes, remplacer « Priors Contextuels » par **« Prédictions (top-down) »**.
+2. **Ajouter la notion de seuil adaptatif** : dans les boîtes GNWT, indiquer un paramètre `seuil_surprise` (fonction du budget attentionnel et de la confiance).
+3. **Mettre à jour le scénario de panne** : l’anomalie ne remonte que si l’erreur de prédiction dépasse le seuil. Ajouter une étape où la prédiction descendante est comparée à l’ignition réelle.
+
+Extrait modifié du schéma de communication inter‑niveaux :
+
+```mermaid
+flowchart LR
+    N5["N=5 : Groupe"] -->|"Prédiction du résumé attendu"| N4["N=4 : Rafale"]
+    N4 -->|"Ignition si erreur ≥ seuil"| N5
+```
+
+
+
+
+
