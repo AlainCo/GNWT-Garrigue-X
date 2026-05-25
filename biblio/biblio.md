@@ -14,15 +14,15 @@
  | **Intégration GNWT + RPT (multiscale)** | [Storm et al., *An integrative, multiscale view on neural theories of consciousness* (2024)](https://doi.org/10.1016/j.neuron.2024.02.004) |
  | **Écosystèmes d'intelligence (Active Inference)** | [Friston et al., *Designing ecosystems of intelligence from first principles* (2024)](https://doi.org/10.1177/26339137231222481) *(Collective Intelligence)* |
  | **Mémoire épisodique continue (MeMo)** | [Quek, Lee, Leong, Verma et al., *MeMo: Memory as a Model* (2026)](https://arxiv.org/abs/2605.15156) |
- | **JEPA** | [LeCun, *A Path Towards Autonomous Machine Intelligence* (2022)](https://arxiv.org/abs/2207.04898) |
- | **World Models** | [Hafner et al., *Mastering Atari with Discrete World Models* (DreamerV3, 2023)](https://arxiv.org/abs/2301.04104) |
+ | **JEPA** | [LeCun, *A Path Towards Autonomous Machine Intelligence* (2022)](https://www.semanticscholar.org/paper/A-Path-Towards-Autonomous-Machine-Intelligence-LeCun-Courant/775f42ed458b8c5b0f2094ea4ff5b64c557b1a34) |
+ | **World Models** | [Hafner et al., *Mastering Atari with Discrete World Models* (DreamerV3, 2023)](https://arxiv.org/abs/2010.02193) |
  | **SSM / Mamba** | [Gu & Dao, *Mamba: Linear-Time Sequence Modeling with Selective State Spaces* (2023)](https://arxiv.org/abs/2312.00752) |
  | **Curiosité intrinsèque** | [Oudeyer & Kaplan, *What is Intrinsic Motivation? A Typology of Computational Approaches* (2007)](https://doi.org/10.3389/neuro.12.006.2007) |
  | **Psychologie computationnelle** | [Friston, *Computational psychiatry: from synapses to sentience* (2022)](https://www.nature.com/articles/s41380-022-01743-z) *(Approche théorique : modèles génératifs, inférence active)* |
  |  | [Teufel & Fletcher, *The promises and pitfalls of applying computational models to neurological and psychiatric disorders* (2016)](https://doi.org/10.1093/brain/aww209) *(Approche clinique : applications et limites)* |
  | **Dark Triad neural** | [Bakiaj, Pantoja Muñoz, Bizzego, Grecucci, *Unmasking the Dark Triad: A Data Fusion Machine Learning Approach to Characterize the Neural Bases of Narcissistic, Machiavellian and Psychopathic Traits* (2025)](https://onlinelibrary.wiley.com/doi/10.1111/ejn.16674) |
- | **Big Five évolutif** | [Nettle, *Personality: What makes you the way you are* (2007)](https://global.oup.com/academic/product/personality-9780192804711) *(Livre, Oxford University Press)* |
- | **TSA computationnel** | [Baron-Cohen, *Autism: the empathizing-systemizing (E-S) theory* (2009)](https://doi.org/10.1016/j.tins.2008.10.005) *(Théorie originelle : 2002)* |
+ | **Big Five évolutif** | [Nettle, *Personality: What makes you the way you are* (2007), *(Livre, Oxford University Press)* ](https://www.amazon.com/Personality-Makes-Oxford-Landmark-Science/dp/0199211434) |
+ | **TSA computationnel** | [Baron-Cohen, *Autism: the empathizing-systemizing (E-S) theory* (2009)](https://pubmed.ncbi.nlm.nih.gov/19338503/) *(Théorie originelle : 2002)* |
  | **Mémoire épisodique continue** | [Quek, Lee, Leong, Verma et al., *MeMo: Memory as a Model* (2026)](https://arxiv.org/abs/2605.15156) |
  | **Constitutional AI** | [Bai et al., *Constitutional AI: Harmlessness from AI Feedback* (Anthropic, 2022)](https://arxiv.org/abs/2212.08073) |
- | **Wargame de minage** | [Ludodélire, *Full Métal Planète*](https://www.youtube.com/watch?v=_oN4YW_v8uI) |
+ | **Wargame de minage** | [*Full Métal Planète*, Jeu de plateau Ludodélire](https://www.youtube.com/watch?v=_oN4YW_v8uI) |
