@@ -115,3 +115,68 @@ flowchart TD
 **3. N=4 :** L'Espace de Travail Global du Rafale capte l'ignition. Le module avionique reçoit le broadcast interne et reconfigure la loi de vol (vol asymétrique compensé). La mémoire épisodique MeMo embarquée consulte si une situation similaire a déjà été vécue. Le résumé qui remonte au N=5 : *[Leader-3 | dégradé | enveloppe_réduite_20% | mission_maintenue | autonomie_réduite_15min]*
 
 **4. N=5/N=6 :** L'officier TACTIQUE du groupe capte l'ignition de Leader-3 en premier (c'est dans son domaine de saillance). Il propose une reconfiguration du schéma de brouillage des frégates. Le CAPITAINE arbite et broadcast la décision au groupe. Le LLM N=6 traduit pour l'amiral : *"Leader-3 maintient sa mission avec une capacité d'évasion réduite de 20%. Réorganisation du schéma de brouillage des frégates pour le couvrir. Durée de la fenêtre de mission réduite à T+15min."*
+
+
+## 🔧 Contraintes Latentes Structurelles (Anti‑Collapse)
+
+Les niveaux N=2 à N=5 échangent des **vecteurs latents compressés** (RPT interne, JEPA prédictif, Résumés d’Ignition). Pour garantir la stabilité de ces flux dans une architecture hiérarchique, trois contraintes structurelles sont imposées :
+
+### 1. Latents internes régularisés (RPT / JEPA)
+
+Chaque module maintient un espace latent **borné mais non dégénéré**.  
+Sans contrainte, les modèles prédictifs (JEPA, SSMs) convergent vers un **representation collapse** : tous les inputs mappés vers un même vecteur.
+
+Pour éviter cela, les latents internes sont régularisés via :
+
+- **Isotropie gaussienne** (LeJEPA, SIGReg)  
+- **Décorrélation** (VICReg / Barlow Twins)  
+- **Normalisation stricte** (LayerNorm)  
+- **Bruit gaussien léger** pour éviter les dimensions mortes
+
+Ces mécanismes garantissent que chaque dimension porte une information utile et que les prédictions restent stables dans le temps.
+
+---
+
+### 2. Hiérarchie des tailles : interne > ignition
+
+Pour éviter la perte d’information en cascade :
+
+- latent interne RPT/JEPA : **128–256 dimensions**  
+- résumé d’Ignition : **16–64 dimensions**
+
+Le résumé d’Ignition est produit par une **tête de compression dédiée**, qui applique :
+
+- normalisation  
+- quantification optionnelle  
+- contrôle de norme (||z|| ≈ constant)
+
+Cela garantit une API statistique stable entre niveaux, même en conditions dégradées.
+
+---
+
+### 3. Prévention du “double collapse” multi-niveaux
+
+Dans une architecture N=3→N=4→N=5, deux compressions successives peuvent entraîner un **double collapse** :
+
+- collapse interne du JEPA/RPT  
+- collapse du résumé d’Ignition
+
+Pour éviter cela :
+
+- chaque niveau vérifie la **variance par dimension** du latent reçu  
+- un résumé d’Ignition trop pauvre déclenche un **signal d’incertitude**  
+- le niveau supérieur peut demander un **Ignition enrichi** (fallback)
+
+Ce mécanisme maintient la cohérence des flux latents à travers les couvertures de Markov.
+
+---
+
+### 4. Règles pratiques d’implémentation
+
+- **Toujours régulariser les latents internes** (SIGReg ou équivalent)  
+- **Toujours compresser via une tête dédiée** (pas de projection brute)  
+- **Monitorer la “vie” du latent** (variance, corrélation, norme)  
+- **Tester la valeur du latent** (prédiction de variables observables simples)  
+- **Limiter la profondeur de compression** (éviter N=3→N=4→N=5→N=6 sans contrôle)
+
+Ces contraintes assurent la stabilité de l’architecture GAN 2040 dans les scénarios de panne, de combat et de coopération distribuée.

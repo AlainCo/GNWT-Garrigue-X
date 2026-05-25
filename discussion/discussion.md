@@ -93,6 +93,10 @@ De même, l'utilisation de **profils cognitifs spécialisés** (hypervigilant, e
 
 Les architectures JEPA, world models hiérarchiques et systèmes de mémoire épisodique (MeMo) restent encore expérimentaux pour des systèmes embarqués distribués soumis à des contraintes strictes de latence et de consommation. L'approche pragmatique recommandée est une montée en puissance incrémentale : commencer par des couches N=0–3 simples avec SSMs/Mamba, puis introduire progressivement la mémoire épisodique et les ignitions globales à mesure que la stabilité des couches inférieures est validée. Outils exploratoires disponibles : [ActiveInference.jl](https://www.mdpi.com/1099-4300/27/1/62), [Mamba-SSM](https://github.com/state-spaces/mamba).
 
+#### Stabilité des espaces latents multi‑niveaux
+
+L’architecture repose sur des latents compressés échangés entre niveaux (RPT, JEPA, Ignition). Leur stabilité dépend de contraintes mathématiques encore expérimentales (isotropie gaussienne, anti‑collapse). La propagation de ces contraintes à travers plusieurs couvertures de Markov reste un défi ouvert.
+
 #### Apprentissage continu sans oubli catastrophique
 
 C'est probablement le **verrou technique principal** de l'architecture. Les systèmes actuels souffrent encore fortement d'oubli catastrophique, de dérive des représentations, de perte de stabilité et de consolidation imparfaite entre sessions. Le cerveau biologique semble résoudre partiellement ce problème via une combinaison de mémoire hiérarchique, de replay, de sommeil, de consolidation lente et de séparation stricte entre mémoire rapide et mémoire profonde. Des mécanismes analogues seront probablement nécessaires : phases offline dédiées, simulation interne dans l'espace latent, recalibrage des pondérations, et rêveries artificielles structurées — soit précisément le cycle proposé en §1, dont la faisabilité à grande échelle reste à démontrer.

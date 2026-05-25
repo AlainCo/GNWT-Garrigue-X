@@ -335,20 +335,7 @@ Malgré ces avancées, plusieurs défis restent ouverts :
 
 Ces points constituent des **axes de validation expérimentale** essentiels pour la suite du projet.
 
----
 
-#### Règles Pratiques pour la Mise en Œuvre
-
-- **Régulariser systématiquement les latents internes**  
-  (SIGReg, VICReg, normalisation, bruit gaussien léger).  
-- **Latent interne > latent d’Ignition**  
-  (ex : 128–256 → 16–64).  
-- **Monitorer la “vie” du latent**  
-  (variance par dimension, corrélation, norme).  
-- **Tester la valeur du latent**  
-  (prédire quelques variables observables simples).  
-- **Éviter la compression en cascade**  
-  (ne pas compresser un latent déjà pauvre).
 
 
 
