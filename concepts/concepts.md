@@ -222,7 +222,7 @@ Contexte: vent_25kt, pont_mouillé, leader_formation
 Ce mécanisme permet à la fois l’apprentissage continu sans *catastrophic forgetting* et la préservation d’une identité propre à chaque entité du SoS.
 
 
-# H. La Stabilité des Espaces Latents : Taille, Collapse et Contraintes Structurelles
+### H. La Stabilité des Espaces Latents : Taille, Collapse et Contraintes Structurelles
 
 **Fondement Théorique :**  
 LeCun et al., *Joint Embedding Predictive Architectures* (2022–2024) ;  
@@ -231,7 +231,7 @@ Bardes et al., *VICReg: Variance-Invariance-Covariance Regularization* (2022) ;
 Zhang et al., *LeJEPA: Latent Euclidean JEPA with Isotropic Gaussian Regularization* (2024) ;  
 Hafner et al., *World Models* (2021–2024).
 
-## Le Problème : Un Espace Latent Doit Être Borné… mais Non Vide
+#### Le Problème : Un Espace Latent Doit Être Borné… mais Non Vide
 
 Dans les architectures présentées plus haut — **RPT locale**, **JEPA prédictif**, **résumés d’Ignition GNWT** — tout repose sur un principe commun :  
 le système encode le monde dans un **espace latent compact**, échangé entre niveaux via les couvertures de Markov.
@@ -244,9 +244,9 @@ Mais un espace latent borné pose un dilemme classique :
 
 Ce phénomène est bien documenté dans les JEPA et les méthodes SSL modernes : sans contraintes structurelles, le modèle converge vers une solution triviale qui minimise la perte sans apprendre de structure utile.
 
-## Les Solutions Actuelles : Contraindre la Distribution Latente
+#### Les Solutions Actuelles : Contraindre la Distribution Latente
 
-### 1. Les Heuristiques Historiques (BYOL, SimSiam, DINO)
+##### 1. Les Heuristiques Historiques (BYOL, SimSiam, DINO)
 
 Les premières générations de modèles auto-supervisés ont évité le collapse via des mécanismes ad hoc :
 
@@ -258,7 +258,7 @@ Les premières générations de modèles auto-supervisés ont évité le collaps
 
 Ces méthodes fonctionnent, mais restent fragiles et nécessitent un réglage fin des hyperparamètres.
 
-### 2. Le Tournant Théorique : L’Isotropie Gaussienne (LeJEPA, SIGReg)
+##### 2. Le Tournant Théorique : L’Isotropie Gaussienne (LeJEPA, SIGReg)
 
 Les travaux récents de Zhang et al. (2024) proposent une approche plus principielle :
 
@@ -281,7 +281,7 @@ Pour imposer cette propriété, LeJEPA introduit **SIGReg** (*Sketched Isotropic
 **Effet :**  
 un espace latent **plein**, **borné**, **stable**, sans stop-gradient ni architecture spéciale.
 
-### 3. LeWM : JEPA de Monde Minimaliste et Stable
+##### 3. LeWM : JEPA de Monde Minimaliste et Stable
 
 LeWM (2024) applique ce principe à un **world model JEPA** :
 
@@ -294,7 +294,7 @@ LeWM (2024) applique ce principe à un **world model JEPA** :
 Résultat :  
 un modèle prédictif compact, stable, et utilisable pour la **rêverie latente** (generative replay).
 
-## Application à Notre Architecture : RPT, JEPA et Résumés d’Ignition
+#### Application à Notre Architecture : RPT, JEPA et Résumés d’Ignition
 
 Dans notre hiérarchie, trois espaces latents coexistent :
 
@@ -323,7 +323,7 @@ L’usage d’une régularisation isotrope (type LeJEPA) permet :
 
 ---
 
-## Obstacles Actuels et Questions Ouvertes
+#### Obstacles Actuels et Questions Ouvertes
 
 Malgré ces avancées, plusieurs défis restent ouverts :
 
@@ -337,7 +337,7 @@ Ces points constituent des **axes de validation expérimentale** essentiels pour
 
 ---
 
-## Règles Pratiques pour la Mise en Œuvre
+#### Règles Pratiques pour la Mise en Œuvre
 
 - **Régulariser systématiquement les latents internes**  
   (SIGReg, VICReg, normalisation, bruit gaussien léger).  
