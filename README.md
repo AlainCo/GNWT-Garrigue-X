@@ -55,14 +55,39 @@ Ce projet n'est pas une simulation de laboratoire : c'est une aventure d'ingéni
 
 ## Discussion
 
-Loin d'être un simple bilan académique, cette section pose le cadre de notre lucidité technique. Pour fédérer une communauté de chercheurs et d'ingénieurs, nous mettons cartes sur table : nous détaillons nos ruptures conceptuelles, mais aussi les verrous critiques et la méthodologie stricte qui valideront le projet autour de quatre grands axes :
+Voici une version **plus directe, moins personnelle**, qui garde le ton clair et accessible que tu veux, tout en restant suffisamment sérieuse pour attirer l’œil d’un expert.  
+Elle va droit au but, sans introspection, et met en avant les sujets techniques de manière concise et attractive.
 
-* **Rupture Vectorielle vs Agents Classiques :** L'originalité majeure du projet réside dans l'unification des théories RPT et GNWT et l'étanchéité absolue de nos modules par couvertures de Markov. C'est une architecture sobre, hiérarchique et hautement résiliente, conçue comme une alternative directe au chaos probabiliste et à la lourdeur des frameworks d'agents LLM monolithiques actuels (type CrewAI ou AutoGen).
-* **Défis Critiques & Verrous Techniques :** Nous identifions sans détour nos trois points de friction majeurs. D'abord, le coût computationnel intense des phases de "sommeil/rêverie" du modèle JEPA ; ensuite, la perméabilité statistique des membranes en cas de défaillance matérielle en cascade ; et enfin, la complexité mathématique consistant à traduire des règles éthiques ou juridiques en contraintes dures et inviolables dans des espaces latents abstraits.
-* **Validation Scientifique et Métriques :** L'architecture refuse les évaluations subjectives. Elle sera soumise à un benchmarking rigoureux face aux approches centralisées et multi-agents classiques (MADDPG). Le succès du MVP sera mesuré selon un tableau de bord strict : taux de réussite des missions malgré les pannes (cible > 90%), vitesse de convergence des lois de contrôle, et sobriété énergétique globale.
-* **Perspectives et Horizons Multi-Domaines :** Si la garrigue est notre premier laboratoire, l'architecture fonctionnaliste et invariante d'échelle (*scale-free*) développée ici est nativement transposable. Les modèles de résilience et de décision distribuée que nous forgeons trouveront une application immédiate dans la gestion de flottes de véhicules autonomes, la logistique industrielle lourde, ou la gestion de crises multi-acteurs.
+---
 
-👉 [Explorer l'analyse complète des limites, le protocole de benchmark et les métriques de robustesse du système ➔](discussion/discussion.md)
+## Discussion
+
+Cette section clarifie les limites actuelles de l’approche et les points qui nécessitent une validation plus approfondie. Les concepts présentés — **couvertures de Markov imbriquées**, **dualité RPT/GNWT**, **JEPA prédictif**, **SSMs temps réel**, **profils computationnels**, **mémoire épisodique MeMo** — ouvrent des perspectives intéressantes, mais soulèvent aussi plusieurs questions techniques majeures.
+
+Quatre axes structurent cette mise en perspective :
+
+* **Architecture hiérarchique & indépendance conditionnelle** —  
+  L’utilisation de **Markov blankets imbriquées** pour structurer un système multi‑niveaux vise à garantir modularité, autonomie et résilience. Cette approche s’inspire de travaux solides, mais son application à un système embarqué reste à éprouver : stabilité des frontières statistiques, pertinence du mécanisme d’**anti‑fusion d’identité**, et comportement réel en conditions dégradées.
+
+* **Limites techniques identifiées** —  
+  Plusieurs défis restent ouverts :  
+  – le **coût des phases de rêverie JEPA** et du generative replay,  
+  – la **résilience** des membranes statistiques en cas de panne en cascade,  
+  – la **formalisation** de contraintes éthiques ou juridiques dans des espaces latents.  
+  Ces points constituent les principaux verrous à lever pour valider l’architecture.
+
+* **Validation expérimentale & métriques objectives** —  
+  L’évaluation repose sur des critères mesurables :  
+  – robustesse aux pannes multi‑niveaux,  
+  – stabilité des signaux issus des SSMs,  
+  – cohérence des ignitions GNWT,  
+  – qualité et utilité de la mémoire épisodique MeMo.  
+  Un benchmark comparatif avec des approches centralisées ou multi‑agents classiques permettra de situer clairement les apports et les limites du modèle.
+
+* **Transposabilité & invariance d’échelle** —  
+  L’architecture est pensée comme **scale‑free**, ce qui la rend potentiellement applicable à d’autres domaines : robotique distribuée, flottes autonomes, logistique, gestion de crise. Cette ouverture nécessite toutefois une expertise sectorielle pour valider la pertinence des mécanismes proposés.
+
+👉 [Accéder à la discussion complète : limites, benchmarks et perspectives ➔](discussion/discussion.md)
 
 
 ## Lectures de Référence
