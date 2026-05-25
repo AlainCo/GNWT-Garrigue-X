@@ -61,6 +61,8 @@ flowchart TD
 
 Le niveau N=5 n'est pas un module monolithique mais une **équipe d'instances spécialisées** partageant un workspace commun (le workspace du groupe) via des résumés d'ignition, sans partager leurs espaces latents internes.
 
+Chaque niveau conscient (N≥4) inclut un Self-Model (MLP) qui génère un méta-vecteur pour chaque ignition, assurant la métacognition et l’explicabilité.
+
 ```mermaid
 flowchart TD
     Capitaine["CAPITAINE\n(Méta-Workspace + Narrative)"] 
@@ -73,14 +75,18 @@ flowchart TD
         Rens["RENS\n(Explorateur)"]
     end
 
+    subgraph Meta ["Métacognition"]
+        SM["Self-Model\n(MLP)"]
+    end
+
     Capitaine <--> Science
     Capitaine <--> Soin
     Capitaine <--> Ingenieur
     Capitaine <--> Tactique
     Capitaine <--> Rens
+    Capitaine <--> SM
 
-    classDef captain fill:#fff176,stroke:#f57f17
-    class Capitaine captain
+    SM -->|"méta‑vecteurs"| MeMo
 ```
 
 **Règle de communication :** Un officier ne transmet au workspace commun que ce qui a franchi son seuil d'ignition personnel. Comme une équipe de vieux professionnels qui se connaissent, s'estiment, et savent se tenir — ils ne parlent pas à chaque micro-événement, ils parlent quand ça compte.
@@ -249,3 +255,4 @@ Ce mécanisme maintient la cohérence des flux latents à travers les couverture
 - **Limiter la profondeur de compression** (éviter N=3→N=4→N=5→N=6 sans contrôle)
 
 Ces contraintes assurent la stabilité de l’architecture GAN 2040 dans les scénarios de panne, de combat et de coopération distribuée.
+

@@ -336,6 +336,71 @@ Malgré ces avancées, plusieurs défis restent ouverts :
 Ces points constituent des **axes de validation expérimentale** essentiels pour la suite du projet.
 
 
+## E. Auto-modélisation et métacognition : le schéma de soi (Higher‑Order Thought)
 
+### Fondement théorique
+
+- **Higher‑Order Thought (HOT)** : Rosenthal (2005) – un état mental devient conscient lorsqu’il est accompagné d’une pensée d’ordre supérieur à son sujet.  
+- **Self‑Model Theory of Subjectivity** : Metzinger (2003) – le soi phénoménal est un modèle que le cerveau construit de lui‑même en temps réel.  
+- **Métacognition en IA** : modèles de confiance, prédiction de performance, calibration des décisions.  
+- **Applications récentes** : [Bahrami et al., *Metacognitive reinforcement learning* (2024)](https://arxiv.org/abs/2401.08099) – l’auto‑évaluation améliore l’adaptation.
+
+### Le concept
+
+Dans votre architecture, chaque module conscient (N≥4) possède un **Self‑Model** : un petit réseau (MLP ou transformeur léger) attaché à son workspace GNWT.  
+À chaque ignition, le Self‑Model génère un **méta‑vecteur** qui encode :
+
+- un score de **confiance** dans l’ignition (dérivé de l’erreur de prédiction locale),
+- un **contexte de l’ignition** (type d’anomalie, provenance),
+- une **saillance attendue** pour le niveau supérieur.
+
+Ce méta‑vecteur est ensuite :
+- stocké dans la mémoire épisodique (MeMo) aux côtés du souvenir,
+- utilisé pour moduler les décisions du niveau supérieur (ex. : l’officier Capitaine pondère les ignitions par leur confiance),
+- remonté à l’interface humaine (N=6) pour l’explicabilité.
+
+Le Self‑Model est entraîné **pendant la phase de sommeil** : on lui demande de prédire la saillance réelle qui a eu lieu après chaque ignition passée, ou de prédire l’erreur d’un module voisin. Ainsi, il apprend à connaître les forces et faiblesses du système – une forme de **métacognition computationnelle**.
+
+### Justification technique
+
+- Comble une lacune majeure identifiée dans la discussion (§3.3) : l’absence d’auto‑modélisation agentive.  
+- Permet au système de signaler ses propres biais (ex. « Je suis l’officier Tactique, ma confiance est faible sur ce scenario »).  
+- Améliore la robustesse : si le Self‑Model détecte une chute de confiance généralisée, il peut déclencher une **rêverie ciblée** pour réapprendre.  
+- Rend l’architecture plus explicable pour les opérateurs humains (N=6 peut interroger le Self‑Model via le LLM).
+
+### Schéma
+
+```mermaid
+flowchart TD
+    subgraph Workspace ["Espace de Travail GNWT (N=4 ou N=5)"]
+        I["Ignition courante\n(vecteur latent)"]
+        SM["Self-Model\n(MLP)"]
+        M["Méta‑vecteur\n[confiance, contexte, saillance attendue]"]
+    end
+
+    I -->|"alimente"| SM
+    SM --> M
+
+    M -->|"stockage"| MeMo["Mémoire Épisodique\n(MeMo)"]
+    M -->|"modulation"| Decision["Arbitrage du niveau supérieur"]
+    M -->|"explicabilité"| LLM["Interface N=6 (LLM)"]
+
+    style SM fill:#f3e5f5,stroke:#8e24aa
+    style M fill:#e1bee7
+```
+
+### Exemple concret : anomalie catapulte (reprise de l’exemple MeMo)
+
+Lors de l’ignition *Anomalie catapulte* (saillance 0,87), le Self‑Model du Rafale (N=4) génère un méta‑vecteur :
+
+```yaml
+confiance: 0.82
+contexte: "asymétrie_poussée, workaround_catapulte_B"
+saillance_attendue: 0.85
+```
+
+Ce vecteur est stocké avec le souvenir épisodique.  
+Plus tard, quand une anomalie similaire survient, le Self‑Model est consulté : sa confiance élevée permet de réutiliser le workaround sans attendre la validation du niveau supérieur.  
+À l’inverse, si la confiance avait été faible (ex. 0,35), le système aurait exigé une confirmation humaine.
 
 
