@@ -220,3 +220,135 @@ Contexte: vent_25kt, pont_mouillé, leader_formation
 - **Débriefing** : Consolidation et sédimentation dans la mémoire long terme (RAG épisodique)
 
 Ce mécanisme permet à la fois l’apprentissage continu sans *catastrophic forgetting* et la préservation d’une identité propre à chaque entité du SoS.
+
+
+# H. La Stabilité des Espaces Latents : Taille, Collapse et Contraintes Structurelles
+
+**Fondement Théorique :**  
+LeCun et al., *Joint Embedding Predictive Architectures* (2022–2024) ;  
+Assran et al., *Self-Supervised Learning from Images with a Joint-Embedding Predictive Architecture* (2023) ;  
+Bardes et al., *VICReg: Variance-Invariance-Covariance Regularization* (2022) ;  
+Zhang et al., *LeJEPA: Latent Euclidean JEPA with Isotropic Gaussian Regularization* (2024) ;  
+Hafner et al., *World Models* (2021–2024).
+
+## Le Problème : Un Espace Latent Doit Être Borné… mais Non Vide
+
+Dans les architectures présentées plus haut — **RPT locale**, **JEPA prédictif**, **résumés d’Ignition GNWT** — tout repose sur un principe commun :  
+le système encode le monde dans un **espace latent compact**, échangé entre niveaux via les couvertures de Markov.
+
+Mais un espace latent borné pose un dilemme classique :
+
+- **Trop petit** → perte d’information, prédictions pauvres, signaux d’Ignition inutilisables.  
+- **Trop grand** → le modèle “triche”, encode du bruit, ou pire :  
+  **collapse** (tous les inputs → même vecteur).
+
+Ce phénomène est bien documenté dans les JEPA et les méthodes SSL modernes : sans contraintes structurelles, le modèle converge vers une solution triviale qui minimise la perte sans apprendre de structure utile.
+
+## Les Solutions Actuelles : Contraindre la Distribution Latente
+
+### 1. Les Heuristiques Historiques (BYOL, SimSiam, DINO)
+
+Les premières générations de modèles auto-supervisés ont évité le collapse via des mécanismes ad hoc :
+
+- **Stop-gradient** (BYOL, SimSiam)  
+- **Teacher–student EMA** (MoCo, DINO)  
+- **Augmentations asymétriques**  
+- **Normalisation forcée** (BatchNorm, LayerNorm)  
+- **Décorrélation** (VICReg, Barlow Twins)
+
+Ces méthodes fonctionnent, mais restent fragiles et nécessitent un réglage fin des hyperparamètres.
+
+### 2. Le Tournant Théorique : L’Isotropie Gaussienne (LeJEPA, SIGReg)
+
+Les travaux récents de Zhang et al. (2024) proposent une approche plus principielle :
+
+> **Un espace latent utile doit suivre une distribution gaussienne isotrope.**
+
+Pourquoi ?  
+Parce qu’un latent isotrope :
+
+- utilise **toutes les dimensions**,  
+- évite les directions mortes ou écrasées,  
+- reste **bien conditionné** pour la prédiction,  
+- empêche naturellement le collapse.
+
+Pour imposer cette propriété, LeJEPA introduit **SIGReg** (*Sketched Isotropic Gaussian Regularization*) :
+
+- on projette les latents sur de nombreuses directions aléatoires,  
+- on force chaque projection à suivre une **N(0,1)**,  
+- par le théorème de Cramér–Wold, la distribution multivariée devient isotrope.
+
+**Effet :**  
+un espace latent **plein**, **borné**, **stable**, sans stop-gradient ni architecture spéciale.
+
+### 3. LeWM : JEPA de Monde Minimaliste et Stable
+
+LeWM (2024) applique ce principe à un **world model JEPA** :
+
+- encodeur → latent  
+- prédicteur → latent futur  
+- deux pertes seulement :  
+  - **prédiction** (MSE),  
+  - **isotropie** (SIGReg)
+
+Résultat :  
+un modèle prédictif compact, stable, et utilisable pour la **rêverie latente** (generative replay).
+
+## Application à Notre Architecture : RPT, JEPA et Résumés d’Ignition
+
+Dans notre hiérarchie, trois espaces latents coexistent :
+
+1. **Latent RPT interne (N=2–3)**  
+   - boucle récurrente locale  
+   - encode la “vie intérieure” du module  
+   - doit être compact mais expressif
+
+2. **Latent JEPA prédictif (N=3–4)**  
+   - modèle du monde abstrait  
+   - doit être stable pour la prédiction et la rêverie
+
+3. **Résumé d’Ignition GNWT (N=3→4→5)**  
+   - vecteur court échangé entre niveaux  
+   - API statistique entre couvertures de Markov
+
+Les trois souffrent du même risque :  
+**collapse interne + compression excessive = perte d’information critique.**
+
+L’usage d’une régularisation isotrope (type LeJEPA) permet :
+
+- d’éviter le collapse dans les latents internes,  
+- de garantir que chaque dimension porte de l’information,  
+- de stabiliser les échanges inter-niveaux,  
+- de rendre les résumés d’Ignition plus fiables et comparables.
+
+---
+
+## Obstacles Actuels et Questions Ouvertes
+
+Malgré ces avancées, plusieurs défis restent ouverts :
+
+- **Dimension optimale du latent** : aucune formule analytique n’existe.  
+- **Propagation multi-niveaux** : comment garantir que l’isotropie se maintient à travers les couvertures de Markov ?  
+- **Compression d’Ignition** : risque de “double collapse” si le latent interne est déjà pauvre.  
+- **Contraintes éthiques/juridiques** : comment les encoder dans un espace latent régularisé ?  
+- **Rêverie JEPA** : coût computationnel encore élevé, même en latent.
+
+Ces points constituent des **axes de validation expérimentale** essentiels pour la suite du projet.
+
+---
+
+## Règles Pratiques pour la Mise en Œuvre
+
+- **Régulariser systématiquement les latents internes**  
+  (SIGReg, VICReg, normalisation, bruit gaussien léger).  
+- **Latent interne > latent d’Ignition**  
+  (ex : 128–256 → 16–64).  
+- **Monitorer la “vie” du latent**  
+  (variance par dimension, corrélation, norme).  
+- **Tester la valeur du latent**  
+  (prédire quelques variables observables simples).  
+- **Éviter la compression en cascade**  
+  (ne pas compresser un latent déjà pauvre).
+
+
+

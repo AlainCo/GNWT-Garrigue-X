@@ -6,7 +6,7 @@
  |  **Réseaux bayésiens** | [Judea Pearl, *Probabilistic Reasoning in Intelligent Systems* (1988)](https://www.sciencedirect.com/book/monograph/9780080514895/probabilistic-reasoning-in-intelligent-systems) |
  | **Couvertures de Markov** | [Kirchhoff, Parr, Palacios, Friston, Kiverstein, *The Markov blankets of life: autonomy, active inference and the free energy principle* (2018)](https://royalsocietypublishing.org/doi/10.1098/rsif.2017.0792) |
  | **Couvertures de Markov collectives & Nested Selves** | [Ciaunica, Levin, Rosas, Friston et al., *Nested Selves: Self-Organization and Shared Markov Blankets in Prenatal Development in Humans* (2023)](https://onlinelibrary.wiley.com/doi/10.1111/tops.12717) |
- | **Couvertures de Markov & Group-Level Models** | [Thestrup Waade, Lundbak Olesen, Friston et al., *As One and Many: Relating Individual and Emergent Group-Level Generative Models in Active Inference* (2025)](https://doi.org/10.3390/e27020143) |
+ | **Couvertures de Markov & Group-Level Models** | [Thestrup Waade, Lundbak Olesen, Friston et al., *As One and Many: Relating Individual and Emergent Group-Level Generative Models in Active Inference* (2025)— [PubMed] ](https://pubmed.ncbi.nlm.nih.gov/40003140/) |
  | **Couvertures imbriquées** | [Ciaunica, Levin, Rosas, Friston et al., *Nested Selves: Self-Organization and Shared Markov Blankets in Prenatal Development in Humans* (2023)](https://onlinelibrary.wiley.com/doi/10.1111/tops.12717) |
  | **Couvertures collectives** | [Thestrup Waade, Lundbak Olesen, Ehrenreich Laursen, Nehrer, Heins, Friston, Mathys, *As One and Many: Relating Individual and Emergent Group-Level Generative Models in Active Inference* (2025)](https://doi.org/10.3390/e27020143) |
  | **GNWT** | [Dehaene & Changeux, *Experimental and Theoretical Approaches to Conscious Processing* (2011)](https://doi.org/10.1016/j.neuron.2011.03.018) |
@@ -18,13 +18,19 @@
  | **Écosystèmes d'intelligence (Active Inference)** | [Friston et al., *Designing ecosystems of intelligence from first principles* (2024)](https://doi.org/10.1177/26339137231222481) *(Collective Intelligence)* |
  | **Mémoire épisodique continue (MeMo)** | [Quek, Lee, Leong, Verma et al., *MeMo: Memory as a Model* (2026)](https://arxiv.org/abs/2605.15156) |
  | **JEPA** | [LeCun, *A Path Towards Autonomous Machine Intelligence* (2022)](https://www.semanticscholar.org/paper/A-Path-Towards-Autonomous-Machine-Intelligence-LeCun-Courant/775f42ed458b8c5b0f2094ea4ff5b64c557b1a34) |
+ | **JEPA** | Assran et al., *Self-Supervised Learning from Images with a Joint-Embedding Predictive Architecture* (2023) — [arXiv](https://arxiv.org/abs/2301.08243) |
+ | **JEPA** | Zhang et al., *LeJEPA: Latent Euclidean JEPA with Isotropic Gaussian Regularization* (2024) |
+ | **JEPA / self-supervised learning** | Bardes et al., *VICReg: Variance-Invariance-Covariance Regularization for Self-Supervised Learning* (2022) — [ICLR](https://iclr.cc/virtual/2022/poster/6481) |
+ | **World Models** | Hafner et al., *Mastering Atari with Discrete World Models* (2021) — [OpenReview](https://openreview.net/forum?id=0oabwyZbOu) |
+ | **JEPA / world models** | LeCun, *A Path Towards Autonomous Machine Intelligence* (2022) — [pointer](https://yschoe.github.io/2022/08/24/LeCun-A-path-towards-autonomous-machine-intelligence.html) |
  | **World Models** | [Hafner et al., *Mastering Atari with Discrete World Models* (DreamerV3, 2023)](https://arxiv.org/abs/2010.02193) |
+ 
  | **SSM / Mamba** | [Gu & Dao, *Mamba: Linear-Time Sequence Modeling with Selective State Spaces* (2023)](https://arxiv.org/abs/2312.00752) |
  | **Curiosité intrinsèque** | [Oudeyer & Kaplan, *What is Intrinsic Motivation? A Typology of Computational Approaches* (2007)](https://doi.org/10.3389/neuro.12.006.2007) |
  | **Curiosité intrinsèque - Théorie formelle** | [Jürgen Schmidhuber, *Formal Theory of Creativity, Fun, and Intrinsic Motivation* (1990-2010)](https://www.researchgate.net/publication/224155374_Formal_Theory_of_Creativity_Fun_and_Intrinsic_Motivation_1990-2010) |
  | **Apprentissage autonome** | [Oudeyer, *Intrinsic Motivation Systems for Autonomous Learning* (2007)](https://web-archive.southampton.ac.uk/cogprints.org/5473/index.html) |
  | **Psychologie computationnelle** | [Friston, *Computational psychiatry: from synapses to sentience* (2022)](https://www.nature.com/articles/s41380-022-01743-z) *(Approche théorique : modèles génératifs, inférence active)* |
- |  | [Teufel & Fletcher, *The promises and pitfalls of applying computational models to neurological and psychiatric disorders* (2016)](https://doi.org/10.1093/brain/aww209) *(Approche clinique : applications et limites)* |
+ | **Psychologie computationnelle**  | [Teufel & Fletcher, *The promises and pitfalls of applying computational models to neurological and psychiatric disorders* (2016)](https://doi.org/10.1093/brain/aww209) *(Approche clinique : applications et limites)* |
  | **Dark Triad neural** | [Bakiaj, Pantoja Muñoz, Bizzego, Grecucci, *Unmasking the Dark Triad: A Data Fusion Machine Learning Approach to Characterize the Neural Bases of Narcissistic, Machiavellian and Psychopathic Traits* (2025)](https://onlinelibrary.wiley.com/doi/10.1111/ejn.16674) |
  | **Big Five évolutif** | [Nettle, *Personality: What makes you the way you are* (2007), *(Livre, Oxford University Press)* ](https://www.amazon.com/Personality-Makes-Oxford-Landmark-Science/dp/0199211434) |
  | **TSA computationnel** | [Baron-Cohen, *Autism: the empathizing-systemizing (E-S) theory* (2009)](https://pubmed.ncbi.nlm.nih.gov/19338503/) *(Théorie originelle : 2002)* |
