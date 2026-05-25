@@ -1,0 +1,117 @@
+## Architecture Cible Générale : Exemple du GAN 2040
+
+```mermaid
+flowchart TD
+    direction TB
+
+    Bas["Niveaux Bas (N=0 à N=3)\nDonnées brutes + RPT locale"] 
+    -->|"Résumé d'Ignition\n(Compressé, Abstrait)"| Haut["Niveaux Hauts (N=4 à N=6)\nGNWT + Conscience d'accès"]
+
+    Haut -->|"Priors Contextuels + Contraintes\n(Objectifs, Règles, Contextes)"| Bas
+
+    style Bas fill:#ffebee
+    style Haut fill:#e3f2fd
+```
+
+Cette pile décrit l'infrastructure cognitive du Groupe Aéronaval (GAN) en **2040**. Les informations transitent de bas en haut sous forme de **Résumés d'Ignition Compressés** (vecteurs latents abstraits, pas de données brutes), et de haut en bas sous forme de **Priors Contextuels** (contraintes sur les espaces de représentation des niveaux inférieurs).
+
+**Principe fondamental :** Chaque frontière verticale est une **Couverture de Markov**. N+1 est aveugle aux états internes de N. Le broadcast GNWT est *intra-niveau* ; la communication *inter-niveau* est uniquement via les résumés d'ignition compressés.
+
+```mermaid
+flowchart TD
+    subgraph N0to3 ["Niveaux Infra-Conscients (RPT Locale)"]
+        N0["N=0 : Composant Physique\n(MLP nano + PID)"] 
+        N1["N=1 : Actionneur Intelligent\n(Mamba-mini)"]
+        N2["N=2 : Équipement\n(Mamba / RWKV)"]
+        N3["N=3 : Sous-système Fonctionnel\n(JEPA-S + RPT locale)"]
+    end
+
+    subgraph N4to6 ["Niveaux Conscients (GNWT + Ignition)"]
+        N4["N=4 : Plateforme / Vecteur\n(JEPA-M + Workspace GNWT)"]
+        N5["N=5 : Groupe Aéronaval\n(JEPA-L + Officiers)"]
+        N6["N=6 : Théâtre / État-Major\n(LLM-XL + RAG)"]
+    end
+
+    N0 --> N1 --> N2 --> N3
+    N3 -->|"Résumé d'Ignition"| N4
+    N4 -->|"Résumé d'Ignition"| N5
+    N5 -->|"Résumé d'Ignition"| N6
+
+    N6 -->|"Priors Contextuels"| N5
+    N5 -->|"Priors Contextuels"| N4
+    N4 -->|"Contraintes locales"| N3
+
+    classDef conscious fill:#e3f2fd,stroke:#1976d2
+    class N4,N5,N6 conscious
+```
+
+### Conscience par niveau : ce qu'on peut attendre
+
+| Niveau | Vie intérieure (RPT) | Conscience d'accès (GNWT) | Peut "rapporter" |
+|---|---|---|---|
+| N=0-1 | Non | Non | Non |
+| N=2 | Minimale (état caché SSM) | Non | Non |
+| N=3 | Oui (boucles feedback locales) | Non | Vers N=4 uniquement |
+| N=4-5 | Oui, riche | Oui (ignition + broadcast) | Oui, à son niveau |
+| N=6 | Oui, narratif | Oui, stratégique | Oui, dialogue humain |
+
+---
+
+### Les Officiers de la Passerelle (N=5) : organisation sociale-cognitive
+
+Le niveau N=5 n'est pas un module monolithique mais une **équipe d'instances spécialisées** partageant un workspace commun (le workspace du groupe) via des résumés d'ignition, sans partager leurs espaces latents internes.
+
+```mermaid
+flowchart TD
+    Capitaine["CAPITAINE\n(Méta-Workspace + Narrative)"] 
+
+    subgraph Officiers ["Officiers Spécialisés"]
+        Science["SCIENCE\n(Systemizing)"]
+        Soin["SOIN\n(Empathique)"]
+        Ingenieur["INGÉNIEUR\n(Consciencieux)"]
+        Tactique["TACTIQUE\n(Persévérant)"]
+        Rens["RENS\n(Explorateur)"]
+    end
+
+    Capitaine <--> Science
+    Capitaine <--> Soin
+    Capitaine <--> Ingenieur
+    Capitaine <--> Tactique
+    Capitaine <--> Rens
+
+    classDef captain fill:#fff176,stroke:#f57f17
+    class Capitaine captain
+```
+
+**Règle de communication :** Un officier ne transmet au workspace commun que ce qui a franchi son seuil d'ignition personnel. Comme une équipe de vieux professionnels qui se connaissent, s'estiment, et savent se tenir — ils ne parlent pas à chaque micro-événement, ils parlent quand ça compte.
+
+**Score d'incertitude épistémique :** Chaque résumé d'ignition porte un score de confiance. Un officier qui opère hors de son domaine de compétence pénalise automatiquement son score de saillance. Le capitaine intègre ce signal dans l'arbitrage — pas pour ignorer, mais pour pondérer.
+
+---
+
+### Scénario de Panne en Combat :
+
+```mermaid
+flowchart TD
+    A["N=0/1 : Tuyère endommagée\n(PID + MLP nano)"] 
+    --> B["N=2/3 : Détection & RPT Locale\n(Mamba)"]
+
+    B -->|"Résumé d'Ignition\n[sévérité=0.73 | workaround=true]"| C["N=4 : Rafale\n(Workspace GNWT)"]
+
+    C --> D["Reconfiguration loi de vol\n+ MeMo consultation"]
+    D -->|"Résumé d'Ignition compressé"| E["N=5 : Groupe\n(Officier Tactique)"]
+
+    E --> F["CAPITAINE arbitre\n+ Broadcast au groupe"]
+    F --> G["N=6 : Amiral\n(Traduction LLM)"]
+
+    classDef ignition fill:#fff3e0,stroke:#f57f17
+    class B,C,D,E ignition
+```
+
+**1. N=0/N=1 :** Un éclat de missile endommage la tuyère droite. Le PID augmenté par MLP nano modifie instantanément les angles d'injection en **4 millisecondes** pour éviter l'extinction du moteur. Aucun signal ne remonte — c'est géré localement, en dessous du seuil RPT.
+
+**2. N=2/N=3 :** Le modèle Mamba du moteur enregistre une anomalie croissante. Ses boucles RPT locales tournent, tentent de consolider une évaluation. Après stabilisation, elles génèrent un **Résumé d'Ignition vectoriel** : *[anomalie_propulsion | sévérité=0.73 | type=asymétrie_poussée | workaround_disponible=true]*. Pas de dump de données brutes — un vecteur sémantique compressé.
+
+**3. N=4 :** L'Espace de Travail Global du Rafale capte l'ignition. Le module avionique reçoit le broadcast interne et reconfigure la loi de vol (vol asymétrique compensé). La mémoire épisodique MeMo embarquée consulte si une situation similaire a déjà été vécue. Le résumé qui remonte au N=5 : *[Leader-3 | dégradé | enveloppe_réduite_20% | mission_maintenue | autonomie_réduite_15min]*
+
+**4. N=5/N=6 :** L'officier TACTIQUE du groupe capte l'ignition de Leader-3 en premier (c'est dans son domaine de saillance). Il propose une reconfiguration du schéma de brouillage des frégates. Le CAPITAINE arbite et broadcast la décision au groupe. Le LLM N=6 traduit pour l'amiral : *"Leader-3 maintient sa mission avec une capacité d'évasion réduite de 20%. Réorganisation du schéma de brouillage des frégates pour le couvrir. Durée de la fenêtre de mission réduite à T+15min."*
