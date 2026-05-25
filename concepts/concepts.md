@@ -404,3 +404,79 @@ Plus tard, quand une anomalie similaire survient, le Self‑Model est consulté 
 À l’inverse, si la confiance avait été faible (ex. 0,35), le système aurait exigé une confirmation humaine.
 
 
+## F. Attention compétitive et budget : le schema attentionnel (Attention Schema Theory)
+
+### Fondement théorique
+
+- **Attention Schema Theory (AST)** : Graziano & Webb (2015) – le cerveau construit un modèle simplifié de son propre processus d’attention, appelé *schéma d’attention*, qui permet de piloter et de prédire le focus attentionnel.
+- **Ressources attentionnelles** : Kahneman (1973) – l’attention est une ressource limitée, partageable entre tâches, avec un budget qui se recharge.
+- **Inhibition cognitive** : Aron (2011) – le contrôle inhibiteur est essentiel pour éviter la saturation et les conflits.
+- **Application en IA** : modèles d’attention avec coût computationnel, *sparse attention*, *budgeted attention* (Clark et al., 2022).
+
+### Le concept
+
+Votre architecture possède un **espace de travail global (GNWT)** où les ignitions sont broadcastées. Sans limite, le système risque une **inflation attentionnelle** : trop d’ignitions simultanées satureraient le workspace, dégraderaient la qualité des décisions et brouilleraient la priorisation.
+
+Pour éviter cela, chaque niveau conscient (N≥4) se voit doté d’un **Attention Scheduler** qui gère un **budget attentionnel global** (exemple : 100 « tokens attentionnels »).  
+Fonctionnement :
+
+- Chaque ignition consomme un certain nombre de tokens (par exemple 5 tokens pour une ignition normale, 10 pour une ignition critique).
+- Le budget se recharge linéairement au cours du temps (exemple : +1 token par seconde).
+- Si le budget est insuffisant, l’ignition est **différée** (mise en file d’attente) ou **inhibée** (perdue).
+- Le **seuil de saillance** nécessaire pour déclencher une ignition peut être dynamiquement ajusté par le scheduler en fonction de la charge (quand le budget est bas, seules les ignitions les plus saillantes passent).
+
+L’Attention Scheduler ne décide pas *quoi* igniter – cela relève des modules RPT – mais il **alloue la ressource** et peut **prioriser** entre ignitions concurrentes. Il s’appuie sur une composante AST qui modélise l’état du budget et prédit les coûts futurs.
+
+### Justification technique
+
+- Comble une lacune majeure de l’architecture actuelle (section 3.2 de la discussion) : l’absence de mécanisme inhibiteur. Sans budget, le système s’expose à une *dérive narrative* et à une perte de réactivité.
+- Permet de simuler des contraintes métaboliques (un cerveau biologique ne peut pas tout traiter à la fois).
+- Facilite l’arbitrage entre officiers : le Capitaine n’a pas besoin de comparer toutes les ignitions ; le scheduler les a déjà filtrées.
+- Améliore la robustesse en combat : en situation de stress (budget bas), seules les menaces immédiates passent – les ignitions non critiques sont reportées.
+
+### Schéma
+
+```mermaid
+flowchart TD
+    subgraph Inputs ["Sous‑systèmes (N≤3)"]
+        A["RPT locale\n(anomalie modérée)"]
+        B["RPT locale\n(menace imminente)"]
+        C["RPT locale\n(panne mineure)"]
+    end
+
+    subgraph Scheduler ["Attention Scheduler (N=5)"]
+        Budget["Budget attentionnel\n(100 tokens, recharge +1/s)"]
+        AST["Module AST\n(prédit coût/bénéfice)"]
+        File["File d’attente (différé)"]
+        Seuil["Seuil adaptatif"]
+    end
+
+    subgraph Workspace ["Workspace GNWT"]
+        Ignition["Ignition broadcastée"]
+    end
+
+    A -->|"demande (5 tokens)"| Scheduler
+    B -->|"demande (10 tokens)"| Scheduler
+    C -->|"demande (3 tokens)"| Scheduler
+
+    Budget -->|"consommation si suffisant"| Ignition
+    Budget -->|"si insuffisant"| File
+    AST -->|"ajuste seuil"| Seuil
+    Seuil -->|"filtre"| Workspace
+
+    File -.->|"reprise quand budget rechargé"| Workspace
+
+    style Scheduler fill:#fff3e0,stroke:#f57f17
+    style Budget fill:#ffe0b2
+```
+
+### Exemple concret : combat intense
+
+Pendant une phase d’engagement, le budget attentionnel du Groupe (N=5) tombe à 15 tokens (recharge +1/s). L’officier Tactique reçoit trois ignitions simultanées :
+
+- **Ignition A** (menace missile, saillance 0,95, coût 10 tokens) – acceptée, budget → 5 tokens.
+- **Ignition B** (anomalie radar secondaire, saillance 0,60, coût 5 tokens) – rejetée faute de budget, mise en file.
+- **Ignition C** (panne moteur de drone éclaireur, saillance 0,70, coût 5 tokens) – rejetée également.
+
+Le scheduler priorise la menace imminente. Quand le budget remonte (après 5 secondes), l’anomalie radar est traitée – mais si une nouvelle menace arrive entre-temps, elle reprendra la priorité. Ce mécanisme évite la saturation et garantit que les décisions critiques ne sont pas noyées dans le bruit.
+

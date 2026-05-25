@@ -89,6 +89,22 @@ flowchart TD
     SM -->|"méta‑vecteurs"| MeMo
 ```
 
+Chaque niveau N≥4 est équipé d’un Attention Scheduler qui alloue un budget attentionnel global. Les ignitions consomment des tokens ; à budget insuffisant, elles sont différées ou inhibées. Le scheduler ajuste dynamiquement le seuil de saillance pour garantir la réactivité en environnement saturé.
+
+```mermaid
+flowchart TD
+    subgraph Workspace ["Workspace GNWT (N=5)"]
+        Sched["Attention Scheduler\n(budget 100, +1/s)"]
+        Capitaine["CAPITAINE"]
+        Officiers["Officiers\n(Tactique, Rens, etc.)"]
+    end
+
+    SousN4["Résumés d’Ignition (N=4)"] --> Sched
+    Sched -->|"ignitions filtrées"| Capitaine
+    Capitaine --> Officiers
+```
+
+
 **Règle de communication :** Un officier ne transmet au workspace commun que ce qui a franchi son seuil d'ignition personnel. Comme une équipe de vieux professionnels qui se connaissent, s'estiment, et savent se tenir — ils ne parlent pas à chaque micro-événement, ils parlent quand ça compte.
 
 **Score d'incertitude épistémique :** Chaque résumé d'ignition porte un score de confiance. Un officier qui opère hors de son domaine de compétence pénalise automatiquement son score de saillance. Le capitaine intègre ce signal dans l'arbitrage — pas pour ignorer, mais pour pondérer.
