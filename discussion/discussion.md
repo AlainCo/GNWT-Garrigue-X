@@ -21,7 +21,7 @@ Ce travail propose une **architecture cognitive distribuée** pour des Systèmes
 
 - **Modélisation des profils cognitifs** :
   Définition de **6 rôles d’officiers** (Science, Soin, Ingénieur, Tactique, Renseignement, Capitaine), chacun avec :
-  - Un **profil de personnalité** ancré dans la psychologie computationnelle ([Friston, 2022](https://www.nature.com/articles/s41380-022-01743-z), [Nettle, 2007](https://global.oup.com/academic/product/personality-9780192804711), [Baron-Cohen, 2009](https://doi.org/10.1016/j.tins.2008.10.005)).
+  - Un **profil de personnalité** ancré dans la psychologie computationnelle ([Friston, 2022](https://www.nature.com/articles/s41380-022-01743-z), [Nettle, 2007](https://www.amazon.com/Personality-Makes-Oxford-Landmark-Science/dp/0199211434), [Baron-Cohen, 2009](https://pubmed.ncbi.nlm.nih.gov/19338508/)).
   - Un **domaine de saillance** et des **seuils d’ignition** spécifiques.
   - Une **mémoire épisodique propre** (MeMo) pour préserver l’identité de chaque agent.
 
@@ -30,7 +30,7 @@ Ce travail propose une **architecture cognitive distribuée** pour des Systèmes
   1. **Mission** : Apprentissage en temps réel (poids gelés, adaptation dynamique).
   2. **Sommeil/Rêverie** : Rejeu des ignitions dans l’espace latent JEPA pour consolidation.
   3. **Débriefing/Jeu** : Analyse sémantique + wargame pour générer de la diversité.
-  Ce cycle s’inspire des travaux sur la **consolidation mémorielle** ([Walker, 2017](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5357011/)) et le *generative replay* ([Hafner et al., 2023](https://arxiv.org/abs/2301.04104)).
+  Ce cycle s’inspire des travaux sur la **consolidation mémorielle** ([Walker, 2017](https://pubmed.ncbi.nlm.nih.gov/19338508/)) et le *generative replay* ([Hafner et al., 2023](https://arxiv.org/abs/2301.04104)).
 
 - **MVP concret et testable** :
   Proposition du projet **GARRIGUE-X** (robots en garrigue) pour valider l’architecture à moindre coût. Le MVP teste :
@@ -130,7 +130,7 @@ L'évaluation objective de l'architecture nécessite de confronter le modèle à
     * puis introduire progressivement mémoire et ignition globale.
   * **Outils exploratoires** :
 
-    * [ActiveInference.jl](https://github.com/ActiveInference/ActiveInference.jl)
+    * [ActiveInference.jl](https://www.mdpi.com/1099-4300/27/1/62)
     * [Mamba-SSM](https://github.com/state-spaces/mamba)
 
 * **Apprentissage continu (lifelong learning)** :
@@ -304,7 +304,7 @@ Cette section propose des **pistes concrètes** pour faire avancer le projet. *C
 - **Robotique et IA** :
   - Collaborer avec des équipes travaillant sur :
     - Les **SSMs embarqués** (ex: [Mamba-SSM](https://github.com/state-spaces/mamba)).
-    - Les **JEPA légers** (ex: adapter [LeCun (2022)](https://arxiv.org/abs/2207.04898) pour du matériel contraint).
+    - Les **JEPA légers** (ex: adapter [LeCun (2022)](https://www.semanticscholar.org/paper/A-Path-Towards-Autonomous-Machine-Intelligence-LeCun-Courant/775f42ed458b8c5b0f2094ea4ff5b64c557b1a34) pour du matériel contraint).
     - Les **systèmes multi-agents** (ex: [LangGraph](https://github.com/langchain-ai/langgraph)).
 
 - **Éthique et droit** :
