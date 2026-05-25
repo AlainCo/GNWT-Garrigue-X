@@ -121,6 +121,35 @@ flowchart TD
 
 Les niveaux N=2 à N=5 échangent des **vecteurs latents compressés** (RPT interne, JEPA prédictif, Résumés d’Ignition). Pour garantir la stabilité de ces flux dans une architecture hiérarchique, trois contraintes structurelles sont imposées :
 
+```mermaid
+flowchart LR
+    subgraph N3 ["N=3 : Sous-système (RPT + JEPA-S)"]
+        L3["Latent Interne\n(128–256d)\n• RPT locale\n• JEPA-S\n• Régularisation isotrope\n(SIGReg / VICReg)"]
+    end
+
+    subgraph N4 ["N=4 : Plateforme (JEPA-M + GNWT)"]
+        C4["Tête de Compression\n(16–64d)\n• Normalisation\n• Contrôle de norme\n• Quantification optionnelle"]
+        L4["Résumé d'Ignition\n(16–64d)\n• Score d'incertitude\n• Signal de saillance"]
+    end
+
+    subgraph N5 ["N=5 : Groupe (Officiers + JEPA-L)"]
+        V5["Validation du Latent\n• Vérification variance\n• Détection collapse\n• Demande d'Ignition enrichi"]
+    end
+
+    L3 -->|"Compression"| C4 --> L4 -->|"Transmission"| V5
+
+    V5 -.->|"Fallback :\nIgnition enrichi"| L3
+
+    classDef latent fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    classDef comp fill:#fff3e0,stroke:#f57f17,stroke-width:2px
+    classDef val fill:#e8f5e9,stroke:#43a047,stroke-width:2px
+
+    class L3 latent
+    class C4 comp
+    class L4 comp
+    class V5 val
+```
+
 ### 1. Latents internes régularisés (RPT / JEPA)
 
 Chaque module maintient un espace latent **borné mais non dégénéré**.  
