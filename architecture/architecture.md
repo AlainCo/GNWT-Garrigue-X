@@ -119,7 +119,7 @@ flowchart TD
 
 ## 🔧 Contraintes Latentes Structurelles (Anti‑Collapse)
 
-Les niveaux N=2 à N=5 échangent des **vecteurs latents compressés** (RPT interne, JEPA prédictif, Résumés d’Ignition). Pour garantir la stabilité de ces flux dans une architecture hiérarchique, trois contraintes structurelles sont imposées :
+
 
 ```mermaid
 flowchart LR
@@ -148,6 +148,46 @@ flowchart LR
     class C4 comp
     class L4 comp
     class V5 val
+```
+Les niveaux N=2 à N=5 échangent des **vecteurs latents compressés** (RPT interne, JEPA prédictif, Résumés d’Ignition). Pour garantir la stabilité de ces flux dans une architecture hiérarchique, trois contraintes structurelles sont imposées :
+
+```mermaid
+flowchart TD
+
+    %% --- N3 : Latent interne ---
+    subgraph N3 ["N=3 : Sous-système (RPT + JEPA-S)"]
+        L3["Latent interne (128–256d)\n• Régularisation isotrope (SIGReg)\n• Variance contrôlée\n• RPT locale"]
+        V3["Analyse Variance\nVar(z3) > seuil_min ?"]
+        S3["Calcul Saillance\ns = f(z3, erreur prédictive)"]
+    end
+
+    %% --- N4 : Compression + Seuil d'Ignition ---
+    subgraph N4 ["N=4 : Plateforme (JEPA-M + GNWT)"]
+        T4["Tête de Compression (16–64d)\n• Normalisation\n• Contrôle de norme\n• Quantification optionnelle"]
+        Th4["Seuil d'Ignition\ns > seuil_dyn ?"]
+        I4["Ignition\nRésumé latent + score d'incertitude"]
+    end
+
+    %% --- N5 : Validation + Fallback ---
+    subgraph N5 ["N=5 : Groupe (Officiers + JEPA-L)"]
+        V5["Validation du Résumé\n• Vérification variance\n• Détection collapse\n• Score d'incertitude"]
+        F5["Fallback :\nDemande d'Ignition enrichi"]
+    end
+
+    %% --- Flux ---
+    L3 --> V3 --> S3 --> T4 --> Th4 --> I4 --> V5
+    V5 -.->|"Ignition enrichi"| L3
+
+    %% --- Styles ---
+    classDef latent fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    classDef comp fill:#fff3e0,stroke:#f57f17,stroke-width:2px
+    classDef ign fill:#ffe0b2,stroke:#ef6c00,stroke-width:2px
+    classDef val fill:#e8f5e9,stroke:#43a047,stroke-width:2px
+
+    class L3,V3,S3 latent
+    class T4,Th4 comp
+    class I4 ign
+    class V5,F5 val
 ```
 
 ### 1. Latents internes régularisés (RPT / JEPA)
