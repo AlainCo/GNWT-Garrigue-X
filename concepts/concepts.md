@@ -148,9 +148,9 @@ Cette séparation n’est pas arbitraire — elle reflète à la fois les contra
 ### F. L'Exploration par la Curiosité et l'Apprentissage par le Jeu
 
 **Fondement Théorique :**
-Jürgen Schmidhuber (*Formal Theory of Creativity, Fun, and Happiness*, 2010) ;
+[Jürgen Schmidhuber, *Formal Theory of Creativity, Fun, and Intrinsic Motivation*, 1990-2010](https://www.researchgate.net/publication/224155374_Formal_Theory_of_Creativity_Fun_and_Intrinsic_Motivation_1990-2010) ;
 [Oudeyer & Kaplan, *What is Intrinsic Motivation? A Typology of Computational Approaches* (2007)](https://doi.org/10.3389/neuro.12.006.2007) ;
-Oudeyer (*Intrinsic Motivation Systems for Autonomous Learning*, 2007).
+[Oudeyer, *Intrinsic Motivation Systems for Autonomous Learning*, 2007](https://web-archive.southampton.ac.uk/cogprints.org/5473/index.html).
 
 **Le Concept :** La curiosité est une **fonction de récompense intrinsèque** basée sur le gain d'information (réduction de l'entropie prédictive). L'agent est récompensé quand il explore des zones où son modèle du monde est encore imprécis — ni trop simples (ennuyeuses), ni trop chaotiques (incompréhensibles). La zone d'apprentissage optimale est celle où le *progrès d'apprentissage* est maximal.
 
@@ -164,9 +164,7 @@ Oudeyer (*Intrinsic Motivation Systems for Autonomous Learning*, 2007).
 ### G. La Mémoire Épisodique Continue (MeMo / Continuous Online Training)
 
 **Fondement Théorique :**  
-[Quek et al., *MeMo: Memory as a Model* (2026)](https://arxiv.org/abs/2605.15156) ;  
-[Kirkpatrick et al., *Overcoming Catastrophic Forgetting* (2017)](https://arxiv.org/abs/1612.00796) ;  
-[Walker, *The Role of Sleep in Cognition and Emotion* (2017)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5357011/).
+[Quek et al., *MeMo: Memory as a Model* (2026)](https://arxiv.org/abs/2605.15156) ; [Kirkpatrick et al., *Overcoming Catastrophic Forgetting* (2017)](https://arxiv.org/abs/1612.00796) ; [Walker, *The Role of Sleep in Cognition and Emotion* (2017)](https://pubmed.ncbi.nlm.nih.gov/19338508/).
 
 **Le Concept :** La mémoire épisodique n’est pas un simple journal de logs, mais un **flux continu de vecteurs latents compressés** qui capture uniquement les moments de forte saillance (ignitions). Chaque événement significatif devient un **souvenir épisodique** riche : état latent JEPA + métadonnées contextuelles.
 
