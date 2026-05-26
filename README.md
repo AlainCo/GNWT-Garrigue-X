@@ -8,6 +8,10 @@ Notre approche rejette délibérément le réductionnisme des architectures mono
 
 L'architecture repose sur un principe central : **la conscience fonctionnelle d'accès n'est pas un phénomène monolithique, mais une propriété émergente à chaque niveau d'organisation suffisamment riche**, séparée des niveaux voisins par des frontières statistiques strictes (couvertures de Markov). Chaque niveau possède sa propre vie intérieure (RPT locale), et seul un sous-ensemble de ses états atteint le niveau supérieur sous forme de *résumé d'ignition*.
 
+> "Hence, if it requires, say, a thousand years to fit for easy flight a bird which started with rudimentary wings, or ten thousand for one which started with no wings at all and had to sprout them *ab initio*, it might be assumed that the flying machine which will really fly might be evolved by the combined and continuous efforts of mathematicians and mechanicians in from one million to ten million years - provided, of course, we can meanwhile eliminate such little drawbacks and embarrassments as the existing relation between weight and strength in inorganic materials. No doubt the problem has attractions for those it interests, but to the ordinary man it would seem as if the effort might be employed more profitably."
+>
+> — Samuel P. Langley, cité dans l'article [A Million Years, Give or Take](https://nowiknow.com/a-million-years-give-or-take/)
+
 ---
 
 ## 1. Concepts Clés et Fondements Théoriques
