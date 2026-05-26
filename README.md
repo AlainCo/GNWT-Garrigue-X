@@ -167,6 +167,11 @@ Les deux récits ci-dessous mettent en scène le **Groupe Aéronaval 14** confro
 * **Titre :** [Groupe Aéronaval 14 – Les batailles qui n’ont pas eu lieu](nouvelles/Groupe-Aeronaval-14-Les-batailles-qui-nont-pas-eu-lieu.md)
 * **Focus architectural :** Cette nouvelle illustre la **phase de rêverie / wargame latent** dans l’espace JEPA. Pendant le sommeil, le système génère des millions de trajectoires alternatives, y compris des configurations ennemies improbables. L’une d’elles (un leurre imitant un signal de détresse) est jugée trop rare et laissée à la décroissance – jusqu’à ce qu’elle se réalise en opération, avec des pertes. Le récit montre comment le seuil de consolidation doit équilibrer probabilité et *potentiel prédictif*, et comment l’imagination (même artificielle) est une arme de survie. Une méditation sur la mémoire, l’anticipation et la responsabilité des rêves qu’on choisit d’oublier.
 
+### 📄 Récit 13 : La hiérarchie des latents et le double collapse
+
+* **Titre :** [Groupe Aéronaval 14 – La routine qui tue](nouvelles/Groupe-Aeronaval-14-La-routine-qui-tue.md)
+* **Focus architectural :** Cette nouvelle illustre le **double collapse** des espaces latents – une dégradation silencieuse de la richesse représentationnelle. Après des semaines de routine, les latents des sous-systèmes (N=3) perdent leur variance par dimension : tous les inputs produisent des vecteurs quasi identiques. La régularisation isotrope (SIGReg) est trop faible pour maintenir la diversité. Lorsqu’un sous-marin apparaît, sa signature est lissée, confondue avec le bruit ambiant – aucune ignition n’est déclenchée. Le récit montre comment la banalité peut être plus dangereuse que le chaos, et comment des métriques de *variance active par dimension* peuvent prévenir l’appauvrissement cognitif. Une leçon pour les pompiers comme pour les IA : la routine tue, la vigilance frémit.
+
 ---
 
 ## MÉMORANDUM BOUTEILLE À LA MER
