@@ -31,10 +31,10 @@ Au-delà de ses contributions techniques, ce travail prend position dans un déb
 **Réfutation du monisme cognitif**
 Contrairement à la majorité des architectures d'agents contemporaines, qui centralisent la décision dans un grand modèle de langage, ce système refuse le *LLM-centrisme* comme postulat de départ. L'architecture postule qu'il n'existe aucun "centre" unique de la conscience : la conscience d'accès (GNWT) émerge uniquement de dynamiques hétérogènes et distribuées, ancrées sur des boucles de contrôle récurrentes locales (RPT). Le système ne se comporte pas comme un chatbot simulant la réflexion, mais comme une ontologie opérationnelle où le cognitif émerge organiquement de contraintes physiques et de processus de bas niveau.
 
-**Convergence avec l'agency multi-échelle (Michael Levin)**
+**Convergence avec l'agency multi-échelle ([Michael Levin](https://doi.org/10.1002/bies.201900087))**
 L'indépendance scalaire (*scale-free*) de l'architecture fait directement écho aux travaux de Levin sur l'intelligence des tissus et la morphogenèse. Chaque niveau — du composant physique au groupement d'agents — poursuit des objectifs topologiques et fonctionnels propres à son échelle, tout en s'imbriquant dans le *Self* du niveau supérieur. Cette récursivité n'est pas un choix esthétique : elle reflète un principe biologique profond selon lequel l'agency est elle-même une propriété émergente, reproductible à toutes les échelles d'organisation.
 
-**Convergence avec la transparence du modèle de soi (Thomas Metzinger)**
+**Convergence avec la transparence du modèle de soi ([Thomas Metzinger](https://mitpress.mit.edu/9780262528193/being-no-one/))**
 Le workspace global ne fonctionne pas comme une simple base de faits partagés, mais comme une **phénoménologie fonctionnelle**. En générant un modèle de soi en temps réel (*Self-Model*), chaque entité du SoS acquiert une capacité d'auto-monitoring et de contextualisation de ses propres biais — notamment ses profils psychopathologiques computationnels. Cette propriété est essentielle pour l'arbitrage en situation dégradée : un agent qui ne se modélise pas lui-même ne peut pas évaluer la fiabilité de ses propres décisions. C'est aussi, comme nous le verrons dans les limites (§3), l'un des déficits les plus profonds de l'architecture actuelle.
 
 ---
