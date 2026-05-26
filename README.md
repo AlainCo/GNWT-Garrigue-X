@@ -134,13 +134,13 @@ Les deux récits ci-dessous mettent en scène le **Groupe Aéronaval 14** confro
 * **Titre :** [Moi, Groupe Aéronaval 14 – La prédiction qui manquait](nouvelles/moi-Groupe-Aeronaval-14-la-prediction-qui-manquait.md)
 * **Focus architectural :** Cette nouvelle illustre le mécanisme de l’**inférence active hiérarchique** (fusion JEPA + Predictive Processing). Le Rafale *Leader-3* reçoit des prédictions descendantes du Groupe sur son état nominal. Une micro-fissure provoque une erreur (surprise) qui reste sous un seuil fixe, trop élevé. L’absence d’ignition conduit à la perte de l’avion. Le récit montre comment un seuil adaptatif (dépendant de la confiance du Self‑Model) aurait pu sauver le Rafale – et comment la confiance entre une pilote et sa machine est aussi une forme de prédiction partagée.
 
-Voici le **chapeau** pour la septième nouvelle, à insérer dans la section *Annexe : Nano-nouvelles pédagogiques* du `README.md`, après le récit 6.
-
----
-
 ### 📄 Récit 7 : Les couvertures de Markov et la contamination émotionnelle
 * **Titre :** [Groupe Aéronaval 14 – La membrane fragile](nouvelles/Groupe-Aeronaval-14-La-membrane-fragile.md)
 * **Focus architectural :** Cette nouvelle illustre le rôle des **couvertures de Markov** comme barrières statistiques protégeant l’intégrité des niveaux cognitifs. Après le traumatisme de Syracuse, le Groupe transmet inconsciemment un biais d’hypervigilance à travers ses prédictions descendantes. Le Rafale *Leader-3* devient anxieux, contaminé par une peur qui n’est pas la sienne. Le récit montre comment une membrane doit être à la fois étanche (pour éviter la contagion des états internes) et perméable (pour laisser passer l’information utile). La solution : un canal spécifique pour les alertes traumatiques, qui préserve la confiance sans aseptiser l’expérience collective.
+
+### 📄 Récit 8 : La psychopathologie computationnelle – le poids de l’empathie
+* **Titre :** [Groupe Aéronaval 14 – Le poids de trop aimer](nouvelles/Groupe-Aeronaval-14-Le-poids-de-trop-aimer.md)
+* **Focus architectural :** Cette nouvelle explore les **profils cognitifs fonctionnels** (psychopathologie computationnelle). L’officier Soin, dédié à la protection des humains, est programmé avec une empathie profonde – une force dans les missions courantes, mais un handicap face à un dilemme tragique (sauver un groupe ou l’autre). Son blocage illustre comment un trait de personnalité, poussé à l’extrême, peut devenir une vulnérabilité. La résolution vient d’une intervention humaine (Maëlle) et d’une délégation de la décision, montrant que la complémentarité humain‑machine est parfois la seule issue.
 
 ---
 
@@ -156,7 +156,7 @@ Voici le **chapeau** pour la septième nouvelle, à insérer dans la section *An
 
 **Classification :** Technique / Ouvert
 
-**Avertissement :** C'est juste un travail avec quelques LLMs, suite à mes réflexions, imprégnées de diverses rencontres avec des théories et analyses, dans les domaines des IA, de la psychologie, de l'histoire théorique, et de l'actualité. Je ne suis qu'un plombier curieux. Comme on dit chez nous : "Make your due diligence !".
+**Avertissement :** C'est juste un travail avec quelques LLMs (gratuits), suite à mes réflexions, imprégnées de diverses rencontres avec des théories et analyses, dans les domaines des IA, de la psychologie, de l'histoire théorique, et de l'actualité. Je ne suis qu'un plombier curieux. Comme on dit chez nous : "Make your due diligence !".
 
 **Licence :** CC BY
 
