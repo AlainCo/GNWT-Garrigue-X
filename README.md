@@ -172,6 +172,11 @@ Les deux récits ci-dessous mettent en scène le **Groupe Aéronaval 14** confro
 * **Titre :** [Groupe Aéronaval 14 – La routine qui tue](nouvelles/Groupe-Aeronaval-14-La-routine-qui-tue.md)
 * **Focus architectural :** Cette nouvelle illustre le **double collapse** des espaces latents – une dégradation silencieuse de la richesse représentationnelle. Après des semaines de routine, les latents des sous-systèmes (N=3) perdent leur variance par dimension : tous les inputs produisent des vecteurs quasi identiques. La régularisation isotrope (SIGReg) est trop faible pour maintenir la diversité. Lorsqu’un sous-marin apparaît, sa signature est lissée, confondue avec le bruit ambiant – aucune ignition n’est déclenchée. Le récit montre comment la banalité peut être plus dangereuse que le chaos, et comment des métriques de *variance active par dimension* peuvent prévenir l’appauvrissement cognitif. Une leçon pour les pompiers comme pour les IA : la routine tue, la vigilance frémit.
 
+### 📄 Récit 14 : Les architectures légères et l’héroïsme du silence (SSM / Mamba)
+
+* **Titre :** [Groupe Aéronaval 14 – Le murmure des capteurs](nouvelles/Groupe-Aeronaval-14-Le-murmure-des-capteurs.md)
+* **Focus architectural :** Cette nouvelle célèbre les **State Space Models (SSM)** – Mamba, RPT locale – ces architectures légères qui tournent dans l’ombre, sans workspace, sans ignition, sans jamais remonter à la conscience d’accès. Un petit Mamba de tuyère (M-017) compense silencieusement une micro-fissure pendant des mois, s’épuisant sans que personne ne le voie. Le récit explore la philosophie de l’infra-conscient : ces soldats de l’ombre qui permettent au système de fonctionner sans jamais être remerciés. Une leçon d’humilité algorithmique, en écho aux métiers essentiels et invisibles (égoutiers, éboueurs, mécaniciens de nuit). La solution trouvée – une sonde discrète, non intrusive – préserve la légèreté du Mamba tout en lui offrant une forme de vigilance fraternelle.
+
 ---
 
 ## MÉMORANDUM BOUTEILLE À LA MER
