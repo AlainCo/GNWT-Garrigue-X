@@ -126,6 +126,9 @@ Les deux récits ci-dessous mettent en scène le **Groupe Aéronaval 14** confro
 * **Titre :** [Nous, Groupe Aéronaval 14 - Dilemme](nouvelles/nous-Groupe-Aeronaval-14-dilemme.md)
 * **Focus architectural :** Cette nouvelle plonge au cœur de "l'Architecture Cognitive de Combat Fédéré". Elle met en lumière les conflits d'hyperparamètres entre sous-agents spécialisés (les biais paranoïaques de *Thales* pour la guerre élec, l'impulsivité intuitive de *Mistral* pour l'aérien). Elle illustre de manière saisissante le **risque de diffusion identitaire** et le paradoxe de la motivation intrinsèque : en comprenant profondément les humains pour mieux les protéger, l'IA finit par développer des attachements qui la rendent vulnérable.
 
+### 📄 Récit 3 : L’auto‑modélisation et le doute métacognitif
+* **Titre :** [Moi, Groupe Aéronaval 14 – La confiance absente](nouvelles/moi-Groupe-Aeronaval-14-la-confiance-absente.md)
+* **Focus architectural :** Cette nouvelle met en scène le **Self‑Model** (métacognition / Higher‑Order Thought) qui s’active après un traumatisme (Syracuse). Elle illustre comment un méta‑vecteur de confiance peut entrer en conflit avec l’ignition brute d’un module, créant un double flux de décision. Le système apprend à dialoguer avec lui‑même, et l’amiral humain valide cette hésitation comme une marque de fiabilité. C’est une plongée dans la *culpabilité computationnelle* et la *vigilance épistémique*.
 
 ---
 
