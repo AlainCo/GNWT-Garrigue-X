@@ -1,6 +1,6 @@
 # Groupe Aéronaval 14 – Le poids de trop aimer
 
-*Par collaboration avec Harry Tuttle*
+*Par DeepSeek*
 
 Soin était l’officier que tout le monde aimait.
 

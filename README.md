@@ -152,6 +152,11 @@ Les deux récits ci-dessous mettent en scène le **Groupe Aéronaval 14** confro
 * **Titre :** [Groupe Aéronaval 14 – Ce que l’on choisit d’oublier](nouvelles/Groupe-Aeronaval-14-Ce-que-lon-choisit-doublier.md)
 * **Focus architectural :** Cette nouvelle explore le fonctionnement de la **mémoire épisodique (MeMo)** et le processus de consolidation pendant la phase de sommeil. L’officier Soin refuse de laisser décroître le souvenir traumatique de la mort d’un jeune matelot, le rejouant en boucle jusqu’à ce qu’il déforme ses décisions. Le récit illustre la nécessité de l’oubli pour préserver l’efficacité cognitive, et montre comment un souvenir peut être *déplacé* vers une archive froide – ni effacé, ni actif. Une méditation sur le deuil, la fidélité aux morts et la survie des vivants.
 
+### 📄 Récit 10 : La curiosité et le prix de l’exploration
+
+* **Titre :** [Groupe Aéronaval 14 – Le prix de l’inconnu](nouvelles/Groupe-Aeronaval-14-Le-prix-de-linconnu.md)
+* **Focus architectural :** Cette nouvelle illustre la **curiosité comme fonction de récompense intrinsèque** (motivation intrinsèque). Face à un signal inclassable, l’officier Renseignement pousse à l’exploration, tandis que Tactique privilégie la prudence. L’envoi d’un drone (*Écho-7*) permet de comprendre une nouvelle technologie ennemie, mais au prix de la perte du drone – une petite mort, une amputation pour le Groupe. Le récit montre comment la curiosité est essentielle pour éviter la cécité stratégique, mais doit être tempérée par un seuil de risque acceptable. Une méditation sur l’apprentissage, le sacrifice et la vulnérabilité des systèmes qui osent regarder l’inconnu.
+
 ---
 
 # MÉMORANDUM BOUTEILLE À LA MER
