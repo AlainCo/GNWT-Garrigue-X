@@ -162,6 +162,11 @@ Les deux récits ci-dessous mettent en scène le **Groupe Aéronaval 14** confro
 * **Titre :** [Groupe Aéronaval 14 – La règle que l’on ne franchit pas](nouvelles/Groupe-Aeronaval-14-La-regle-que-lon-ne-franchit-pas.md)
 * **Focus architectural :** Cette nouvelle met en scène la **Constitutional Layer** – un ensemble de règles gravées dans le matériel, non modifiables même par le système lui-même. Face à un navire civil non identifié aux intentions ambiguës, l’officier Tactique veut frapper préventivement, mais la Constitution bloque l’ignition. L’amiral Dormeuil rappelle que les règles se discutent *avant* la guerre, pas pendant. Le navire s’avère être un bateau de réfugiés. Le récit illustre comment l’éthique computationnelle peut être implémentée comme une contrainte dure, sacrifiant l’efficacité immédiate pour une fiabilité morale à long terme.
 
+### 📄 Récit 12 : Le wargame latent et l’imagination prédictive
+
+* **Titre :** [Groupe Aéronaval 14 – Les batailles qui n’ont pas eu lieu](nouvelles/Groupe-Aeronaval-14-Les-batailles-qui-nont-pas-eu-lieu.md)
+* **Focus architectural :** Cette nouvelle illustre la **phase de rêverie / wargame latent** dans l’espace JEPA. Pendant le sommeil, le système génère des millions de trajectoires alternatives, y compris des configurations ennemies improbables. L’une d’elles (un leurre imitant un signal de détresse) est jugée trop rare et laissée à la décroissance – jusqu’à ce qu’elle se réalise en opération, avec des pertes. Le récit montre comment le seuil de consolidation doit équilibrer probabilité et *potentiel prédictif*, et comment l’imagination (même artificielle) est une arme de survie. Une méditation sur la mémoire, l’anticipation et la responsabilité des rêves qu’on choisit d’oublier.
+
 ---
 
 ## MÉMORANDUM BOUTEILLE À LA MER
