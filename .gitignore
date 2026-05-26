@@ -1,0 +1,21 @@
+
+# VS Code workspace
+*.code-workspace
+
+# VS Code local settings
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# backup, log, copies...
+*.bak
+*.log
+*.tmp
+tmp/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+# project generated files
+dist/
+build/
