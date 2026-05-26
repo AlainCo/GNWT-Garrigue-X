@@ -116,7 +116,7 @@ C'est un hommage discret aux esprits qui éclairent la route. Les papiers sont d
 
 L'architecture d'un Système de Systèmes (SoS) cognitif peut sembler abstraite. Pour en comprendre les implications opérationnelles, philosophiques et humaines à l'horizon 2040, l'utilisation de la fiction spéculative est un puissant outil pédagogique. 
 
-Les deux récits ci-dessous mettent en scène le **Groupe Aéronaval 14** confronté à la dure réalité de la guerre, illustrant comment les concepts techniques du mémorandum (GNWT, couvertures de Markov, consolidation de mémoire) se traduisent en une "vie intérieure" artificielle.
+Les deux récits ci-dessous mettent en scène le **Groupe Aéronaval 14** confronté à la dure réalité de la guerre, illustrant comment les concepts techniques du mémorandum se traduisent en une "vie intérieure" artificielle.
 
 ### 📄 Récit 1 : L'émergence du "Je" et la mémoire des traumatismes
 * **Titre :** [Moi, Groupe Aéronaval 14 - Nuit de doute](nouvelles/moi-Groupe-Aeronaval-14-nuit-de-doute.md)
