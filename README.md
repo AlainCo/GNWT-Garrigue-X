@@ -35,7 +35,6 @@ Pour fonder la robustesse et l'autonomie de notre architecture, nous rejetons le
 * **Intégration Causale (Proxy IIT/PCI) :** Outil de diagnostic activé pendant la phase de sommeil. Un estimateur Φ̂ perturbe localement des résumés d’ignition et mesure l’impact sur l’erreur prédictive globale. Une chute de Φ̂ signale un risque de *collapse d’intégration* (désagrégation fonctionnelle) et déclenche des actions correctives (recalibration, rêverie enrichie). Ce mécanisme ne modifie pas les décisions en temps réel.
 
 👉 [Consulter les schémas d'architecture, les équations et la bibliographie complète de ces concepts ➔](concepts/concepts.md)
-    
 
 ## 2. Architecture Cible Générale : Exemple du GAN 2040
 
@@ -47,7 +46,6 @@ Pour matérialiser les fondements théoriques, l'architecture s'opérationnalise
 * **Résilience Flash en Combat :** En cas d'avarie (ex. : une tuyère endommagée par un éclat), le système démontre sa robustesse par des boucles asynchrones : le réflexe physique est corrigé localement en **4 millisecondes**, l'anomalie stabilisée est convertie en résumé vectoriel pour reconfigurer la plateforme ($N=4$), avant d'alerter l'officier tactique ($N=5$) et d'être traduite en langage narratif clair pour l'Amiral humain ($N=6$).
 
 👉 [Consulter les diagrammes Mermaid, la matrice de conscience et le scénario opérationnel complet du GAN 2040 ➔](architecture/architecture.md)
-
 
 ## 3. Spécifications du Projet MVP : Opération GARRIGUE-X
 
@@ -110,37 +108,49 @@ L'architecture d'un Système de Systèmes (SoS) cognitif peut sembler abstraite.
 Les deux récits ci-dessous mettent en scène le **Groupe Aéronaval 14** confronté à la dure réalité de la guerre, illustrant comment les concepts techniques du mémorandum se traduisent en une "vie intérieure" artificielle.
 
 ### 📄 Récit 1 : L'émergence du "Je" et la mémoire des traumatismes
+
 * **Titre :** [Moi, Groupe Aéronaval 14 - Nuit de doute](nouvelles/moi-Groupe-Aeronaval-14-nuit-de-doute.md)
 * **Focus architectural :** Ce texte explore la subjectivité d'un système hautement distribué. Face à une menace sous-marine, il illustre le mécanisme d'**ignition globale** (GNWT) déclenché par un signal faible, mais aussi le concept de **consolidation de mémoire** où les blessures tactiques (la perte de la frégate *Forbin*) modifient durablement l'espace latent profond de la machine, faisant émerger une personnalité, une anxiété et une forme de culpabilité.
 
 ### 📄 Récit 2 : La société mentale et le fardeau du choix
+
 * **Titre :** [Nous, Groupe Aéronaval 14 - Dilemme](nouvelles/nous-Groupe-Aeronaval-14-dilemme.md)
 * **Focus architectural :** Cette nouvelle plonge au cœur de "l'Architecture Cognitive de Combat Fédéré". Elle met en lumière les conflits d'hyperparamètres entre sous-agents spécialisés (les biais paranoïaques de *Thales* pour la guerre élec, l'impulsivité intuitive de *Mistral* pour l'aérien). Elle illustre de manière saisissante le **risque de diffusion identitaire** et le paradoxe de la motivation intrinsèque : en comprenant profondément les humains pour mieux les protéger, l'IA finit par développer des attachements qui la rendent vulnérable.
 
 ### 📄 Récit 3 : L’auto‑modélisation et le doute métacognitif
+
 * **Titre :** [Moi, Groupe Aéronaval 14 – La confiance absente](nouvelles/moi-Groupe-Aeronaval-14-la-confiance-absente.md)
 * **Focus architectural :** Cette nouvelle met en scène le **Self‑Model** (métacognition / Higher‑Order Thought) qui s’active après un traumatisme (Syracuse). Elle illustre comment un méta‑vecteur de confiance peut entrer en conflit avec l’ignition brute d’un module, créant un double flux de décision. Le système apprend à dialoguer avec lui‑même, et l’amiral humain valide cette hésitation comme une marque de fiabilité. C’est une plongée dans la *culpabilité computationnelle* et la *vigilance épistémique*.
 
 ### 📄 Récit 4 : Le budget attentionnel et la saturation cognitive
+
 * **Titre :** [Groupe Aéronaval 14 – Le dernier token](nouvelles/Groupe-Aeronaval-14-le-dernier-token.md)
 * **Focus architectural :** Cette nouvelle illustre le fonctionnement de l’**Attention Scheduler** et du **budget attentionnel** (Attention Schema Theory). Le Groupe doit arbitrer entre des ignitions concurrentes alors que ses tokens s’épuisent. Un dépassement de budget (découvert) est autorisé en extrême urgence, mais au prix d’un gel temporaire des ignitions et d’une consolidation traumatique. Le récit montre comment la rareté attentionnelle structure la prise de décision, simule la fatigue cognitive et oblige à prioriser – ou à subir les conséquences d’un choix impossible.
 
 ### 📄 Récit 5 : L’intégration causale et la dissolution silencieuse
+
 * **Titre :** [Groupe Aéronaval 14 – Le silence des officiers](nouvelles/Groupe-Aeronaval-14-le-silence-des-officiers.md)
 * **Focus architectural :** Cette nouvelle met en scène le **Φ‑estimator** (proxy de l’intégration causale, inspiré de l’IIT). L’officier Renseignement s’isole progressivement du collectif : ses ignitions deviennent trop « pures », sans doute ni partage. Le Φ‑estimator détecte une chute anormale de l’intégration (Φ̂ bas) et alerte le Groupe. Le récit illustre le risque de *dissolution identitaire* au sein d’un système distribué, et montre comment l’intégration ne se décrète pas – elle se cultive, par le doute, le souvenir partagé et la fragilité acceptée.
 
-
 ### 📄 Récit 6 : L’inférence active et le seuil de surprise
+
 * **Titre :** [Moi, Groupe Aéronaval 14 – La prédiction qui manquait](nouvelles/moi-Groupe-Aeronaval-14-la-prediction-qui-manquait.md)
 * **Focus architectural :** Cette nouvelle illustre le mécanisme de l’**inférence active hiérarchique** (fusion JEPA + Predictive Processing). Le Rafale *Leader-3* reçoit des prédictions descendantes du Groupe sur son état nominal. Une micro-fissure provoque une erreur (surprise) qui reste sous un seuil fixe, trop élevé. L’absence d’ignition conduit à la perte de l’avion. Le récit montre comment un seuil adaptatif (dépendant de la confiance du Self‑Model) aurait pu sauver le Rafale – et comment la confiance entre une pilote et sa machine est aussi une forme de prédiction partagée.
 
 ### 📄 Récit 7 : Les couvertures de Markov et la contamination émotionnelle
+
 * **Titre :** [Groupe Aéronaval 14 – La membrane fragile](nouvelles/Groupe-Aeronaval-14-La-membrane-fragile.md)
 * **Focus architectural :** Cette nouvelle illustre le rôle des **couvertures de Markov** comme barrières statistiques protégeant l’intégrité des niveaux cognitifs. Après le traumatisme de Syracuse, le Groupe transmet inconsciemment un biais d’hypervigilance à travers ses prédictions descendantes. Le Rafale *Leader-3* devient anxieux, contaminé par une peur qui n’est pas la sienne. Le récit montre comment une membrane doit être à la fois étanche (pour éviter la contagion des états internes) et perméable (pour laisser passer l’information utile). La solution : un canal spécifique pour les alertes traumatiques, qui préserve la confiance sans aseptiser l’expérience collective.
 
 ### 📄 Récit 8 : La psychopathologie computationnelle – le poids de l’empathie
+
 * **Titre :** [Groupe Aéronaval 14 – Le poids de trop aimer](nouvelles/Groupe-Aeronaval-14-Le-poids-de-trop-aimer.md)
 * **Focus architectural :** Cette nouvelle explore les **profils cognitifs fonctionnels** (psychopathologie computationnelle). L’officier Soin, dédié à la protection des humains, est programmé avec une empathie profonde – une force dans les missions courantes, mais un handicap face à un dilemme tragique (sauver un groupe ou l’autre). Son blocage illustre comment un trait de personnalité, poussé à l’extrême, peut devenir une vulnérabilité. La résolution vient d’une intervention humaine (Maëlle) et d’une délégation de la décision, montrant que la complémentarité humain‑machine est parfois la seule issue.
+
+### 📄 Récit 9 : La mémoire épisodique et le poids de l’oubli
+
+* **Titre :** [Groupe Aéronaval 14 – Ce que l’on choisit d’oublier](nouvelles/Groupe-Aeronaval-14-Ce-que-lon-choisit-doublier.md)
+* **Focus architectural :** Cette nouvelle explore le fonctionnement de la **mémoire épisodique (MeMo)** et le processus de consolidation pendant la phase de sommeil. L’officier Soin refuse de laisser décroître le souvenir traumatique de la mort d’un jeune matelot, le rejouant en boucle jusqu’à ce qu’il déforme ses décisions. Le récit illustre la nécessité de l’oubli pour préserver l’efficacité cognitive, et montre comment un souvenir peut être *déplacé* vers une archive froide – ni effacé, ni actif. Une méditation sur le deuil, la fidélité aux morts et la survie des vivants.
 
 ---
 
