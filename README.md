@@ -49,7 +49,6 @@ Pour matérialiser les fondements théoriques, l'architecture s'opérationnalise
 👉 [Consulter les diagrammes Mermaid, la matrice de conscience et le scénario opérationnel complet du GAN 2040 ➔](architecture/architecture.md)
 
 
-
 ## 3. Spécifications du Projet MVP : Opération GARRIGUE-X
 
 Pour valider cette architecture sans les coûts d'infrastructure du domaine aéronautique, nous déployons un projet sur 12 mois dans un univers compétitif réel et complexe : **la garrigue méditerranéenne**. L'objectif est de prouver l'efficacité empirique du système à travers un démonstrateur agile, low-cost et pragmatique, articulé autour de quatre grands axes :
@@ -62,7 +61,6 @@ Pour valider cette architecture sans les coûts d'infrastructure du domaine aér
 Ce projet n'est pas une simulation de laboratoire : c'est une aventure d'ingénierie brute où le code se confronte à la poussière, aux ruptures de pente et au soleil. Un appel à compétences transdisciplinaire (robotique, machine learning, neurosciences, éthique) est ouvert pour livrer en 12 mois une meute de machines autonomes, résilientes et respectueuses de la Constitution.
 
 👉 [Découvrir la stack matérielle complète, le détail des trois phases d'apprentissage et les profils recherchés pour le MVP ➔](mvp/mvp.md)
-
 
 ## Discussion
 
@@ -92,7 +90,6 @@ Quatre axes structurent cette mise en perspective :
   L’architecture est pensée comme **scale‑free**, ce qui la rend potentiellement applicable à d’autres domaines : robotique distribuée, flottes autonomes, logistique, gestion de crise. Cette ouverture nécessite toutefois une expertise sectorielle pour valider la pertinence des mécanismes proposés.
 
 👉 [Accéder à la discussion complète : limites, benchmarks et perspectives ➔](discussion/discussion.md)
-
 
 ## Lectures de Référence
 
@@ -132,9 +129,10 @@ Les deux récits ci-dessous mettent en scène le **Groupe Aéronaval 14** confro
 * **Titre :** [Groupe Aéronaval 14 – Le silence des officiers](nouvelles/Groupe-Aeronaval-14-le-silence-des-officiers.md)
 * **Focus architectural :** Cette nouvelle met en scène le **Φ‑estimator** (proxy de l’intégration causale, inspiré de l’IIT). L’officier Renseignement s’isole progressivement du collectif : ses ignitions deviennent trop « pures », sans doute ni partage. Le Φ‑estimator détecte une chute anormale de l’intégration (Φ̂ bas) et alerte le Groupe. Le récit illustre le risque de *dissolution identitaire* au sein d’un système distribué, et montre comment l’intégration ne se décrète pas – elle se cultive, par le doute, le souvenir partagé et la fragilité acceptée.
 
----
 
-Tu peux copier-coller ce bloc. Vérifie le chemin exact du fichier (je pense que tu as nommé `Groupe-Aeronaval-14-le-silence-des-officiers.md` – si le nom diffère, ajuste le lien).
+### 📄 Récit 6 : L’inférence active et le seuil de surprise
+* **Titre :** [Moi, Groupe Aéronaval 14 – La prédiction qui manquait](nouvelles/moi-Groupe-Aeronaval-14-la-prediction-qui-manquait.md)
+* **Focus architectural :** Cette nouvelle illustre le mécanisme de l’**inférence active hiérarchique** (fusion JEPA + Predictive Processing). Le Rafale *Leader-3* reçoit des prédictions descendantes du Groupe sur son état nominal. Une micro-fissure provoque une erreur (surprise) qui reste sous un seuil fixe, trop élevé. L’absence d’ignition conduit à la perte de l’avion. Le récit montre comment un seuil adaptatif (dépendant de la confiance du Self‑Model) aurait pu sauver le Rafale – et comment la confiance entre une pilote et sa machine est aussi une forme de prédiction partagée.
 
 ---
 
