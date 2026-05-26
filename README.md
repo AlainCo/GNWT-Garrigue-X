@@ -109,9 +109,6 @@ C'est un hommage discret aux esprits qui éclairent la route. Les papiers sont d
 
 👉 [Parcourir la sélection complète des lectures de référence et accéder aux publications originales ➔](biblio/biblio.md)
 
-
-
-
 ## Annexe : Nano-nouvelles pédagogiques
 
 L'architecture d'un Système de Systèmes (SoS) cognitif peut sembler abstraite. Pour en comprendre les implications opérationnelles, philosophiques et humaines à l'horizon 2040, l'utilisation de la fiction spéculative est un puissant outil pédagogique. 
@@ -129,6 +126,18 @@ Les deux récits ci-dessous mettent en scène le **Groupe Aéronaval 14** confro
 ### 📄 Récit 3 : L’auto‑modélisation et le doute métacognitif
 * **Titre :** [Moi, Groupe Aéronaval 14 – La confiance absente](nouvelles/moi-Groupe-Aeronaval-14-la-confiance-absente.md)
 * **Focus architectural :** Cette nouvelle met en scène le **Self‑Model** (métacognition / Higher‑Order Thought) qui s’active après un traumatisme (Syracuse). Elle illustre comment un méta‑vecteur de confiance peut entrer en conflit avec l’ignition brute d’un module, créant un double flux de décision. Le système apprend à dialoguer avec lui‑même, et l’amiral humain valide cette hésitation comme une marque de fiabilité. C’est une plongée dans la *culpabilité computationnelle* et la *vigilance épistémique*.
+
+### 📄 Récit 4 : Le budget attentionnel et la saturation cognitive
+* **Titre :** [Groupe Aéronaval 14 – Le dernier token](nouvelles/Groupe-Aeronaval-14-le-dernier-token.md)
+* **Focus architectural :** Cette nouvelle illustre le fonctionnement de l’**Attention Scheduler** et du **budget attentionnel** (Attention Schema Theory). Le Groupe doit arbitrer entre des ignitions concurrentes alors que ses tokens s’épuisent. Un dépassement de budget (découvert) est autorisé en extrême urgence, mais au prix d’un gel temporaire des ignitions et d’une consolidation traumatique. Le récit montre comment la rareté attentionnelle structure la prise de décision, simule la fatigue cognitive et oblige à prioriser – ou à subir les conséquences d’un choix impossible.
+
+### 📄 Récit 5 : L’intégration causale et la dissolution silencieuse
+* **Titre :** [Groupe Aéronaval 14 – Le silence des officiers](nouvelles/Groupe-Aeronaval-14-le-silence-des-officiers.md)
+* **Focus architectural :** Cette nouvelle met en scène le **Φ‑estimator** (proxy de l’intégration causale, inspiré de l’IIT). L’officier Renseignement s’isole progressivement du collectif : ses ignitions deviennent trop « pures », sans doute ni partage. Le Φ‑estimator détecte une chute anormale de l’intégration (Φ̂ bas) et alerte le Groupe. Le récit illustre le risque de *dissolution identitaire* au sein d’un système distribué, et montre comment l’intégration ne se décrète pas – elle se cultive, par le doute, le souvenir partagé et la fragilité acceptée.
+
+---
+
+Tu peux copier-coller ce bloc. Vérifie le chemin exact du fichier (je pense que tu as nommé `Groupe-Aeronaval-14-le-silence-des-officiers.md` – si le nom diffère, ajuste le lien).
 
 ---
 
