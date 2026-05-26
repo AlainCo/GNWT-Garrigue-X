@@ -8,7 +8,6 @@ Notre approche rejette délibérément le réductionnisme des architectures mono
 
 L'architecture repose sur un principe central : **la conscience fonctionnelle d'accès n'est pas un phénomène monolithique, mais une propriété émergente à chaque niveau d'organisation suffisamment riche**, séparée des niveaux voisins par des frontières statistiques strictes (couvertures de Markov). Chaque niveau possède sa propre vie intérieure (RPT locale), et seul un sous-ensemble de ses états atteint le niveau supérieur sous forme de *résumé d'ignition*.
 
-
 ---
 
 ## 1. Concepts Clés et Fondements Théoriques
