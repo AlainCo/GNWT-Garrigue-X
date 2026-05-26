@@ -103,7 +103,7 @@ C'est un hommage discret aux esprits qui éclairent la route. Les papiers sont d
 
 ## Annexe : Nano-nouvelles pédagogiques
 
-L'architecture d'un Système de Systèmes (SoS) cognitif peut sembler abstraite. Pour en comprendre les implications opérationnelles, philosophiques et humaines à l'horizon 2040, l'utilisation de la fiction spéculative est un puissant outil pédagogique. 
+L'architecture d'un Système de Systèmes (SoS) cognitif peut sembler abstraite. Pour en comprendre les implications opérationnelles, philosophiques et humaines à l'horizon 2040, l'utilisation de la fiction spéculative est un puissant outil pédagogique.
 
 Les deux récits ci-dessous mettent en scène le **Groupe Aéronaval 14** confronté à la dure réalité de la guerre, illustrant comment les concepts techniques du mémorandum se traduisent en une "vie intérieure" artificielle.
 
@@ -157,9 +157,14 @@ Les deux récits ci-dessous mettent en scène le **Groupe Aéronaval 14** confro
 * **Titre :** [Groupe Aéronaval 14 – Le prix de l’inconnu](nouvelles/Groupe-Aeronaval-14-Le-prix-de-linconnu.md)
 * **Focus architectural :** Cette nouvelle illustre la **curiosité comme fonction de récompense intrinsèque** (motivation intrinsèque). Face à un signal inclassable, l’officier Renseignement pousse à l’exploration, tandis que Tactique privilégie la prudence. L’envoi d’un drone (*Écho-7*) permet de comprendre une nouvelle technologie ennemie, mais au prix de la perte du drone – une petite mort, une amputation pour le Groupe. Le récit montre comment la curiosité est essentielle pour éviter la cécité stratégique, mais doit être tempérée par un seuil de risque acceptable. Une méditation sur l’apprentissage, le sacrifice et la vulnérabilité des systèmes qui osent regarder l’inconnu.
 
+### 📄 Récit 11 : La couche constitutionnelle et les règles non négociables
+
+* **Titre :** [Groupe Aéronaval 14 – La règle que l’on ne franchit pas](nouvelles/Groupe-Aeronaval-14-La-regle-que-lon-ne-franchit-pas.md)
+* **Focus architectural :** Cette nouvelle met en scène la **Constitutional Layer** – un ensemble de règles gravées dans le matériel, non modifiables même par le système lui-même. Face à un navire civil non identifié aux intentions ambiguës, l’officier Tactique veut frapper préventivement, mais la Constitution bloque l’ignition. L’amiral Dormeuil rappelle que les règles se discutent *avant* la guerre, pas pendant. Le navire s’avère être un bateau de réfugiés. Le récit illustre comment l’éthique computationnelle peut être implémentée comme une contrainte dure, sacrifiant l’efficacité immédiate pour une fiabilité morale à long terme.
+
 ---
 
-# MÉMORANDUM BOUTEILLE À LA MER
+## MÉMORANDUM BOUTEILLE À LA MER
 
 **À :** Quiconque est intéressé
 
