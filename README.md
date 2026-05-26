@@ -141,7 +141,7 @@ Les deux récits ci-dessous mettent en scène le **Groupe Aéronaval 14** confro
 
 **Type :** Bouteille à la mer / Loisir / Spéculation / Recherche de gens compétents
 
-**Remerciements :** Merci à ChatGPT, Claude, Gemini, Perplexity, Le Chat Mistral, Grok, à Youtube et ses créateurs, au Collège de France, à Google, Wikipedia... J'en oublie.
+**Remerciements :** Merci à ChatGPT, Claude, Gemini, Perplexity, Le Chat Mistral, Grok, Deepseek, à Youtube et ses créateurs, au Collège de France, à Google, Wikipedia... J'en oublie.
 
 [![Licence Creative Commons](https://licensebuttons.net/l/by/4.0/88x31.png)](http://creativecommons.org/licenses/by/4.0/)
 
