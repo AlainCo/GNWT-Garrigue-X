@@ -1,4 +1,4 @@
-# GNWT-garigue-x : UNE BOUTEILLE À LA MER
+# GNWT-Garrigue-X : UNE BOUTEILLE À LA MER
 
 ## Executive Summary
 
