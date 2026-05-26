@@ -15,8 +15,8 @@
  | **RPT** | [Lamme, *Towards a true neural stance on consciousness* (2006)](https://doi.org/10.1016/j.tics.2006.09.001) |
  | **Predictive Processing** | [Clark, *Whatever next? Predictive brains, situated agents, and the future of cognitive science* (2013)](https://doi.org/10.1098/rstb.2013.0176) |
  | **Free-Energy Principle** | [Friston, *The free-energy principle: a unified brain theory* (2010)](https://doi.org/10.1038/nrn2787) |
- | **Self-Model Theory** | [Metzinger, *Being No One: The Self-Model Theory of Subjectivity* (2003)](https://mitpress.mit.edu/9780262528193/being-no-one/) |
- | **Agency multi-échelle** | [Levin, *The computational boundary of a ‘self’: developmental bioelectricity and the self-model* (2019)](https://doi.org/10.1002/bies.201900087) |
+ | **Self-Model Theory** | [Metzinger, *Being No One: The Self-Model Theory of Subjectivity* (2003)](https://direct.mit.edu/books/monograph/1991/Being-No-OneThe-Self-Model-Theory-of-Subjectivity?) |
+ | **Agency multi-échelle** | [Levin, *The computational boundary of a ‘self’: developmental bioelectricity and the self-model* (2019)](https://www.frontiersin.org/journals/psychology/articles/10.3389/fpsyg.2019.02688/full) |
  | **Intégration GNWT+RPT** | [Doerig et al., *An integrative, multiscale view on consciousness theories* (2024)](https://osf.io/preprints/psyarxiv/9byzu) *(Intègre GNWT, RPT, IIT, PP, NREP)* |
  | **Intégration GNWT + RPT (multiscale)** | [Storm et al., *An integrative, multiscale view on neural theories of consciousness* (2024)](https://doi.org/10.1016/j.neuron.2024.02.004) |
  | **Écosystèmes d'intelligence (Active Inference)** | [Friston et al., *Designing ecosystems of intelligence from first principles* (2024)](https://doi.org/10.1177/26339137231222481) *(Collective Intelligence)* |
