@@ -60,7 +60,7 @@ flowchart TD
 | Composant | Rôle dans l'architecture |
 |---|---|
 | I-JEPA (GPU) | Modèle du monde centralisé, workspace N=5 |
-| LangGraph modifié | Framework multi-agents, gestion des officiers |
+| [LangGraph](https://github.com/langchain-ai/langgraph) modifié | Framework multi-agents, gestion des officiers |
 | MeMo streaming | Capture et compression des ignitions de terrain |
 | Llama-3-8B (RAG) | Interface N=6, dialogue opérateur humain |
 | Constitutional layer | Contrainte dure : plante ≠ touchée, quelle que soit l'optimisation |

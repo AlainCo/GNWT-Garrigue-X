@@ -13,6 +13,10 @@
  | **GNWT - Fondements théoriques** | [Bernard Baars, *A Cognitive Theory of Consciousness* (1988)](https://philpapers.org/rec/BAAACT) |
  | **GNWT - Modèle neuronal** | [Stanislas Dehaene, *A Neuronal Model of a Global Workspace in Effortful Cognitive Tasks* (2006)](https://nyaspubs.onlinelibrary.wiley.com/doi/abs/10.1111/j.1749-6632.2001.tb05714.x) |
  | **RPT** | [Lamme, *Towards a true neural stance on consciousness* (2006)](https://doi.org/10.1016/j.tics.2006.09.001) |
+ | **Predictive Processing** | [Clark, *Whatever next? Predictive brains, situated agents, and the future of cognitive science* (2013)](https://doi.org/10.1098/rstb.2013.0176) |
+ | **Free-Energy Principle** | [Friston, *The free-energy principle: a unified brain theory* (2010)](https://doi.org/10.1038/nrn2787) |
+ | **Self-Model Theory** | [Metzinger, *Being No One: The Self-Model Theory of Subjectivity* (2003)](https://mitpress.mit.edu/9780262528193/being-no-one/) |
+ | **Agency multi-échelle** | [Levin, *The computational boundary of a ‘self’: developmental bioelectricity and the self-model* (2019)](https://doi.org/10.1002/bies.201900087) |
  | **Intégration GNWT+RPT** | [Doerig et al., *An integrative, multiscale view on consciousness theories* (2024)](https://osf.io/preprints/psyarxiv/9byzu) *(Intègre GNWT, RPT, IIT, PP, NREP)* |
  | **Intégration GNWT + RPT (multiscale)** | [Storm et al., *An integrative, multiscale view on neural theories of consciousness* (2024)](https://doi.org/10.1016/j.neuron.2024.02.004) |
  | **Écosystèmes d'intelligence (Active Inference)** | [Friston et al., *Designing ecosystems of intelligence from first principles* (2024)](https://doi.org/10.1177/26339137231222481) *(Collective Intelligence)* |
@@ -24,8 +28,10 @@
  | **World Models** | Hafner et al., *Mastering Atari with Discrete World Models* (2021) — [OpenReview](https://openreview.net/forum?id=0oabwyZbOu) |
  | **JEPA / world models** | LeCun, *A Path Towards Autonomous Machine Intelligence* (2022) — [pointer](https://yschoe.github.io/2022/08/24/LeCun-A-path-towards-autonomous-machine-intelligence.html) |
  | **World Models** | [Hafner et al., *Mastering Atari with Discrete World Models* (DreamerV3, 2023)](https://arxiv.org/abs/2010.02193) |
- 
  | **SSM / Mamba** | [Gu & Dao, *Mamba: Linear-Time Sequence Modeling with Selective State Spaces* (2023)](https://arxiv.org/abs/2312.00752) |
+ | **RWKV** | [Peng et al., *RWKV: Reinventing RNNs for the Transformer Era* (2023)](https://arxiv.org/abs/2305.13048) |
+ | **xLSTM** | [Beck et al., *xLSTM: Extended Long Short-Term Memory* (2024)](https://arxiv.org/abs/2405.04517) |
+ | **Barlow Twins** | [Zbontar et al., *Barlow Twins: Self-Supervised Learning via Redundancy Reduction* (2021)](https://arxiv.org/abs/2103.03230) |
  | **Curiosité intrinsèque** | [Oudeyer & Kaplan, *What is Intrinsic Motivation? A Typology of Computational Approaches* (2007)](https://doi.org/10.3389/neuro.12.006.2007) |
  | **Curiosité intrinsèque - Théorie formelle** | [Jürgen Schmidhuber, *Formal Theory of Creativity, Fun, and Intrinsic Motivation* (1990-2010)](https://www.researchgate.net/publication/224155374_Formal_Theory_of_Creativity_Fun_and_Intrinsic_Motivation_1990-2010) |
  | **Apprentissage autonome** | [Oudeyer, *Intrinsic Motivation Systems for Autonomous Learning* (2007)](https://web-archive.southampton.ac.uk/cogprints.org/5473/index.html) |

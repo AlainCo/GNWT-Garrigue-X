@@ -84,9 +84,9 @@ Cette séparation n’est pas arbitraire — elle reflète à la fois les contra
 
 ### Fondement théorique
 
-- **Joint Embedding Predictive Architecture (JEPA)** : LeCun (2022) – prédire des représentations abstraites (latentes) du monde plutôt que les observations brutes. Ignore le bruit inutile et favorise l’apprentissage de structures causales.
-- **Predictive Processing (PP)** : Friston, Clark (2013) – le cerveau est une machine à prédire qui minimise en permanence l’erreur de prédiction. La conscience émerge lorsque cette erreur ne peut être résorbée localement.
-- **Inférence active** : Friston et al. (2010) – un agent minimise son énergie libre en agissant sur le monde pour rendre ses prédictions vraies.
+- **Joint Embedding Predictive Architecture (JEPA)** : [LeCun, *A Path Towards Autonomous Machine Intelligence* (2022)](https://www.semanticscholar.org/paper/A-Path-Towards-Autonomous-Machine-Intelligence-LeCun-Courant/775f42ed458b8c5b0f2094ea4ff5b64c557b1a34) – prédire des représentations abstraites (latentes) du monde plutôt que les observations brutes. Ignore le bruit inutile et favorise l’apprentissage de structures causales.
+- **Predictive Processing (PP)** : [Clark, *Whatever next? Predictive brains, situated agents, and the future of cognitive science* (2013)](https://doi.org/10.1098/rstb.2013.0176) – le cerveau est une machine à prédire qui minimise en permanence l’erreur de prédiction. La conscience émerge lorsque cette erreur ne peut être résorbée localement.
+- **Inférence active** : [Friston, *The free-energy principle: a unified brain theory* (2010)](https://doi.org/10.1038/nrn2787) – un agent minimise son énergie libre en agissant sur le monde pour rendre ses prédictions vraies.
 - **Hiérarchies prédictives** : les niveaux supérieurs génèrent des prédictions (priors) qui contraignent les représentations des niveaux inférieurs ; l’erreur résiduelle remonte.
 
 ### Le concept
@@ -398,7 +398,7 @@ Ces points constituent des **axes de validation expérimentale** essentiels pour
 ### Fondement théorique
 
 - **Higher‑Order Thought (HOT)** : Rosenthal (2005) – un état mental devient conscient lorsqu’il est accompagné d’une pensée d’ordre supérieur à son sujet.  
-- **Self‑Model Theory of Subjectivity** : Metzinger (2003) – le soi phénoménal est un modèle que le cerveau construit de lui‑même en temps réel.  
+- **Self‑Model Theory of Subjectivity** : [Metzinger (2003)](https://mitpress.mit.edu/9780262528193/being-no-one/) – le soi phénoménal est un modèle que le cerveau construit de lui‑même en temps réel.  
 - **Métacognition en IA** : modèles de confiance, prédiction de performance, calibration des décisions.  
 - **Applications récentes** : [Bahrami et al., *Metacognitive reinforcement learning* (2024)](https://arxiv.org/abs/2401.08099) – l’auto‑évaluation améliore l’adaptation.
 
