@@ -66,13 +66,6 @@ Ce projet n'est pas une simulation de laboratoire : c'est une aventure d'ingéni
 
 ## Discussion
 
-Voici une version **plus directe, moins personnelle**, qui garde le ton clair et accessible que tu veux, tout en restant suffisamment sérieuse pour attirer l’œil d’un expert.  
-Elle va droit au but, sans introspection, et met en avant les sujets techniques de manière concise et attractive.
-
----
-
-## Discussion
-
 Cette section clarifie les limites actuelles de l’approche et les points qui nécessitent une validation plus approfondie. Les concepts présentés — **couvertures de Markov imbriquées**, **dualité RPT/GNWT**, **JEPA prédictif**, **SSMs temps réel**, **profils computationnels**, **mémoire épisodique MeMo** — ouvrent des perspectives intéressantes, mais soulèvent aussi plusieurs questions techniques majeures.
 
 Quatre axes structurent cette mise en perspective :
