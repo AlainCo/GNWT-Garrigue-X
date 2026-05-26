@@ -134,7 +134,7 @@ Les deux récits ci-dessous mettent en scène le **Groupe Aéronaval 14** confro
 
 ### 📄 Récit 6 : L’inférence active et le seuil de surprise
 
-* **Titre :** [Moi, Groupe Aéronaval 14 – La prédiction qui manquait](nouvelles/moi-Groupe-Aeronaval-14-la-prediction-qui-manquait.md)
+* **Titre :** [Moi, Groupe Aéronaval 14 – La prédiction qui manquait](nouvelles/Groupe-Aeronaval-14-la-prediction-qui-manquait.md)
 * **Focus architectural :** Cette nouvelle illustre le mécanisme de l’**inférence active hiérarchique** (fusion JEPA + Predictive Processing). Le Rafale *Leader-3* reçoit des prédictions descendantes du Groupe sur son état nominal. Une micro-fissure provoque une erreur (surprise) qui reste sous un seuil fixe, trop élevé. L’absence d’ignition conduit à la perte de l’avion. Le récit montre comment un seuil adaptatif (dépendant de la confiance du Self‑Model) aurait pu sauver le Rafale – et comment la confiance entre une pilote et sa machine est aussi une forme de prédiction partagée.
 
 ### 📄 Récit 7 : Les couvertures de Markov et la contamination émotionnelle
