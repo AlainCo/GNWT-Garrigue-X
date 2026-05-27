@@ -7,6 +7,9 @@
 !.vscode/extensions.json
 !.vscode/settings.json
 
+#obsidian
+.obsidian/
+
 # backup, log, copies...
 *.bak
 *.log
