@@ -1,0 +1,12 @@
+version: 1
+
+translation:
+  rules:
+    - match: "*.md"
+      profile: romantic
+      hints: |
+        Use a narrative tone.
+        Keep metaphors vivid but readable.
+reference_index:
+  rules:
+    - match: "**/*.md"

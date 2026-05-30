@@ -1,0 +1,12 @@
+version: 1
+
+translation:
+  rules:
+    - match: "**/*.md"
+      profile: technical
+    - match: "**/opinion-*.md"
+      exclude: true
+reference_index:
+  rules:
+    - match: "**/opinion-*.md"
+      exclude: true

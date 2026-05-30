@@ -1,0 +1,13 @@
+version: 1
+
+translation:
+  rules:
+    - match: "**/*.md"
+      profile: technical
+    - match: "work/**/*.md"
+      exclude: true
+
+reference_index:
+  rules:
+    - match: "work/**/*.md"
+      exclude: true    
