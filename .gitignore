@@ -15,6 +15,7 @@
 *.log
 *.tmp
 tmp/
+work/
 
 # OS generated files
 .DS_Store

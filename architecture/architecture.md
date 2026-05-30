@@ -302,23 +302,3 @@ Ce mécanisme maintient la cohérence des flux latents à travers les couverture
 
 Ces contraintes assurent la stabilité de l’architecture GAN 2040 dans les scénarios de panne, de combat et de coopération distribuée.
 
-
-
-## Impact sur `architecture.md`
-
-1. **Renommer les flèches descendantes** : dans tous les diagrammes, remplacer « Priors Contextuels » par **« Prédictions (top-down) »**.
-2. **Ajouter la notion de seuil adaptatif** : dans les boîtes GNWT, indiquer un paramètre `seuil_surprise` (fonction du budget attentionnel et de la confiance).
-3. **Mettre à jour le scénario de panne** : l’anomalie ne remonte que si l’erreur de prédiction dépasse le seuil. Ajouter une étape où la prédiction descendante est comparée à l’ignition réelle.
-
-Extrait modifié du schéma de communication inter‑niveaux :
-
-```mermaid
-flowchart LR
-    N5["N=5 : Groupe"] -->|"Prédiction du résumé attendu"| N4["N=4 : Rafale"]
-    N4 -->|"Ignition si erreur ≥ seuil"| N5
-```
-
-
-
-
-
