@@ -23,3 +23,35 @@ Thumbs.db
 # project generated files
 dist/
 build/
+
+# VS Code workspace
+*.code-workspace
+
+# VS Code local settings
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+#obsidian
+.obsidian/
+
+# backup, log, copies...
+*.bak
+*.log
+*.tmp
+tmp/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+
+#do-my-work generated files
+work/
+references.index.md
+references.index.yaml
+spurious-files.md
+*.review.html
+**/*.review.html
+*.references.md
+**/*.references.md
