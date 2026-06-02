@@ -17,3 +17,5 @@ reference_index:
   rules:
     - match: "work/**/*.md"
       exclude: true
+    - match: "Ideas-Todo.md"
+      exclude: true
