@@ -36,5 +36,3 @@ Utiliser les marqueurs suivants lorsquâ€™ils permettent de clarifier la prioritÃ
 ## Configuration
 
 - configurer Do-My-work
-
-
