@@ -6,12 +6,16 @@ translation:
       profile: technical
       translated_document_header: |
         # GNWT-Garrigue-X-en : message in a bottle, set adrift
-        > ✨ This README from  project **GNWT-Garrigue-X** was translated automatically with **Do-My-Work** — a tool designed to make projects speak globally.
+        > ✨ This README from  project [**GNWT-Garrigue-X**](https://github.com/AlainCo/GNWT-Garrigue-X) was translated automatically with [**Do-My-Work**](https://github.com/AlainCo/do-my-work) — a tool designed to make projects speak globally.
+
         > ⚠️ Minor imperfections may remain — feel free to open an issue if something seems unclear.
+
         > ⚠️ Like a message in a bottle set adrift, it may not be perfect — but hopefully, it still finds you.
     - match: "**/*.md"
       profile: technical
     - match: "work/**/*.md"
+      exclude: true
+    - match: "docs/**/*.md"
       exclude: true
 reference_index:
   rules:
