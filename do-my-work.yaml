@@ -19,3 +19,15 @@ reference_index:
       exclude: true
     - match: "docs/**/*.md"
       exclude: true
+spurious:
+  rules:
+    - match: "**/*.review.html"
+      exclude: true
+    - match: "**/*.index.md"
+      exclude: true
+    - match: "**/*.references.md"
+      exclude: true
+    - match: "**/.gitignore"
+      exclude: true
+    - match: ".git/**/*"
+      exclude: true
