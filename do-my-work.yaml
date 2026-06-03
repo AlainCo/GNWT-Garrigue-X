@@ -13,15 +13,19 @@ translation:
         > ⚠️ Like a message in a bottle set adrift, it may not be perfect — but hopefully, it still finds you.
     - match: "**/*.md"
       profile: technical
-    - match: "work/**/*.md"
+    - match: "work/**/*"
       exclude: true
-    - match: "docs/**/*.md"
+    - match: "docs/**/*"
+      exclude: true
+    - match: "tools/**/*"
       exclude: true
 reference_index:
   rules:
-    - match: "work/**/*.md"
+    - match: "work/**/*"
       exclude: true
-    - match: "docs/**/*.md"
+    - match: "docs/**/*"
+      exclude: true
+    - match: "tools/**/*"
       exclude: true
 spurious:
   rules:
@@ -34,4 +38,8 @@ spurious:
     - match: "**/.gitignore"
       exclude: true
     - match: ".git/**/*"
+      exclude: true
+    - match: "docs/**/*"
+      exclude: true
+    - match: "tools/**/*"
       exclude: true
