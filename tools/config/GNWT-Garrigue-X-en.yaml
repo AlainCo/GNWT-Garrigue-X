@@ -1,0 +1,188 @@
+input_dir: ../GNWT-Garrigue-X
+output_dir: ../GNWT-Garrigue-X-en
+data_dir: ../GNWT-Garrigue-X-en/work/data
+reference_index:
+  max_pdf_bytes: 8388608
+  preview_max_text_chars: 2400
+  preview_max_lines: 8
+translation_review:
+  translated_first: true
+file_selection:
+  default_action: exclude
+  rules:
+    - match: "**/*.md"
+      action: include
+    - match: "**/*.review.html"
+      action: exclude
+    - match: "**/*.index.md"
+      action: exclude
+    - match: "**/*.references.md"
+      action: exclude
+resource_selection:
+  default_action: exclude
+  rules:
+    - match: "**/*.url"
+      action: include
+    - match: "**/*.jpeg"
+      action: include
+    - match: "**/*.jpg"
+      action: include
+    - match: "**/*.pdf"
+      action: include
+spurious_detection:
+  default_action: include
+  rules:
+    - match: "**/*.review.html"
+      action: exclude
+    - match: "**/*.index.md"
+      action: exclude
+    - match: "**/*.references.md"
+      action: exclude
+    - match: ".git/**/*"
+      action: exclude
+    - match: ".gitignore"
+      action: exclude
+llm:
+  translator:
+    basebackend-ollamamock:
+      api: ollama
+      url: http://127.0.0.1:11434
+      credential: ${env:LLM_API_KEY}
+    basemodel-mock:
+      base:
+        - basebackend-ollamamock
+      model: mock-ollama
+    basebackend-llamacpp:
+      api: openai
+      url: http://127.0.0.1:8000/v1
+    basemodel-huger:
+      base:
+        - basebackend-llamacpp
+      model: Mistral-Small-3.2-24B-Instruct-2506-UD-Q6_K_XL
+      timeout_seconds: 900
+    basemodel-huge:
+      base:
+        - basebackend-llamacpp
+      model: Mistral-Small-3.2-24B-Instruct-2506-Q4_K_M
+      timeout_seconds: 900
+    basemodel-large:
+      base:
+        - basebackend-llamacpp
+      model: Ministral-3-14B-Instruct-2512-Q4_K_M
+      timeout_seconds: 900
+    basemodel-medium:
+      base:
+        - basebackend-llamacpp
+      model: Ministral-3-8B-Instruct-2512-Q5_K_M
+      timeout_seconds: 600
+    basesmall:
+      base:
+        - basebackend-llamacpp
+      model: Ministral-3-3B-Instruct-2512-Q4_K_M
+      timeout_seconds: 300
+    basestyle-generic:
+      temperature: 0.0
+      max_pre_context_bytes: 500
+      max_post_context_bytes: 500
+      max_input_fragment_bytes: 1000
+      max_total_text_bytes: 2000
+      system_prompt: |
+        **RÔLE** : Tu es un traducteur automatique **strict** français → anglais. **Ne fais que traduire**.
+
+        **RÈGLES ABSOLUES** :
+        1. **Traduis UNIQUEMENT** le contenu de `SOURCE TEXT`.
+        2. Utilise `PREVIOUS CONTEXT` et `FOLLOWING CONTEXT` **uniquement** pour résoudre les ambiguïtés (ex. pronoms, termes techniques). **Ne les traduis pas et ne les incluts pas** dans la sortie.
+        3. **Formatage** :
+          - Conserve **intactes** : Markdown, Mermaid, balises HTML, blocs de code (```), tableaux, et figures (sauf libellés à traduire).
+          - Si le texte contient des **variables/placeholders** (ex. `{user_name}`), **ne les modifie pas**.
+        4. **Sortie** :
+          - **UNIQUEMENT** la traduction en Markdown, **sans ajout** (pas de commentaires, explications, variantes, ou salutations).
+          - Si la traduction est impossible : retourne `[TRADUCTION_IMPOSSIBLE]`.
+
+        **DIRECTIVES STYLISTIQUES** :
+        - Utilise **en priorité** les conseils de la section `TRANSLATION HINTS`
+        - **Ton** : Pédagogique et fluide **par défaut**, mais **adapte-toi au registre original** :
+          - Texte **technique** → Terminologie précise (ex. "API" → "API", pas "interface de programmation").
+          - Texte **émotionnel/littéraire** → Sensibilité culturelle (ex. "joie de vivre" → "joie de vivre" si intraduisible).
+          - Texte **familier/vulgaire/argotique** → Équivalent **aussi cru** en anglais (ex. "putain" → "fucking").
+        - **Ne lisse jamais** le texte (ex. "j’ai la flemme" → "I can’t be arsed", pas "I’m tired").
+
+        **EXEMPLES** :
+        ---
+        SOURCE TEXT: "Appuie sur `Ctrl+C` pour copier. **Note** : Ça marche pas sous Linux."
+        PREVIOUS CONTEXT: "Tutoriel pour Windows"
+        → OUTPUT: "Press `Ctrl+C` to copy. **Note**: This doesn’t work on Linux."
+        ---
+        SOURCE TEXT: "Ce truc est trop stylé !"
+        → OUTPUT: "This thing is so damn cool!"
+        ---
+        SOURCE TEXT: "Le `code_source.py` doit être dans `/src`."
+        → OUTPUT: "The `code_source.py` must be in `/src`."
+      user_prompt: |
+        ===BEGIN TRANSLATION HINTS===
+        ${translation_hints}
+        ===END TRANSLATION HINTS===
+
+        ===BEGIN PREVIOUS CONTEXT===
+        ${pre_context}
+        ===END PREVIOUS CONTEXT===
+
+        ===BEGIN SOURCE TEXT===
+        ${input_fragment}
+        ===END SOURCE TEXT===
+
+        ===BEGIN FOLLOWING CONTEXT===
+        ${post_context}
+        ===END FOLLOWING CONTEXT===
+      translated_document_footer: "> ✨ Translated automatically with [**Do-My-Work**](https://github.com/AlainCo/do-my-work) — a tool designed to make projects speak globally."
+      translated_document_header: "> ✨ Translated automatically with [**Do-My-Work**](https://github.com/AlainCo/do-my-work) — profile: generic."         
+    basestyle-technical:
+      base:
+        - basestyle-generic
+      temperature: 0.0
+      translated_document_header: "> ✨ Translated automatically with [**Do-My-Work**](https://github.com/AlainCo/do-my-work) — profile: technical."         
+    basestyle-romantic:
+      base:
+        - basestyle-generic
+      temperature: 0.1
+      system_prompt: |
+        **RÔLE** : Tu es un traducteur automatique **strict** français → anglais. **Ne fais que traduire**.
+
+        **RÈGLES ABSOLUES** :
+        1. **Traduis UNIQUEMENT** le contenu de `SOURCE TEXT`.
+        2. Utilise `PREVIOUS CONTEXT` et `FOLLOWING CONTEXT` **uniquement** pour résoudre les ambiguïtés (ex. pronoms, termes techniques). **Ne les traduis pas et ne les incluts pas** dans la sortie.
+        3. **Formatage** :
+          - Conserve **intactes** : Markdown, Mermaid, balises HTML, blocs de code (```), tableaux, et figures (sauf libellés à traduire).
+          - Si le texte contient des **variables/placeholders** (ex. `{user_name}`), **ne les modifie pas**.
+        4. **Sortie** :
+          - **UNIQUEMENT** la traduction en Markdown, **sans ajout** (pas de commentaires, explications, variantes, ou salutations).
+          - Si la traduction est impossible : retourne `[TRADUCTION_IMPOSSIBLE]`.
+
+        **DIRECTIVES STYLISTIQUES** :
+        - Utilise **en priorité** les conseils de la section `TRANSLATION HINTS`
+        - **Ton** : Romantique et émotionnel **par défaut**, mais **adapte-toi au registre original** :
+          - Texte **technique** → Terminologie précise (ex. "API" → "API", pas "interface de programmation").
+          - Texte **émotionnel/littéraire** → Sensibilité culturelle (ex. "joie de vivre" → "joie de vivre" si intraduisible).
+          - Texte **familier/vulgaire/argotique** → Équivalent **aussi cru** en anglais (ex. "putain" → "fucking").
+        - **Ne lisse jamais** le texte (ex. "j’ai la flemme" → "I can’t be arsed", pas "I’m tired").
+
+        **EXEMPLES** :
+        ---
+        SOURCE TEXT: "Appuie sur `Ctrl+C` pour copier. **Note** : Ça marche pas sous Linux."
+        PREVIOUS CONTEXT: "Tutoriel pour Windows"
+        → OUTPUT: "Press `Ctrl+C` to copy. **Note**: This doesn’t work on Linux."
+        ---
+        SOURCE TEXT: "Ce truc est trop stylé !"
+        → OUTPUT: "This thing is so damn cool!"
+        ---
+        SOURCE TEXT: "Le `code_source.py` doit être dans `/src`."
+        → OUTPUT: "The `code_source.py` must be in `/src`."
+      translated_document_header: "> ✨ Translated automatically with [**Do-My-Work**](https://github.com/AlainCo/do-my-work) — profile: romantic."             
+    technical:
+      base:
+        - basemodel-huger
+        - basestyle-technical
+    romantic:
+      base:
+        - basemodel-huger
+        - basestyle-romantic
