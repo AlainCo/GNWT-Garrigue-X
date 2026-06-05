@@ -74,6 +74,9 @@ call :rundomywork copy-resource-tree
 echo Running translate-document-tree with review enabled...
 call :rundomywork translate-document-tree --with-review
 
+echo Running again translate-document-tree with review enabled, and trace LLM for debug...
+call :rundomywork translate-document-tree --with-review --trace-llm
+
 echo Running  spurious-file-report...
 call :rundomywork  spurious-file-report
 
