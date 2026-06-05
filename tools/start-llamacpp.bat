@@ -63,6 +63,11 @@ if not exist "%LLAMA_ARG_MODEL%" (
     exit /b 1
 )
 
+set TS=%DATE:~6,4%%DATE:~3,2%%DATE:~0,2%-%TIME:~0,2%%TIME:~3,2%
+set TS=%TS: =0%
+if NOT "%LLAMA_ARG_LOG_FILE_BY_DATE%" == "" (
+	set LLAMA_ARG_LOG_FILE=%LLAMA_ARG_LOG_FILE_BY_DATE%.%TS%.log
+)
 
 :: ================== performance configuration
 :: context
