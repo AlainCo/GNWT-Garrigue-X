@@ -57,7 +57,3 @@
  | **Thématique** | **Référence clé** |
  |-------------|-------------------|
  | **Wargame de minage** | [*Full Métal Planète*, Jeu de plateau Ludodélire](https://www.youtube.com/watch?v=_oN4YW_v8uI) |
-
-
-
-
