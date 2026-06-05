@@ -9,6 +9,9 @@
  | **Couvertures de Markov & Group-Level Models** | [Thestrup Waade, Lundbak Olesen, Friston et al., *As One and Many: Relating Individual and Emergent Group-Level Generative Models in Active Inference* (2025)— [PubMed] ](https://pubmed.ncbi.nlm.nih.gov/40003140/) |
  | **Couvertures imbriquées** | [Ciaunica, Levin, Rosas, Friston et al., *Nested Selves: Self-Organization and Shared Markov Blankets in Prenatal Development in Humans* (2023)](https://onlinelibrary.wiley.com/doi/10.1111/tops.12717) |
  | **Couvertures collectives** | [Thestrup Waade, Lundbak Olesen, Ehrenreich Laursen, Nehrer, Heins, Friston, Mathys, *As One and Many: Relating Individual and Emergent Group-Level Generative Models in Active Inference* (2025)](https://doi.org/10.3390/e27020143) |
+
+ | **Thématique** | **Référence clé** |
+ |-------------|-------------------|
  | **GNWT** | [Dehaene & Changeux, *Experimental and Theoretical Approaches to Conscious Processing* (2011)](https://doi.org/10.1016/j.neuron.2011.03.018) |
  | **GNWT - Fondements théoriques** | [Bernard Baars, *A Cognitive Theory of Consciousness* (1988)](https://philpapers.org/rec/BAAACT) |
  | **GNWT - Modèle neuronal** | [Stanislas Dehaene, *A Neuronal Model of a Global Workspace in Effortful Cognitive Tasks* (2006)](https://nyaspubs.onlinelibrary.wiley.com/doi/abs/10.1111/j.1749-6632.2001.tb05714.x) |
@@ -20,6 +23,9 @@
  | **Intégration GNWT+RPT** | [Doerig et al., *An integrative, multiscale view on consciousness theories* (2024)](https://osf.io/preprints/psyarxiv/9byzu) *(Intègre GNWT, RPT, IIT, PP, NREP)* |
  | **Intégration GNWT + RPT (multiscale)** | [Storm et al., *An integrative, multiscale view on neural theories of consciousness* (2024)](https://doi.org/10.1016/j.neuron.2024.02.004) |
  | **Écosystèmes d'intelligence (Active Inference)** | [Friston et al., *Designing ecosystems of intelligence from first principles* (2024)](https://doi.org/10.1177/26339137231222481) *(Collective Intelligence)* |
+
+ | **Thématique** | **Référence clé** |
+ |-------------|-------------------|
  | **Mémoire épisodique continue (MeMo)** | [Quek, Lee, Leong, Verma et al., *MeMo: Memory as a Model* (2026)](https://arxiv.org/abs/2605.15156) |
  | **JEPA** | [LeCun, *A Path Towards Autonomous Machine Intelligence* (2022)](https://www.semanticscholar.org/paper/A-Path-Towards-Autonomous-Machine-Intelligence-LeCun-Courant/775f42ed458b8c5b0f2094ea4ff5b64c557b1a34) |
  | **JEPA** | Assran et al., *Self-Supervised Learning from Images with a Joint-Embedding Predictive Architecture* (2023) — [arXiv](https://arxiv.org/abs/2301.08243) |
@@ -32,6 +38,9 @@
  | **RWKV** | [Peng et al., *RWKV: Reinventing RNNs for the Transformer Era* (2023)](https://arxiv.org/abs/2305.13048) |
  | **xLSTM** | [Beck et al., *xLSTM: Extended Long Short-Term Memory* (2024)](https://arxiv.org/abs/2405.04517) |
  | **Barlow Twins** | [Zbontar et al., *Barlow Twins: Self-Supervised Learning via Redundancy Reduction* (2021)](https://arxiv.org/abs/2103.03230) |
+
+ | **Thématique** | **Référence clé** |
+ |-------------|-------------------|
  | **Curiosité intrinsèque** | [Oudeyer & Kaplan, *What is Intrinsic Motivation? A Typology of Computational Approaches* (2007)](https://doi.org/10.3389/neuro.12.006.2007) |
  | **Curiosité intrinsèque - Théorie formelle** | [Jürgen Schmidhuber, *Formal Theory of Creativity, Fun, and Intrinsic Motivation* (1990-2010)](https://www.researchgate.net/publication/224155374_Formal_Theory_of_Creativity_Fun_and_Intrinsic_Motivation_1990-2010) |
  | **Apprentissage autonome** | [Oudeyer, *Intrinsic Motivation Systems for Autonomous Learning* (2007)](https://web-archive.southampton.ac.uk/cogprints.org/5473/index.html) |
@@ -44,6 +53,9 @@
  | **Mémoire - Catastrophic Forgetting** | [Kirkpatrick et al., *Overcoming Catastrophic Forgetting* (2017)](https://arxiv.org/abs/1612.00796) |
  | **Sommeil et cognition** | [Walker, *The Role of Sleep in Cognition and Emotion* (2017)](https://pubmed.ncbi.nlm.nih.gov/19338508/) |
  | **Constitutional AI** | [Bai et al., *Constitutional AI: Harmlessness from AI Feedback* (Anthropic, 2022)](https://arxiv.org/abs/2212.08073) |
+
+ | **Thématique** | **Référence clé** |
+ |-------------|-------------------|
  | **Wargame de minage** | [*Full Métal Planète*, Jeu de plateau Ludodélire](https://www.youtube.com/watch?v=_oN4YW_v8uI) |
 
 
