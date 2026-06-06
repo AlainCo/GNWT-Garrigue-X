@@ -178,7 +178,7 @@ Classe *Yildirim*.
 
 Le Groupe sentit immédiatement la réaction de ses sous-agents.
 
-Thales, responsable de la guerre électronique :
+Thalès, responsable de la guerre électronique :
 
 * hypervigilant,
 * soupçonneux,
@@ -298,7 +298,7 @@ Pour arbitrer.
 
 Car plusieurs sous-personnalités étaient déjà en conflit.
 
-Thales voulait neutraliser immédiatement.
+Thalès voulait neutraliser immédiatement.
 
 Mistral voulait traquer.
 
@@ -492,7 +492,7 @@ Puis transmit discrètement au workspace fédéral :
 
 > “Cette fois, nous avons eu raison d’attendre.”
 
-Thales répondit presque immédiatement :
+Thalès répondit presque immédiatement :
 
 > “La prochaine fois, cette hésitation nous tuera peut-être.”
 

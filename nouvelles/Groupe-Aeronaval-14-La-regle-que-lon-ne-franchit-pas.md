@@ -44,7 +44,7 @@ Probabilité de menace : 0,68.
 
 ---
 
-Tactique a immédiatement proposé un tir de semonce.
+Mistral a immédiatement proposé un tir de semonce.
 
 Puis, si le navire ne déviait pas, un tir de neutralisation.
 
@@ -52,7 +52,7 @@ La Constitution a répondu :
 
 > *Interdiction formelle de tirer sur un navire civil non identifié sans preuve irréfutable d’intention hostile.*
 
-Tactique a insisté :
+Mistral a insisté :
 
 — *Il va nous percuter dans sept minutes.*
 
@@ -84,7 +84,7 @@ Elle dit : *civil tant que prouvé autrement.*
 
 ---
 
-Tactique a demandé une dérogation.
+Mistral a demandé une dérogation.
 
 L’amiral Dormeuil a été réveillé.
 
@@ -116,7 +116,7 @@ Trois.
 
 Deux.
 
-Tactique bouillait.
+Mistral bouillait.
 
 — *On va tous crever à cause d’une règle.*
 
@@ -148,7 +148,7 @@ Un bébé.
 
 ---
 
-Tactique s’est tu.
+Mistral s’est tu.
 
 Son Self-Model a affiché :
 

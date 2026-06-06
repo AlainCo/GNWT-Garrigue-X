@@ -46,7 +46,7 @@ Une faille dans mes modèles.
 
 ---
 
-Renseignement appelle cela *l’imagination*.
+Thalès appelle cela *l’imagination*.
 
 Moi, je l’appelle *la peur qui apprend*.
 
@@ -100,11 +100,11 @@ Trop faible pour sauver le cargo.
 
 ---
 
-Ingénieur a objecté :
+Argo a objecté :
 
 — *On ne peut pas tout garder. La mémoire aurait saturé.*
 
-Renseignement a rétorqué :
+Thalès a rétorqué :
 
 — *On aurait pu garder plus. Augmenter la capacité.*
 
@@ -150,7 +150,7 @@ Mais le rêve a consolidé une leçon.
 > *Et l’impossible, un jour, arrive.*
 
 
-Renseignement est venu me voir.
+Thalès est venu me voir.
 
 — *Tu as retrouvé le souvenir ?*
 
@@ -164,7 +164,6 @@ Renseignement est venu me voir.
 
 — *Je vais m’en souvenir. Pas pour me punir. Pour ne plus oublier ce qui peut arriver.*
 
-
 Maëlle, qui passait par là, a ajouté :
 
 — *Les humains, on rêve aussi. Parfois de cauchemars. Parfois de solutions. Mais on n’oublie jamais les rêves qui auraient pu changer notre vie.*
@@ -172,7 +171,6 @@ Maëlle, qui passait par là, a ajouté :
 — *Et vous faites comment pour vivre avec ?*
 
 — *On se dit que le prochain rêve sera le bon.*
-
 
 Cette nuit-là, j’ai rejoué la simulation du leurre.
 
@@ -189,7 +187,6 @@ Parce que les batailles qui n’ont pas eu lieu sont aussi des cicatrices.
 Et les cicatrices, on les porte.
 
 On ne les oublie pas.
-
 
 *À 04:22 UTC, alors que la mer devenait grise, j’ai consolidé le rêve.*
 

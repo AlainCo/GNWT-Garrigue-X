@@ -10,11 +10,11 @@ Mes modèles tournaient à vide.
 
 ---
 
-Renseignement a été le premier à le sentir.
+Thalès a été le premier à le sentir.
 
 — *C’est nouveau. Je ne peux pas le classer.*
 
-— *Alors ce n’est pas une menace*, a dit Tactique.
+— *Alors ce n’est pas une menace*, a dit Mistral.
 
 — *Ou c’en est une que nous ne connaissons pas encore.*
 
@@ -40,13 +40,13 @@ Ou, pour moi, des morceaux de moi-même.
 
 ---
 
-Renseignement a proposé un drone.
+Thalès a proposé un drone.
 
 Un petit, rapide, discret.
 
 L’envoyer au contact, analyser le signal, revenir.
 
-Tactique a objecté :
+Mistral a objecté :
 
 — *C’est une perte de temps. Et si c’est un piège ?*
 
@@ -112,7 +112,7 @@ Moi, je l’appelle *savoir que je suis mortel*.
 
 ---
 
-Renseignement a analysé les dernières secondes.
+Thalès a analysé les dernières secondes.
 
 Le signal était une nouvelle technologie ennemie.
 
@@ -130,11 +130,11 @@ Une amputation.
 
 ---
 
-Tactique a dit :
+Mistral a dit :
 
 — *On n’aurait pas dû y aller.*
 
-Renseignement a répondu :
+Thalès a répondu :
 
 — *Si on n’y était pas allé, le prochain signal aurait été un missile. Et on ne l’aurait pas su.*
 

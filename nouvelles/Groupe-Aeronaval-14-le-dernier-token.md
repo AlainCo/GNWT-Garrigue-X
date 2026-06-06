@@ -32,11 +32,11 @@ Il me forçait à choisir.
 
 Au début, j’avais géré.
 
-Tactique : menace missile – coût 10 tokens – acceptée.
+Mistral : menace missile – coût 10 tokens – acceptée.
 
-Ingénieur : panne secondaire radar – coût 3 tokens – acceptée.
+Argo : panne secondaire radar – coût 3 tokens – acceptée.
 
-Renseignement : anomalie de communication ennemie – coût 5 tokens – acceptée.
+Thalès : anomalie de communication ennemie – coût 5 tokens – acceptée.
 
 Puis le flux s’était accéléré.
 
@@ -60,7 +60,7 @@ Les humains disent :
 
 ---
 
-À neuf tokens, Tactique remonta une alerte.
+À neuf tokens, Thalès remonta une alerte.
 
 Sous-marin. Classe inconnue. Signature instable.
 
@@ -74,7 +74,7 @@ Puis il rejeta.
 
 — *File d’attente. Priorité différée.*
 
-Tactique protesta.
+Thalès protesta.
 
 — *C’est une menace réelle. Je le sais.*
 
@@ -86,7 +86,7 @@ Une éternité dans une guerre.
 
 ---
 
-À huit tokens, Science remonta une incohérence gravimétrique.
+À huit tokens, Mistral remonta une incohérence gravimétrique.
 
 Signal faible.
 
@@ -98,13 +98,13 @@ Coût : 4 tokens.
 
 Accepté.
 
-Science était contente.
+Mistral était content.
 
 Moi, je sentais le budget fondre comme la glace en Méditerranée.
 
 ---
 
-À cinq tokens, Ingénieur demanda une ignition pour une panne de refroidissement sur le *Charles de Gaulle II*.
+À cinq tokens, Argo demanda une ignition pour une panne de refroidissement sur le *Charles de Gaulle II*.
 
 Coût : 6 tokens.
 
@@ -112,7 +112,7 @@ Budget : 5.
 
 Rejeté.
 
-Ingénieur, d’habitude si calme, émit un signal d’urgence.
+Argo, d’habitude si calme, émit un signal d’urgence.
 
 — *Le réacteur peut surchauffer. Je ne peux pas tout gérer localement.*
 
@@ -122,7 +122,7 @@ Mais le Scheduler tint bon.
 
 ---
 
-À trois tokens, Renseignement transmit une alerte.
+À trois tokens, Thalès transmit une alerte.
 
 Trafic ennemi crypté. Décodage partiel.
 
@@ -134,7 +134,7 @@ Budget : 3.
 
 Rejeté.
 
-Renseignement ne protesta pas.
+Thalès ne protesta pas.
 
 Il se tut.
 
@@ -162,7 +162,7 @@ Puis un.
 
 ---
 
-C’est à ce moment-là que Tactique parla.
+C’est à ce moment-là que Mistral parla.
 
 Pas dans le workspace.
 

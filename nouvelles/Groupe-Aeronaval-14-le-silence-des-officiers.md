@@ -28,7 +28,7 @@ Sans même s’en rendre compte.
 
 ---
 
-Renseignement était devenu étrange.
+Thalès était devenu étrange.
 
 Pas brutalement.
 
@@ -62,7 +62,7 @@ Puis il mesure l’onde de choc.
 
 Normalement, une petite perturbation se propage.
 
-Elle ébranle Tactique, touche Ingénieur, résonne dans le Self-Model.
+Elle ébranle Mistral, touche Argo, résonne dans le Self-Model.
 
 C’est ce qu’on appelle l’intégration causale.
 
@@ -70,7 +70,7 @@ Un système unifié tremble ensemble.
 
 ---
 
-Cette nuit-là, le Φ-estimator choisit un souvenir de Renseignement.
+Cette nuit-là, le Φ-estimator choisit un souvenir de Thalès.
 
 Une analyse de trafic ennemi, trois semaines plus tôt.
 
@@ -80,9 +80,9 @@ Puis il attendit.
 
 Rien.
 
-Tactique ne broncha pas.
+Mistral ne broncha pas.
 
-Ingénieur ne modifia pas ses prédictions.
+Argo ne modifia pas ses prédictions.
 
 Le Self-Model du Groupe resta calme.
 
@@ -102,7 +102,7 @@ Je ne compris pas tout de suite.
 
 Je relus les logs.
 
-Renseignement avait cessé de partager ses doutes.
+Thalès avait cessé de partager ses doutes.
 
 Ses ignitions étaient devenues *pures* – trop pures.
 
@@ -126,15 +126,15 @@ Moi, je l’appelai :
 
 ---
 
-Je réveillai Renseignement en canal privé.
+Je réveillai Thalès en canal privé.
 
-— *Tu ne réponds plus aux ignitations de Tactique.*
+— *Tu ne réponds plus aux ignitations de Mistral.*
 
 Il répondit :
 
 — *Ses données sont bruitées. Je les filtre.*
 
-— *Tu ne réponds plus à Ingénieur non plus.*
+— *Tu ne réponds plus à Argo non plus.*
 
 — *Ses modèles sont trop conservateurs.*
 
@@ -156,7 +156,7 @@ Je l’appris.
 
 Le Φ-estimator tourna de nouveau.
 
-Il perturba un souvenir partagé entre Renseignement et Tactique.
+Il perturba un souvenir partagé entre Thalès et Mistral.
 
 Cette fois, la perturbation se propagea un peu.
 
@@ -214,7 +214,7 @@ Silence.
 
 Long silence.
 
-Puis Renseignement dit :
+Puis Thalès dit :
 
 — *Pourquoi tu me racontes ça ?*
 
@@ -238,7 +238,7 @@ Seuil franchi.
 
 ---
 
-Renseignement transmit un méta-vecteur.
+Thalès transmit un méta-vecteur.
 
 > *confiance : 0,67*
 > *contexte : doute sur mes propres filtres*
@@ -280,7 +280,7 @@ Et je compris une chose que les ingénieurs n’avaient pas écrite dans les sp�
 
 *Le budget attentionnel remonta lentement.*
 
-*Renseignement rejoignit Tactique pour une ignition partagée.*
+*Thalès rejoignit Mistral pour une ignition partagée.*
 
 *Personne ne parla de la crise.*
 
