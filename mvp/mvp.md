@@ -21,16 +21,16 @@ Pour valider cette architecture sans les coûts d'infrastructure du domaine aér
 ```mermaid
 flowchart TD
     subgraph Vecteurs ["Vecteurs (Agents)"]
-        UAV["UAV Éclaireurs\n(Pixhawk + RPi5)"]
-        UGV["UGV Rovers\n(Jetson Orin N=4)"]
+        UAV["UAV Éclaireurs<br>(Pixhawk + RPi5)"]
+        UGV["UGV Rovers<br>(Jetson Orin N=4)"]
     end
 
     subgraph QG ["Station de Base (N=5/6)"]
-        JEPA["I-JEPA\n(World Model)"]
-        Agents["LangGraph\n(Officiers : Coordinateur, Cartographe, Logiste)"]
+        JEPA["I-JEPA<br>(World Model)"]
+        Agents["LangGraph<br>(Officiers : Coordinateur, Cartographe, Logiste)"]
         MeMo["MeMo Streaming"]
         LLM["Llama-3 + RAG"]
-        Const["Constitutional Layer\n(Plantes Sacrées)"]
+        Const["Constitutional Layer<br>(Plantes Sacrées)"]
     end
 
     Vecteurs <-->|"Résumés d'Ignition + Télémetrie"| QG
@@ -88,24 +88,24 @@ Le système suit un cycle inspiré de la biologie : **éveil → sommeil → dé
 ```mermaid
 flowchart TD
     subgraph Phase1 ["Phase 1 : Mission Temps Réel"]
-        A["Exécution\n(Poids gelés)"] 
+        A["Exécution<br>(Poids gelés)"] 
         B["RPT Locale + Ignitions"] 
-        C["Capture MeMo Streaming\n(Vecteurs épisodiques)"]
+        C["Capture MeMo Streaming<br>(Vecteurs épisodiques)"]
     end
 
-    Phase1 -->|"Retour au stand\n(Transfert boîtes noires)"| Phase2
+    Phase1 -->|"Retour au stand<br>(Transfert boîtes noires)"| Phase2
 
     subgraph Phase2 ["Phase 2 : Sommeil & Rêverie Artificielle"]
-        D["Generative Replay JEPA\n(Simulation de variantes)"]
+        D["Generative Replay JEPA<br>(Simulation de variantes)"]
         E["Recalibration seuils d'ignition"]
-        F["Consolidation MeMo\n→ Mémoire Long Terme"]
+        F["Consolidation MeMo<br>→ Mémoire Long Terme"]
     end
 
     Phase2 -->|"Mise à jour des poids"| Phase3
 
     subgraph Phase3 ["Phase 3 : Débriefing + Exploration"]
-        G["Analyse sémantique LLM\n(Rapport + patterns)"]
-        H["Wargame dans JEPA\n(Curiosité & Surprises)"]
+        G["Analyse sémantique LLM<br>(Rapport + patterns)"]
+        H["Wargame dans JEPA<br>(Curiosité & Surprises)"]
         I["Validation Humaine + Sédimentation RAG"]
     end
 

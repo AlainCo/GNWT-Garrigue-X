@@ -6,10 +6,10 @@
 flowchart TD
     direction TB
 
-    Bas["Niveaux Bas (N=0 à N=3)\nDonnées brutes + RPT locale"] 
-    -->|"Résumé d'Ignition\n(Compressé, Abstrait)"| Haut["Niveaux Hauts (N=4 à N=6)\nGNWT + Conscience d'accès"]
+    Bas["Niveaux Bas (N=0 à N=3)<br>Données brutes + RPT locale"] 
+    -->|"Résumé d'Ignition<br>(Compressé, Abstrait)"| Haut["Niveaux Hauts (N=4 à N=6)<br>GNWT + Conscience d'accès"]
 
-    Haut -->|"Prédictions (top-down) + Contraintes\n(Objectifs, Règles, Contextes)"| Bas
+    Haut -->|"Prédictions (top-down) + Contraintes<br>(Objectifs, Règles, Contextes)"| Bas
 
     style Bas fill:#ffebee
     style Haut fill:#e3f2fd
@@ -31,22 +31,22 @@ flowchart LR
 ```mermaid
 flowchart TD
     subgraph N0to3 ["Niveaux Infra-Conscients (RPT Locale)"]
-        N0["N=0 : Composant Physique\n(MLP nano + PID)"] 
-        N1["N=1 : Actionneur Intelligent\n(Mamba-mini)"]
-        N2["N=2 : Équipement\n(Mamba / RWKV)"]
-        N3["N=3 : Sous-système Fonctionnel\n(JEPA-S + RPT locale)"]
+        N0["N=0 : Composant Physique<br>(MLP nano + PID)"] 
+        N1["N=1 : Actionneur Intelligent<br>(Mamba-mini)"]
+        N2["N=2 : Équipement<br>(Mamba / RWKV)"]
+        N3["N=3 : Sous-système Fonctionnel<br>(JEPA-S + RPT locale)"]
     end
 
     subgraph N4to6 ["Niveaux Conscients (GNWT + Ignition)"]
-        N4["N=4 : Plateforme / Vecteur\n(JEPA-M + Workspace GNWT)"]
-        N5["N=5 : Groupe Aéronaval\n(JEPA-L + Officiers)"]
-        N6["N=6 : Théâtre / État-Major\n(LLM-XL + RAG)"]
+        N4["N=4 : Plateforme / Vecteur<br>(JEPA-M + Workspace GNWT)"]
+        N5["N=5 : Groupe Aéronaval<br>(JEPA-L + Officiers)"]
+        N6["N=6 : Théâtre / État-Major<br>(LLM-XL + RAG)"]
     end
 
     N0 --> N1 --> N2 --> N3
-    N3 -->|"Résumé d'Ignition\n(si erreur ≥ seuil)"| N4
-    N4 -->|"Résumé d'Ignition\n(si erreur ≥ seuil)"| N5
-    N5 -->|"Résumé d'Ignition\n(si erreur ≥ seuil)"| N6
+    N3 -->|"Résumé d'Ignition<br>(si erreur ≥ seuil)"| N4
+    N4 -->|"Résumé d'Ignition<br>(si erreur ≥ seuil)"| N5
+    N5 -->|"Résumé d'Ignition<br>(si erreur ≥ seuil)"| N6
 
     N6 -->|"Prédictions (top‑down)"| N5
     N5 -->|"Prédictions (top‑down)"| N4
@@ -73,18 +73,18 @@ Chaque niveau conscient (N≥4) inclut un Self-Model (MLP) qui génère un méta
 
 ```mermaid
 flowchart TD
-    Capitaine["CAPITAINE\n(Méta-Workspace + Narrative)"] 
+    Capitaine["CAPITAINE<br>(Méta-Workspace + Narrative)"] 
 
     subgraph Officiers ["Officiers Spécialisés"]
-        Science["SCIENCE\n(Systemizing)"]
-        Soin["SOIN\n(Empathique)"]
-        Ingenieur["INGÉNIEUR\n(Consciencieux)"]
-        Tactique["TACTIQUE\n(Persévérant)"]
-        Rens["RENS\n(Explorateur)"]
+        Science["SCIENCE<br>(Systemizing)"]
+        Soin["SOIN<br>(Empathique)"]
+        Ingenieur["INGÉNIEUR<br>(Consciencieux)"]
+        Tactique["TACTIQUE<br>(Persévérant)"]
+        Rens["RENS<br>(Explorateur)"]
     end
 
     subgraph Meta ["Métacognition"]
-        SM["Self-Model\n(MLP)"]
+        SM["Self-Model<br>(MLP)"]
     end
 
     Capitaine <--> Science
@@ -102,9 +102,9 @@ Chaque niveau N≥4 est équipé d’un Attention Scheduler qui alloue un budget
 ```mermaid
 flowchart TD
     subgraph Workspace ["Workspace GNWT (N=5)"]
-        Sched["Attention Scheduler\n(budget 100, +1/s)"]
+        Sched["Attention Scheduler<br>(budget 100, +1/s)"]
         Capitaine["CAPITAINE"]
-        Officiers["Officiers\n(Tactique, Rens, etc.)"]
+        Officiers["Officiers<br>(Tactique, Rens, etc.)"]
     end
 
     SousN4["Résumés d’Ignition (N=4)"] --> Sched
@@ -117,12 +117,12 @@ Pendant la phase de sommeil, un estimateur Φ̂ (proxy de l’intégration causa
 ```mermaid
 flowchart TD
     subgraph N5 ["N=5 : Groupe (Officiers + JEPA-L)"]
-        V5["Validation du Résumé\n• Vérification variance\n• Détection collapse\n• Score d'incertitude"]
-        PHI["Φ-estimator\n(actif pendant sommeil)"]
+        V5["Validation du Résumé<br>• Vérification variance<br>• Détection collapse<br>• Score d'incertitude"]
+        PHI["Φ-estimator<br>(actif pendant sommeil)"]
     end
 
     V5 --> PHI
-    PHI -.->|"alerte si Φ̂ < seuil"| Actions["Actions correctives\n(rêverie ciblée)"]
+    PHI -.->|"alerte si Φ̂ < seuil"| Actions["Actions correctives<br>(rêverie ciblée)"]
 ```
 
 
@@ -136,26 +136,26 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    A["N=0/1 : Tuyère endommagée\n(PID + MLP nano)"] 
-    --> B["N=2/3 : Détection & RPT Locale\n(Mamba)"]
+    A["N=0/1 : Tuyère endommagée<br>(PID + MLP nano)"] 
+    --> B["N=2/3 : Détection & RPT Locale<br>(Mamba)"]
 
-    B -->|"Latent interne mis à jour"| C["N=4 : Rafale\n(Workspace GNWT)"]
+    B -->|"Latent interne mis à jour"| C["N=4 : Rafale<br>(Workspace GNWT)"]
 
     subgraph Comparateur ["Comparateur de surprise (N=4)"]
-        D1["Prédiction reçue de N=5\n(état nominal)"]
-        D2["Ignition réelle\n(dégradée)"]
-        D3["Erreur = |réel - prédiction|\n= 0.73"]
+        D1["Prédiction reçue de N=5<br>(état nominal)"]
+        D2["Ignition réelle<br>(dégradée)"]
+        D3["Erreur = |réel - prédiction|<br>= 0.73"]
         D4{Erreur ≥ seuil ?}
     end
 
     D3 --> D4
     D4 -->|oui| E["Ignition GNWT déclenchée"]
-    D4 -->|non| F["Ajustement local RPT\n(sans broadcast)"]
+    D4 -->|non| F["Ajustement local RPT<br>(sans broadcast)"]
 
-    E --> G["Reconfiguration loi de vol\n+ MeMo consultation"]
-    G -->|"Résumé d'Ignition compressé"| H["N=5 : Groupe\n(Officier Tactique)"]
-    H --> I["CAPITAINE arbitre\n+ Broadcast au groupe"]
-    I --> J["N=6 : Amiral\n(Traduction LLM)"]
+    E --> G["Reconfiguration loi de vol<br>+ MeMo consultation"]
+    G -->|"Résumé d'Ignition compressé"| H["N=5 : Groupe<br>(Officier Tactique)"]
+    H --> I["CAPITAINE arbitre<br>+ Broadcast au groupe"]
+    I --> J["N=6 : Amiral<br>(Traduction LLM)"]
 ```
 
 **1. N=0/N=1 :** Un éclat de missile endommage la tuyère droite. Le PID augmenté par MLP nano modifie instantanément les angles d'injection en **4 millisecondes** pour éviter l'extinction du moteur. Aucun signal ne remonte — c'est géré localement, en dessous du seuil RPT.
@@ -173,21 +173,21 @@ Le Rafale reçoit du niveau supérieur (N=5) une **prédiction** de son état at
 ```mermaid
 flowchart LR
     subgraph N3 ["N=3 : Sous-système (RPT + JEPA-S)"]
-        L3["Latent Interne\n(128–256d)\n• RPT locale\n• JEPA-S\n• Régularisation isotrope\n(SIGReg / VICReg)"]
+        L3["Latent Interne<br>(128–256d)<br>• RPT locale<br>• JEPA-S<br>• Régularisation isotrope<br>(SIGReg / VICReg)"]
     end
 
     subgraph N4 ["N=4 : Plateforme (JEPA-M + GNWT)"]
-        C4["Tête de Compression\n(16–64d)\n• Normalisation\n• Contrôle de norme\n• Quantification optionnelle"]
-        L4["Résumé d'Ignition\n(16–64d)\n• Score d'incertitude\n• Signal de saillance"]
+        C4["Tête de Compression<br>(16–64d)<br>• Normalisation<br>• Contrôle de norme<br>• Quantification optionnelle"]
+        L4["Résumé d'Ignition<br>(16–64d)<br>• Score d'incertitude<br>• Signal de saillance"]
     end
 
     subgraph N5 ["N=5 : Groupe (Officiers + JEPA-L)"]
-        V5["Validation du Latent\n• Vérification variance\n• Détection collapse\n• Demande d'Ignition enrichi"]
+        V5["Validation du Latent<br>• Vérification variance<br>• Détection collapse<br>• Demande d'Ignition enrichi"]
     end
 
     L3 -->|"Compression"| C4 --> L4 -->|"Transmission"| V5
 
-    V5 -.->|"Fallback :\nIgnition enrichi"| L3
+    V5 -.->|"Fallback :<br>Ignition enrichi"| L3
 
     classDef latent fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
     classDef comp fill:#fff3e0,stroke:#f57f17,stroke-width:2px
@@ -206,22 +206,22 @@ flowchart TD
 
     %% --- N3 : Latent interne ---
     subgraph N3 ["N=3 : Sous-système (RPT + JEPA-S)"]
-        L3["Latent interne (128–256d)\n• Régularisation isotrope (SIGReg)\n• Variance contrôlée\n• RPT locale"]
-        V3["Analyse Variance\nVar(z3) > seuil_min ?"]
-        S3["Calcul Saillance\ns = f(z3, erreur prédictive)"]
+        L3["Latent interne (128–256d)<br>• Régularisation isotrope (SIGReg)<br>• Variance contrôlée<br>• RPT locale"]
+        V3["Analyse Variance<br>Var(z3) > seuil_min ?"]
+        S3["Calcul Saillance<br>s = f(z3, erreur prédictive)"]
     end
 
     %% --- N4 : Compression + Seuil d'Ignition ---
     subgraph N4 ["N=4 : Plateforme (JEPA-M + GNWT)"]
-        T4["Tête de Compression (16–64d)\n• Normalisation\n• Contrôle de norme\n• Quantification optionnelle"]
-        Th4["Seuil d'Ignition\ns > seuil_dyn ?"]
-        I4["Ignition\nRésumé latent + score d'incertitude"]
+        T4["Tête de Compression (16–64d)<br>• Normalisation<br>• Contrôle de norme<br>• Quantification optionnelle"]
+        Th4["Seuil d'Ignition<br>s > seuil_dyn ?"]
+        I4["Ignition<br>Résumé latent + score d'incertitude"]
     end
 
     %% --- N5 : Validation + Fallback ---
     subgraph N5 ["N=5 : Groupe (Officiers + JEPA-L)"]
-        V5["Validation du Résumé\n• Vérification variance\n• Détection collapse\n• Score d'incertitude"]
-        F5["Fallback :\nDemande d'Ignition enrichi"]
+        V5["Validation du Résumé<br>• Vérification variance<br>• Détection collapse<br>• Score d'incertitude"]
+        F5["Fallback :<br>Demande d'Ignition enrichi"]
     end
 
     %% --- Flux ---

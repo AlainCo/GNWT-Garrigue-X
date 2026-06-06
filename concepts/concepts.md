@@ -35,7 +35,7 @@ flowchart TD
         N3c["JEPA-S + RPT Locale"]
     end
 
-    N6c ---|"Résumé d'Ignition\n(vecteur latent)"| N5c
+    N6c ---|"Résumé d'Ignition<br>(vecteur latent)"| N5c
     N5c ---|"Résumé d'Ignition"| N4c
     N4c ---|"Résumé d'Ignition"| N3c
 
@@ -57,11 +57,11 @@ flowchart TD
 
 ```mermaid
 flowchart LR
-    A[Feedforward Rapide\nStage 1-2] --> B[Récurrence Locale\nStage 3 - RPT]
-    B --> C[Ignition + Broadcast Global\nStage 4 - GNWT]
+    A[Feedforward Rapide<br>Stage 1-2] --> B[Récurrence Locale<br>Stage 3 - RPT]
+    B --> C[Ignition + Broadcast Global<br>Stage 4 - GNWT]
 
-    B -.->|"Vie intérieure riche\n(Phenomenal Consciousness)"| D["'Voir sans savoir qu'on voit'"]
-    C --> E["Accès Conscient + Rapport\n(Access Consciousness)"]
+    B -.->|"Vie intérieure riche<br>(Phenomenal Consciousness)"| D["'Voir sans savoir qu'on voit'"]
+    C --> E["Accès Conscient + Rapport<br>(Access Consciousness)"]
     E -.-> F["'Savoir qu'on voit et pouvoir en parler'"]
 
     classDef rpt fill:#fff3e0
@@ -117,20 +117,20 @@ Dans cette vision, les **priors contextuels** ne sont plus des vecteurs fixes en
 ```mermaid
 flowchart TD
     subgraph NiveauSup ["Niveau N+1 (ex. N=5 Groupe)"]
-        Pred["Prédiction du résumé\n(par JEPA-M)"]
-        Seuil["Seuil adaptatif\n(budget, confiance)"]
+        Pred["Prédiction du résumé<br>(par JEPA-M)"]
+        Seuil["Seuil adaptatif<br>(budget, confiance)"]
     end
 
     subgraph NiveauInf ["Niveau N (ex. N=4 Rafale)"]
         Latent["Latent interne RPT/JEPA"]
         Ignition["Résumé d’Ignition réel"]
-        Erreur["Erreur de prédiction\n(surprise)"]
+        Erreur["Erreur de prédiction<br>(surprise)"]
     end
 
     Pred -->|"descend"| Erreur
     Ignition -->|"entre"| Erreur
-    Erreur -->|"si écart < seuil"| MiseAJour["Mise à jour locale du latent\n(RPT, pas d’ignition)"]
-    Erreur -->|"si écart ≥ seuil"| GNWT["Ignition GNWT\n(broadcast global)"]
+    Erreur -->|"si écart < seuil"| MiseAJour["Mise à jour locale du latent<br>(RPT, pas d’ignition)"]
+    Erreur -->|"si écart ≥ seuil"| GNWT["Ignition GNWT<br>(broadcast global)"]
 
     GNWT -->|"remonte au niveau supérieur"| Pred
 
@@ -229,25 +229,25 @@ flowchart TD
 ```mermaid
 flowchart TD
     subgraph Mission ["Phase 1 : Mission Temps Réel"]
-        A["T=14h23\nIgnition N=4 (Rafale)"] 
-        B["Anomalie catapulte détectée\nsaillance = 0.87"]
-        C["Capture MeMo\n→ Vecteur épisodique"]
+        A["T=14h23<br>Ignition N=4 (Rafale)"] 
+        B["Anomalie catapulte détectée<br>saillance = 0.87"]
+        C["Capture MeMo<br>→ Vecteur épisodique"]
     end
 
     Mission -->|"Transfert des boîtes noires"| Sommeil
 
     subgraph Sommeil ["Phase 2 : Sommeil & Rêverie"]
-        D["Generative Replay JEPA\n(Simulations de variantes)"]
-        E["Recalibration seuils d'ignition\n(Module PISTE)"]
-        F["Consolidation\n→ Mémoire Long Terme (RAG)"]
+        D["Generative Replay JEPA<br>(Simulations de variantes)"]
+        E["Recalibration seuils d'ignition<br>(Module PISTE)"]
+        F["Consolidation<br>→ Mémoire Long Terme (RAG)"]
     end
 
     Sommeil -->|"Mise à jour + Consolidation"| Consultation
 
-    subgraph Consultation ["Phase 3 : Consultation Ultérieure\n(T+30 jours)"]
+    subgraph Consultation ["Phase 3 : Consultation Ultérieure<br>(T+30 jours)"]
         G["Nouvelle anomalie similaire détectée"]
-        H["RAG épisodique retrouve\nle souvenir T=14h23"]
-        I["Proposition proactive\n→ Workaround 'catapulte_B'"]
+        H["RAG épisodique retrouve<br>le souvenir T=14h23"]
+        I["Proposition proactive<br>→ Workaround 'catapulte_B'"]
     end
 
     classDef ignition fill:#fff3e0,stroke:#f57f17,stroke-width:2px
@@ -429,15 +429,15 @@ Le Self‑Model est entraîné **pendant la phase de sommeil** : on lui demande 
 ```mermaid
 flowchart TD
     subgraph Workspace ["Espace de Travail GNWT (N=4 ou N=5)"]
-        I["Ignition courante\n(vecteur latent)"]
-        SM["Self-Model\n(MLP)"]
-        M["Méta‑vecteur\n[confiance, contexte, saillance attendue]"]
+        I["Ignition courante<br>(vecteur latent)"]
+        SM["Self-Model<br>(MLP)"]
+        M["Méta‑vecteur<br>[confiance, contexte, saillance attendue]"]
     end
 
     I -->|"alimente"| SM
     SM --> M
 
-    M -->|"stockage"| MeMo["Mémoire Épisodique\n(MeMo)"]
+    M -->|"stockage"| MeMo["Mémoire Épisodique<br>(MeMo)"]
     M -->|"modulation"| Decision["Arbitrage du niveau supérieur"]
     M -->|"explicabilité"| LLM["Interface N=6 (LLM)"]
 
@@ -495,14 +495,14 @@ L’Attention Scheduler ne décide pas *quoi* igniter – cela relève des modul
 ```mermaid
 flowchart TD
     subgraph Inputs ["Sous‑systèmes (N≤3)"]
-        A["RPT locale\n(anomalie modérée)"]
-        B["RPT locale\n(menace imminente)"]
-        C["RPT locale\n(panne mineure)"]
+        A["RPT locale<br>(anomalie modérée)"]
+        B["RPT locale<br>(menace imminente)"]
+        C["RPT locale<br>(panne mineure)"]
     end
 
     subgraph Scheduler ["Attention Scheduler (N=5)"]
-        Budget["Budget attentionnel\n(100 tokens, recharge +1/s)"]
-        AST["Module AST\n(prédit coût/bénéfice)"]
+        Budget["Budget attentionnel<br>(100 tokens, recharge +1/s)"]
+        AST["Module AST<br>(prédit coût/bénéfice)"]
         File["File d’attente (différé)"]
         Seuil["Seuil adaptatif"]
     end
@@ -572,23 +572,23 @@ Ce mécanisme est **non invasif** (réalisé en simulation latente) et **périod
 ```mermaid
 flowchart TD
     subgraph Sommeil ["Phase de Sommeil (rêverie JEPA)"]
-        A["Chargement d’un batch d’ignitions\n(souvenirs MeMo)"]
-        B["Injection de bruit\n(perturbation locale)"]
-        C["Calcul de l’erreur prédictive\navant/après perturbation"]
+        A["Chargement d’un batch d’ignitions<br>(souvenirs MeMo)"]
+        B["Injection de bruit<br>(perturbation locale)"]
+        C["Calcul de l’erreur prédictive<br>avant/après perturbation"]
         D["Φ̂ = Var(Δ erreur) / (σ²_bruit+ε)"]
     end
 
     subgraph Alerte ["Décision"]
         E{Φ̂ < seuil ?}
         F["OK : intégration satisfaisante"]
-        G["Alerte : collapse d’intégration\n(actions correctives)"]
+        G["Alerte : collapse d’intégration<br>(actions correctives)"]
     end
 
     A --> B --> C --> D --> E
     E -->|non| F
     E -->|oui| G
 
-    G --> H["Actions possibles :\n- Augmenter taille des résumés\n- Recalibrer compression\n- Rêverie enrichie"]
+    G --> H["Actions possibles :<br>- Augmenter taille des résumés<br>- Recalibrer compression<br>- Rêverie enrichie"]
 
     style D fill:#ffebee,stroke:#c62828
     style G fill:#ffcdd2
