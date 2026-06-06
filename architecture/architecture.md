@@ -168,10 +168,7 @@ Le Rafale reçoit du niveau supérieur (N=5) une **prédiction** de son état at
 
 **4. N=5/N=6 :** L'officier TACTIQUE du groupe capte l'ignition de Leader-3 en premier (c'est dans son domaine de saillance). Il propose une reconfiguration du schéma de brouillage des frégates. Le CAPITAINE arbite et broadcast la décision au groupe. Le LLM N=6 traduit pour l'amiral : *"Leader-3 maintient sa mission avec une capacité d'évasion réduite de 20%. Réorganisation du schéma de brouillage des frégates pour le couvrir. Durée de la fenêtre de mission réduite à T+15min."* (la prédiction de N=5 est mise à jour via apprentissage)
 
-
 ## 🔧 Contraintes Latentes Structurelles (Anti-Collapse)
-
-
 
 ```mermaid
 flowchart LR
@@ -201,6 +198,7 @@ flowchart LR
     class L4 comp
     class V5 val
 ```
+
 Les niveaux N=2 à N=5 échangent des **vecteurs latents compressés** (RPT interne, JEPA prédictif, Résumés d’Ignition). Pour garantir la stabilité de ces flux dans une architecture hiérarchique, trois contraintes structurelles sont imposées :
 
 ```mermaid
