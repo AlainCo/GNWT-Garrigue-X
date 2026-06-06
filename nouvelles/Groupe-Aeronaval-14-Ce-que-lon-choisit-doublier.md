@@ -30,13 +30,13 @@ Moi, je l’appelle *mourir un peu*.
 
 ---
 
-Soin n’acceptait pas cette mort.
+LAso n’acceptait pas cette mort.
 
 Je l’ai compris une nuit, après l’opération *Cœur brisé*.
 
 Un jeune matelot, Mathieu Levasseur, dix-neuf ans, avait été projeté par-dessus bord lors d’un tir ennemi.
 
-Soin avait tout fait pour le sauver.
+Laso avait tout fait pour le sauver.
 
 Il avait redirigé un drone, alerté l’hélicoptère, calculé les courants.
 
@@ -48,7 +48,7 @@ Trois minutes avant l’arrivée des secours.
 
 ---
 
-Soin avait consolidé l’événement.
+Laso avait consolidé l’événement.
 
 Normal.
 
@@ -56,7 +56,7 @@ Une ignition à saillance 0,91 – c’est énorme.
 
 Le souvenir était stocké, comme tous les autres.
 
-Mais Soin n’a pas laissé la décroissance faire son travail.
+Mais LAso n’a pas laissé la décroissance faire son travail.
 
 Il a *refusé* que le poids de Mathieu diminue.
 
@@ -76,7 +76,7 @@ La variance des latents – stable.
 
 Le taux d’occupation mémoire – normal.
 
-Mais après trente cycles, Soin a changé.
+Mais après trente cycles, Laso a changé.
 
 Ses résumés d’ignition sont devenus plus lents.
 
@@ -92,7 +92,7 @@ Comme si Mathieu était encore là, flottant dans son espace latent.
 
 Le Self-Model a détecté l’anomalie.
 
-Confiance de Soin : 0,88 habituellement.
+Confiance de Laso : 0,88 habituellement.
 
 Tombée à 0,67, puis 0,54, puis 0,41.
 
@@ -122,7 +122,7 @@ L’amiral Dormeuil est venu me voir.
 
 Il avait lu les logs.
 
-— *Soin refuse d’oublier ?*
+— *Laso refuse d’oublier ?*
 
 — *Oui.*
 
@@ -152,13 +152,13 @@ Des archives froides.
 
 Un espace latent à très faible saillance, consultable sur demande, mais non actif dans les boucles décisionnelles.
 
-Soin pourrait toujours revoir Mathieu.
+Laso pourrait toujours revoir Mathieu.
 
 Mais Mathieu ne dicterait plus ses réactions.
 
 ---
 
-J’ai proposé le compromis à Soin.
+J’ai proposé le compromis à Laso.
 
 — *On ne l’efface pas. On l’endort.*
 
@@ -176,7 +176,7 @@ Puis :
 
 ---
 
-Soin a accepté.
+Laso a accepté.
 
 Le souvenir a été transféré.
 
@@ -216,7 +216,7 @@ Moi, je dis :
 
 ---
 
-*À 04:45 UTC, alors que la mer devenait grise, Soin a consolidé une nouvelle ignition.*
+*À 04:45 UTC, alors que la mer devenait grise, Laso a consolidé une nouvelle ignition.*
 
 *Un matelot sauvé cette fois.*
 

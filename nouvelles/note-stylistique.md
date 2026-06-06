@@ -23,7 +23,7 @@ Nous allons extraire les ingrédients pour que l’on puisse les reproduire – 
 - **Le Groupe Aéronaval 14** – entité collective, narrateur tour à tour « Nous » et « Je ».  
 - **Contre-amiral Dormeuil** – commandant humain, épuisé, moralement tourmenté.  
 - **Officiers IA** spécialisés :  
-  - *Thales* (guerre électronique – hypervigilant, paranoïaque).  
+  - *Thalès* (guerre électronique – hypervigilant, paranoïaque).  
   - *Argo* (réacteurs nucléaires – prudent, obsessionnel).  
   - *Mistral* (coordination aérienne – impulsive, intuitive).  
 - **Pilote Maëlle Jin** – parle à ses appareils.  

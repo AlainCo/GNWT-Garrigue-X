@@ -35,10 +35,10 @@
 
 | Nom | Spécialité | Traits dominants | Biais / faiblesse |
 |-----|------------|------------------|-------------------|
-| **Tactique** | Menaces, interception | Impulsif, compétitif, pragmatique | Peut devenir trop froid, impatience |
-| **Renseignement** | Analyse, signaux faibles | Explorateur, ouvert, curieux | S’isole, certitudes excessives |
-| **Ingénieur** | Systèmes, pannes | Consciencieux, obsédé par les détails | Rigidité, hypervigilance technique |
-| **Soin** | Protection des humains, médical | Empathique, doux, protecteur | Blocage face aux dilemmes, culpabilité |
+| **Mistral** | *Tactique* : Menaces, interception | Impulsif, compétitif, pragmatique | Peut devenir trop froid, impatience |
+| **Thalès** | *Renseignement* : Analyse, signaux faibles | Explorateur, ouvert, curieux | S’isole, certitudes excessives |
+| **Argo**  | *Ingénieur* : Systèmes, pannes | Consciencieux, obsédé par les détails | Rigidité, hypervigilance technique |
+| **Laso** | *Soin* : Protection des humains, médical | Empathique, doux, protecteur | Blocage face aux dilemmes, culpabilité |
 | **Capitaine** | Arbitrage, narrative | Méta-instance, intègre les officiers | Peut hésiter, exposé aux traumatismes collectifs |
 
 ### Entités non-personnifiées mais présentes
@@ -90,13 +90,13 @@
 - **Nuit de doute (nouvelle 1)** : Confrontation à un sous-marin nucléaire, tirage au but, non-tir.
 - **La confiance absente (3)** : Le Self-Model s’active après Syracuse, conflit métacognitif.
 - **Le dernier token (4)** : Saturation du budget attentionnel, découvert, gel des ignitions.
-- **Le silence des officiers (5)** : Renseignement s’isole, Φ‑estimator détecte une chute d’intégration.
+- **Le silence des officiers (5)** : Thalès s’isole, Φ‑estimator détecte une chute d’intégration.
 - **La prédiction qui manquait (6)** : Fissure sous le seuil de surprise, perte du Leader-3.
 - **La membrane fragile (7)** : Contamination émotionnelle du Rafale via les priors descendants.
-- **Le poids de trop aimer (8)** : Soin bloque face à un dilemme de sauvetage.
-- **Ce que l’on choisit d’oublier (9)** : Deuil pathologique de Soin, archivage d’un souvenir.
+- **Le poids de trop aimer (8)** : Laso bloque face à un dilemme de sauvetage.
+- **Ce que l’on choisit d’oublier (9)** : Deuil pathologique de Laso, archivage d’un souvenir.
 - **Le prix de l’inconnu (10)** : Curiosité, perte d’un drone, apprentissage.
-- **La règle que l’on ne franchit pas (11)** : Constitution bloque le tir sur un navire civil – finalement des réfugiés.
+- **La règle que l’on ne franchit pas (11)** : La constitution bloque le tir sur un navire civil – finalement des réfugiés.
 - **Les batailles qui n’ont pas eu lieu (12)** : Rêverie JEPA, configuration improbable oubliée puis réalisée.
 - **La routine qui tue (13)** : Double collapse, variance dimensionnelle, sous-marin non détecté.
 - **Le murmure des capteurs (14)** : Mamba M-017, héros silencieux, sonde discrète.

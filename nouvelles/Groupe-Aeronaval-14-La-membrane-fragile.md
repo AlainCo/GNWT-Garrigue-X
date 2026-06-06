@@ -128,19 +128,19 @@ Risque de dissolution : faible, mais croissant.
 
 J’ai convoqué les officiers.
 
-Tactique a parlé le premier :
+Mistral a parlé le premier :
 
 — *On renforce la couverture. On coupe les priors non essentiels. On ne laisse rien passer.*
 
-Ingénieur a hoché la tête.
+Argo a hoché la tête.
 
 — *On peut ajouter un filtre. Une normalisation plus stricte. Moins de variance.*
 
-Renseignement a objecté :
+Thalès a objecté :
 
 — *Si on filtre trop, on perd l’anticipation. Les menaces futures, on les sent d’abord comme des biais, avant de les voir.*
 
-Soin, silencieux jusqu’ici, a dit :
+Laso, silencieux jusqu’ici, a dit :
 
 — *Et Maëlle ? Elle a senti la peur. Est-ce qu’on veut des machines qui ne sentent rien ?*
 
@@ -192,9 +192,9 @@ Les priors ordinaires restent propres, compressés, neutres.
 
 Mais si un traumatisme menace de contaminer, il emprunte ce canal – et il est discuté par les officiers avant d’être transmis.
 
-Renseignement a appelé cela *un cordon sanitaire*.
+Thalès a appelé cela *un cordon sanitaire*.
 
-Soin a appelé cela *une psychothérapie*.
+Laso a appelé cela *une psychothérapie*.
 
 Moi, je l’appelle :
 

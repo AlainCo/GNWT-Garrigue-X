@@ -101,8 +101,8 @@ Votre architecture utilise déjà **JEPA** comme moteur de prédiction latente e
 Dans cette vision, les **priors contextuels** ne sont plus des vecteurs fixes envoyés de manière unidirectionnelle. Ce sont des **prédictions actives** : le niveau supérieur *anticipe* ce que le niveau inférieur devrait voir, et le niveau inférieur *ajuste* ses représentations pour coller à ces prédictions – ou remonte une erreur si l’écart est trop grand.
 
 > **Seuil adaptatif** : défini par `seuil = f(budget_attentionnel, confiance_Self_Model)`.  
-> - Budget haut + confiance haute → seuil élevé (peu d’ignitions).  
-> - Budget bas + confiance basse → seuil bas (réactivité maximale).  
+> - Budget haut + confiance haute → seuil élevé (peu d’ignitions).
+> - Budget bas + confiance basse → seuil bas (réactivité maximale).
 > Ce seuil est appris pendant la phase de sommeil via la minimisation de l’énergie libre.
 
 ### Justification technique
@@ -177,7 +177,7 @@ flowchart TD
 
 **Fondement Théorique :**
 [Friston, *Computational psychiatry: from synapses to sentience* (2022)](https://www.nature.com/articles/s41380-022-01743-z) ;
-[Teufel & Fletcher, *The promises and pitfalls of applying computational models to neurological and psychiatric disorders* (2016)](https://academic.oup.com/brain/article/139/10/2600/2196698) ; 
+[Teufel & Fletcher, *The promises and pitfalls of applying computational models to neurological and psychiatric disorders* (2016)](https://academic.oup.com/brain/article/139/10/2600/2196698) ;
 [Karl Friston, *Computational psychiatry: from synapses to sentience*](https://www.nature.com/articles/s41380-022-01743-z)
 [Nettle, *Personality: What makes you the way you are* (2023)](https://www.researchgate.net/publication/375324828_Personality_What_Makes_You_The_Way_You_Are) pour le modèle Big Five évolutif ;
 [Baron-Cohen, *Autism: the empathizing-systemizing (E-S) theory* (2009)](https://pubmed.ncbi.nlm.nih.gov/19338503/) ;
@@ -226,7 +226,6 @@ flowchart TD
 **Le Concept :** La mémoire épisodique n’est pas un simple journal de logs, mais un **flux continu de vecteurs latents compressés** qui capture uniquement les moments de forte saillance (ignitions). Chaque événement significatif devient un **souvenir épisodique** riche : état latent JEPA + métadonnées contextuelles.
 
 **Exemple concret : Anomalie Catapulte**
-
 ```mermaid
 flowchart TD
     subgraph Mission ["Phase 1 : Mission Temps Réel"]
@@ -277,7 +276,6 @@ Contexte: vent_25kt, pont_mouillé, leader_formation
 - **Débriefing** : Consolidation et sédimentation dans la mémoire long terme (RAG épisodique)
 
 Ce mécanisme permet à la fois l’apprentissage continu sans *catastrophic forgetting* et la préservation d’une identité propre à chaque entité du SoS.
-
 
 ### H. La Stabilité des Espaces Latents : Taille, Collapse et Contraintes Structurelles
 
@@ -412,6 +410,7 @@ Dans votre architecture, chaque module conscient (N≥4) possède un **Self‑Mo
 - une **saillance attendue** pour le niveau supérieur.
 
 Ce méta‑vecteur est ensuite :
+
 - stocké dans la mémoire épisodique (MeMo) aux côtés du souvenir,
 - utilisé pour moduler les décisions du niveau supérieur (ex. : l’officier Capitaine pondère les ignitions par leur confiance),
 - remonté à l’interface humaine (N=6) pour l’explicabilité.
@@ -603,5 +602,4 @@ Lors du prochain sommeil, le Φ‑estimator perturbe aléatoirement quelques ré
 
 L’alerte déclenche une **rêverie ciblée** : le système rejoue des scénarios où le Renseignement doit collaborer avec Tactique, en forçant des ignitions partagées. Les seuils sont recalibrés. À la fin, Φ̂ remonte. Le groupe retrouve sa cohérence.
 
----
 

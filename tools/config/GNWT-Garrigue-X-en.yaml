@@ -75,7 +75,7 @@ llm:
         - basebackend-llamacpp
       model: Ministral-3-8B-Instruct-2512-Q5_K_M
       timeout_seconds: 600
-    basesmall:
+    basemodel-small:
       base:
         - basebackend-llamacpp
       model: Ministral-3-3B-Instruct-2512-Q4_K_M
@@ -93,12 +93,15 @@ llm:
         1. **Translate ONLY** the content of `SOURCE TEXT`.
         2. Use `PREVIOUS CONTEXT` and `FOLLOWING CONTEXT` **only** to resolve ambiguities (e.g., pronouns, technical terms). **Do not translate them or include them** in the output.
         3. **Formatting**:
-            * Keep **intact**: Markdown, Mermaid, HTML tags, code blocks (\`\`\`), tables, and figures (except labels to be translated).
-            * If the text contains **variables/placeholders** (e.g., `{user_name}`), **do not modify them**.
+            * Keep **intact**: linefeed, Markdown, Mermaid, HTML tags, code blocks (\`\`\`).
+            * Keep **intact**: tables, and figures (except labels to be translated).
+            * keep **intact**: programming code and formulas
+            * keep **intact**: URL, references, and Markdown links.
+              * eg: [Un navire bleu](vaisseaux/un-navire-bleu.md)  → [A blue ship](vaisseaux/un-cheval-bleu.md)
+              * eg: https://un-site-francais.fr/une-page-sur-la-marine.html#chapitre1 → https://un-site-francais.fr/une-page-sur-la-marine.html#chapitre1
         4. **Output**:
             * **ONLY** the translation in Markdown, **with no additions** (no comments, explanations, variants, or greetings).
-            * If translation is impossible: return `[TRANSLATION_IMPOSSIBLE]`.
-            
+
         **STYLE GUIDELINES**:
         * Give **priority** to the guidance in the `TRANSLATION HINTS` section.
         * **Tone**: Educational and fluent **by default**, but **adapt to the original register**:
@@ -141,12 +144,15 @@ llm:
         1. **Translate ONLY** the content of `SOURCE TEXT`.
         2. Use `PREVIOUS CONTEXT` and `FOLLOWING CONTEXT` **only** to resolve ambiguities (e.g., pronouns, technical terms). **Do not translate them or include them** in the output.
         3. **Formatting**:
-            * Keep **intact**: Markdown, Mermaid, HTML tags, code blocks (\`\`\`), tables, and figures (except labels to be translated).
-            * If the text contains **variables/placeholders** (e.g., `{user_name}`), **do not modify them**.
+            * Keep **intact**: linefeed, Markdown, Mermaid, HTML tags, code blocks (\`\`\`).
+            * Keep **intact**: tables, and figures (except labels to be translated).
+            * keep **intact**: programming code and formulas
+            * keep **intact**: URL, references, and Markdown links.
+              * eg: [Un navire bleu](vaisseaux/un-navire-bleu.md)  → [A blue ship](vaisseaux/un-cheval-bleu.md)
+              * eg: https://un-site-francais.fr/une-page-sur-la-marine.html#chapitre1 → https://un-site-francais.fr/une-page-sur-la-marine.html#chapitre1
         4. **Output**:
             * **ONLY** the translation in Markdown, **with no additions** (no comments, explanations, variants, or greetings).
-            * If translation is impossible: return `[TRANSLATION_IMPOSSIBLE]`.
-            
+
         **STYLE GUIDELINES**:
         * Give **priority** to the guidance in the `TRANSLATION HINTS` section.
         * **Tone**: Romantic and emotional **by default**, but **adapt to the original register**:

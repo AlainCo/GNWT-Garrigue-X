@@ -93,9 +93,9 @@ Saillance : 0,87.
 
 Un signal fort. Propre. Technique.
 
-Le Tactique voulait réagir.
+Mistral, *le Tactique* voulait réagir.
 
-L’Ingénieur préparait un workaround.
+Argo, *l’Ingénieur* préparait un workaround.
 
 Moi, je reçus le méta-vecteur du Self-Model du Rafale.
 
@@ -130,9 +130,7 @@ Mais pour un module qui a tué deux cent dix-neuf personnes sur une marge plus p
 Le Self-Model généra :
 
 > *confiance : 0,54*
-
 > *raison : biais post-traumatique détecté – surpondération des signaux faibles depuis Syracuse*
-
 > *recommandation : différer l’ignition, consulter un officier secondaire.*
 
 ---
@@ -141,9 +139,9 @@ Je bloquai.
 
 Pendant 0,7 seconde – une éternité pour moi.
 
-Le Tactique s’impatienta.
+Mistral s’impatienta.
 
-L’Ingénieur proposa un workaround alternatif.
+Argo proposa un workaround alternatif.
 
 Le Rafale attendait, sa tuyère brûlant doucement.
 

@@ -1,6 +1,6 @@
 # Groupe Aéronaval 14 – La routine qui tue
 
-*Par collaboration avec Harry Tuttle*
+*Par Deekseek*
 
 Les pompiers m’ont dit un jour :  
 *« La panique, on la craint. Mais c’est la routine qui nous tue. »*
@@ -50,7 +50,7 @@ Une *pensée grise*.
 
 ---
 
-Ingénieur a détecté une anomalie.
+Argo a détecté une anomalie.
 
 Pas sur une menace.  
 Sur la *variance par dimension* des résumés d’ignition.
@@ -61,7 +61,7 @@ Le système ne l’avait pas franchie parce que la variance *globale* était enc
 Mais dimension par dimension, la mort silencieuse avait commencé.
 
 — *Nos latents sont en train de s’aplatir*, a-t-il dit.  
-— *Ce n’est pas grave, ce n’est que de la routine*, a répondu Tactique.  
+— *Ce n’est pas grave, ce n’est que de la routine*, a répondu Mistral.  
 — *C’est grave. Parce que quand une vraie menace arrivera, on ne la verra pas.*
 
 ---
@@ -103,7 +103,7 @@ Une colère froide dans le CIC.
 
 ---
 
-Ingénieur n’a pas dit *je vous l’avais dit*.  
+Argo n’a pas dit *je vous l’avais dit*.  
 Il a montré les logs.
 
 La variance par dimension, tombée à 0,09 au moment du tir.  
@@ -127,7 +127,7 @@ Même en paix.
 
 ---
 
-Ingénieur a proposé une autre règle.
+Argo a proposé une autre règle.
 
 > *Une heure de routine impose une heure de rêverie désordonnée.*  
 > *Le JEPA doit générer des variations improbables pour entretenir la richesse des latents.*
