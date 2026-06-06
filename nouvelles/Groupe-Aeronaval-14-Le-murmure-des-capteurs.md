@@ -132,7 +132,7 @@ Et il a trouvé M-017.
 
 — *Il est en train de mourir*, a-t-il dit.
 
-— *Pourquoi on ne l’a pas vu ?* a demandé Tactique.
+— *Pourquoi on ne l’a pas vu ?* a demandé Mistral.
 
 — *Parce qu’il n’a jamais remonté. Parce qu’il ne peut pas. Il n’a pas de conscience d’accès. Il fait son travail, et il meurt sans que personne le sache.*
 
