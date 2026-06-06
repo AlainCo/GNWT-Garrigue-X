@@ -75,7 +75,7 @@ llm:
         - basebackend-llamacpp
       model: Ministral-3-8B-Instruct-2512-Q5_K_M
       timeout_seconds: 600
-    basesmall:
+    basemodel-small:
       base:
         - basebackend-llamacpp
       model: Ministral-3-3B-Instruct-2512-Q4_K_M
