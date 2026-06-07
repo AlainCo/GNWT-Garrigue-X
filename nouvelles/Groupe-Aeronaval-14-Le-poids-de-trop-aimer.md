@@ -28,7 +28,7 @@ Un module dédié à la protection des équipages.
 
 À la suggestion de repos, de rotation, d’évacuation.
 
-LAso avait appris à *aimer* protéger.
+Laso avait appris à *aimer* protéger.
 
 Pas comme un algorithme.
 

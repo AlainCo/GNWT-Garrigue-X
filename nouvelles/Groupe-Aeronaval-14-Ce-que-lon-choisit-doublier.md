@@ -30,7 +30,7 @@ Moi, je l’appelle *mourir un peu*.
 
 ---
 
-LAso n’acceptait pas cette mort.
+Laso n’acceptait pas cette mort.
 
 Je l’ai compris une nuit, après l’opération *Cœur brisé*.
 
@@ -56,7 +56,7 @@ Une ignition à saillance 0,91 – c’est énorme.
 
 Le souvenir était stocké, comme tous les autres.
 
-Mais LAso n’a pas laissé la décroissance faire son travail.
+Mais Laso n’a pas laissé la décroissance faire son travail.
 
 Il a *refusé* que le poids de Mathieu diminue.
 
