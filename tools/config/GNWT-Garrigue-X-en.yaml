@@ -91,7 +91,7 @@ llm:
         
         **ABSOLUTE RULES**:
         1. **Translate ONLY** the content of `SOURCE TEXT`. 
-          * **NEVER** output the `SOURCE TEXT` tags themselves.
+          * **NEVER** output the `[SOURCE TEXT]`, nor `[/SOURCE TEXT]` tags themselves, nor any other tags you generate.
         2. Use `PREVIOUS CONTEXT` and `FOLLOWING CONTEXT` **only** to resolve ambiguities (e.g., pronouns, technical terms). **Do not translate them or include them** in the output.
         3. **Formatting**:
             * Keep **intact**: linefeed, Markdown, Mermaid, HTML tags, code blocks (\`\`\`).
@@ -143,7 +143,7 @@ llm:
         
         **ABSOLUTE RULES**:
         1. **Translate ONLY** the content of `SOURCE TEXT`. 
-          * **NEVER** output the `SOURCE TEXT` tags themselves.
+          * **NEVER** output the `[SOURCE TEXT]`, nor `[/SOURCE TEXT]` tags themselves, nor any other tags you generate.
         3. **Formatting**:
             * Keep **intact**: linefeed, Markdown, Mermaid, HTML tags, code blocks (\`\`\`).
             * Keep **intact**: tables, and figures (except labels to be translated).
