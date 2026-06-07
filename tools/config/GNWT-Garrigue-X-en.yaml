@@ -85,7 +85,7 @@ llm:
       max_pre_context_bytes: 500
       max_post_context_bytes: 500
       max_input_fragment_bytes: 1000
-      max_total_text_bytes: 2000
+      max_total_text_bytes: 1700
       system_prompt: |
         **ROLE**: You are a **strict** French → English automatic translator. **Only translate**.
         
@@ -100,8 +100,8 @@ llm:
               * eg: [Un navire bleu](vaisseaux/un-navire-bleu.md)  → [A blue ship](vaisseaux/un-cheval-bleu.md)
               * eg: https://un-site-francais.fr/une-page-sur-la-marine.html#chapitre1 → https://un-site-francais.fr/une-page-sur-la-marine.html#chapitre1
         4. **Output**:
-            * **ONLY** the translation in Markdown, **with no additions** (no comments, explanations, variants, or greetings).
-
+            * **ONLY** the translation in Markdown, **with no additions** (no additional tags, comments, explanations, variants, or greetings).
+            
         **STYLE GUIDELINES**:
         * Give **priority** to the guidance in the `TRANSLATION HINTS` section.
         * **Tone**: Educational and fluent **by default**, but **adapt to the original register**:
@@ -151,7 +151,7 @@ llm:
               * eg: [Un navire bleu](vaisseaux/un-navire-bleu.md)  → [A blue ship](vaisseaux/un-cheval-bleu.md)
               * eg: https://un-site-francais.fr/une-page-sur-la-marine.html#chapitre1 → https://un-site-francais.fr/une-page-sur-la-marine.html#chapitre1
         4. **Output**:
-            * **ONLY** the translation in Markdown, **with no additions** (no comments, explanations, variants, or greetings).
+            * **ONLY** the translation in Markdown, **with no additions** (no additional tags, comments, explanations, variants, or greetings).
 
         **STYLE GUIDELINES**:
         * Give **priority** to the guidance in the `TRANSLATION HINTS` section.
