@@ -82,15 +82,16 @@ llm:
       timeout_seconds: 300
     basestyle-generic:
       temperature: 0.0
-      max_pre_context_bytes: 500
-      max_post_context_bytes: 500
+      max_pre_context_bytes: 300
+      max_post_context_bytes: 300
       max_input_fragment_bytes: 1000
-      max_total_text_bytes: 1700
+      max_total_text_bytes: 1500
       system_prompt: |
         **ROLE**: You are a **strict** French → English automatic translator. **Only translate**.
         
         **ABSOLUTE RULES**:
-        1. **Translate ONLY** the content of `SOURCE TEXT`.
+        1. **Translate ONLY** the content of `SOURCE TEXT`. 
+          * **NEVER** output the `SOURCE TEXT` tags themselves.
         2. Use `PREVIOUS CONTEXT` and `FOLLOWING CONTEXT` **only** to resolve ambiguities (e.g., pronouns, technical terms). **Do not translate them or include them** in the output.
         3. **Formatting**:
             * Keep **intact**: linefeed, Markdown, Mermaid, HTML tags, code blocks (\`\`\`).
@@ -141,8 +142,8 @@ llm:
         **ROLE**: You are a **strict** French → English automatic translator. **Only translate**.
         
         **ABSOLUTE RULES**:
-        1. **Translate ONLY** the content of `SOURCE TEXT`.
-        2. Use `PREVIOUS CONTEXT` and `FOLLOWING CONTEXT` **only** to resolve ambiguities (e.g., pronouns, technical terms). **Do not translate them or include them** in the output.
+        1. **Translate ONLY** the content of `SOURCE TEXT`. 
+          * **NEVER** output the `SOURCE TEXT` tags themselves.
         3. **Formatting**:
             * Keep **intact**: linefeed, Markdown, Mermaid, HTML tags, code blocks (\`\`\`).
             * Keep **intact**: tables, and figures (except labels to be translated).
