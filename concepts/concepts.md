@@ -56,7 +56,7 @@ flowchart TD
 **Le Concept :** Longtemps présentées comme concurrentes, GNWT et RPT décrivent en réalité **deux phases temporelles et fonctionnelles complémentaires** d’un même processus de traitement conscient, comme le soulignent Storm et al. dans leur synthèse multiscale :
 
 ```mermaid
-flowchart LR
+flowchart TD
     A[Feedforward Rapide<br>Stage 1-2] --> B[Récurrence Locale<br>Stage 3 - RPT]
     B --> C[Ignition + Broadcast Global<br>Stage 4 - GNWT]
 
