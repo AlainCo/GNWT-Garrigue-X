@@ -70,6 +70,11 @@ llm:
         - basebackend-llamacpp
       model: Ministral-3-14B-Instruct-2512-Q4_K_M
       timeout_seconds: 900
+    basemodel-largenemo:
+      base:
+        - basebackend-llamacpp
+      model: Mistral-Nemo-Instruct-2407-Q6_K_L
+      timeout_seconds: 900
     basemodel-medium:
       base:
         - basebackend-llamacpp
@@ -81,7 +86,7 @@ llm:
       model: Ministral-3-3B-Instruct-2512-Q4_K_M
       timeout_seconds: 300
     basestyle-generic:
-      temperature: 0.0
+      temperature: 0.1
       max_pre_context_bytes: 300
       max_post_context_bytes: 300
       max_input_fragment_bytes: 1000
@@ -132,12 +137,10 @@ llm:
     basestyle-technical:
       base:
         - basestyle-generic
-      temperature: 0.0
       translated_document_header: "> ✨ Translated automatically with [**Do-My-Work**](https://github.com/AlainCo/do-my-work) — profile: technical."         
     basestyle-romantic:
       base:
         - basestyle-generic
-      temperature: 0.0
       system_prompt: |
         **ROLE**: You are a **strict** French → English automatic translator. **Only translate**.
         
