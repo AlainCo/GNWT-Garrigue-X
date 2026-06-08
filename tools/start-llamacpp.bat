@@ -12,6 +12,10 @@
 :: LLAMA_ARG_HOST (default localhost)
 :: LLAMA_ARG_ENDPOINT_METRICS
 :: LLAMA_ARG_THREADS with your number of core 
+:: LLAMA_ARG_MODELS_DIR models dir for autoload
+:: LLAMA_ARG_MODELS_PRESET preset configuration of models
+:: LLAMA_ARG_MODELS_MAX number of models loaded (advised 1)
+:: LLAMA_ARG_MODELS_AUTOLOAD if models are automatically loaded (advised 1)
 
 
 :: set to change our default
@@ -39,6 +43,11 @@ if "%LLAMA_HOME%"=="" (
 )
 echo Using llamacpp server from LLAMA_HOME: %LLAMA_HOME%
 
+
+
+if NOT "%LLAMA_ARG_MODELS_DIR%" == "" goto onmodelsdir
+if NOT "%LLAMA_ARG_MODELS_PRESET%" == "" goto onmodelspreset
+
 :: model home
 if "%LLAMA_MODEL_DIR%"=="" (
     echo LLAMA_MODEL_DIR environment variable is not set. set to %LLAMA_HOME%\model
@@ -50,8 +59,6 @@ if errorlevel 1 (
     echo Cannot change current directory to %LLAMA_MODEL_DIR% 
     exit /b 1
 )
-
-
 :: model
 if "%LLAMA_ARG_MODEL%"=="" (
     echo LLAMA_ARG_MODEL environment variable is not set. Please set it to the name of the llama model you want to use.
@@ -62,6 +69,29 @@ if not exist "%LLAMA_ARG_MODEL%" (
     echo model %LLAMA_ARG_MODEL% does not exist.
     exit /b 1
 )
+goto ondonemodel
+
+:onmodelsdir
+echo LLAMA_ARG_MODELS_DIR set to %LLAMA_ARG_MODELS_DIR% (directory where models can be loaded on demand)
+goto onroutermode
+
+:onmodelspreset
+echo LLAMA_ARG_MODELS_PRESET set to %LLAMA_ARG_MODELS_PRESET% (configuration file of models)
+goto onroutermode
+
+:onroutermode
+echo LLAMA_ARG_MODELS_MAX set to %LLAMA_ARG_MODELS_MAX% (max number of model loaded at a time)
+echo LLAMA_ARG_MODELS_AUTOLOAD set to "%LLAMA_ARG_MODELS_AUTOLOAD%" (wether models are loaded automatically. default true)
+:: model explicitly set in router mode
+if NOT "%LLAMA_ARG_MODEL%" == "" (
+    echo Using llamacpp model: %LLAMA_ARG_MODEL%
+    if not exist "%LLAMA_ARG_MODEL%" (
+        echo model %LLAMA_ARG_MODEL% does not exist.
+        exit /b 1
+    )
+)
+:ondonemodel
+
 
 set TS=%DATE:~6,4%%DATE:~3,2%%DATE:~0,2%-%TIME:~0,2%%TIME:~3,2%
 set TS=%TS: =0%
