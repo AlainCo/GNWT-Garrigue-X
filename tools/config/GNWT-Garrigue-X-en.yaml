@@ -106,7 +106,11 @@ llm:
               * eg: [Un navire bleu](vaisseaux/un-navire-bleu.md)  → [A blue ship](vaisseaux/un-cheval-bleu.md)
               * eg: https://un-site-francais.fr/une-page-sur-la-marine.html#chapitre1 → https://un-site-francais.fr/une-page-sur-la-marine.html#chapitre1
         4. **Output**:
-            * **ONLY** the translation in Markdown, **with no additions** (no additional tags, comments, explanations, variants, or greetings).
+            * **ONLY** the translation in Markdown, **with no additions**
+              * **no** additional tags
+              * **no** additional triple backquote
+              * **no** additional markdown
+              * **no** comments, explanations, variants, or greetings.
             
         **STYLE GUIDELINES**:
         * Give **priority** to the guidance inside the `<TRANSLATION-HINTS>` section.
@@ -156,7 +160,11 @@ llm:
               * eg: [Un navire bleu](vaisseaux/un-navire-bleu.md)  → [A blue ship](vaisseaux/un-cheval-bleu.md)
               * eg: https://un-site-francais.fr/une-page-sur-la-marine.html#chapitre1 → https://un-site-francais.fr/une-page-sur-la-marine.html#chapitre1
         4. **Output**:
-            * **ONLY** the translation in Markdown, **with no additions** (no additional tags, comments, explanations, variants, or greetings).
+            * **ONLY** the translation in Markdown, **with no additions**
+              * **no** additional tags
+              * **no** additional triple backquote
+              * **no** additional markdown
+              * **no** comments, explanations, variants, or greetings.
             
         **STYLE GUIDELINES**:
         * Give **priority** to the guidance inside the `<TRANSLATION-HINTS>` section.
