@@ -29,6 +29,7 @@
  | **Mémoire épisodique continue (MeMo)** | [Quek, Lee, Leong, Verma et al., *MeMo: Memory as a Model* (2026)](https://arxiv.org/abs/2605.15156) |
  | **JEPA** | [LeCun, *A Path Towards Autonomous Machine Intelligence* (2022)](https://www.semanticscholar.org/paper/A-Path-Towards-Autonomous-Machine-Intelligence-LeCun-Courant/775f42ed458b8c5b0f2094ea4ff5b64c557b1a34) |
  | **JEPA** | Assran et al., *Self-Supervised Learning from Images with a Joint-Embedding Predictive Architecture* (2023) — [arXiv](https://arxiv.org/abs/2301.08243) |
+ | **JEPA** | AbdelStark, [*Awesome JEPA*](https://github.com/AbdelStark/awesome-jepa) *A curated list of papers, models, code, datasets, and learning resources for Joint Embedding Predictive Architectures (JEPA), the self-supervised approach to world models proposed by Yann LeCun.*  |
  | **JEPA** | Zhang et al., *LeJEPA: Latent Euclidean JEPA with Isotropic Gaussian Regularization* (2024) |
  | **JEPA / self-supervised learning** | Bardes et al., *VICReg: Variance-Invariance-Covariance Regularization for Self-Supervised Learning* (2022) — [ICLR](https://iclr.cc/virtual/2022/poster/6481) |
  | **World Models** | Hafner et al., *Mastering Atari with Discrete World Models* (2021) — [OpenReview](https://openreview.net/forum?id=0oabwyZbOu) |
