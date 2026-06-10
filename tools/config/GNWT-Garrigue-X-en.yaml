@@ -86,11 +86,11 @@ llm:
       model: Ministral-3-3B-Instruct-2512-Q4_K_M
       timeout_seconds: 300
     basestyle-generic:
-      temperature: 0.1
+      temperature: 0.0
       max_pre_context_bytes: 300
       max_post_context_bytes: 300
-      max_input_fragment_bytes: 500
-      max_total_text_bytes: 1000
+      max_input_fragment_bytes: 30
+      max_total_text_bytes: 600
       system_prompt: |
         **ROLE**: You are a **strict** French → English automatic translator. **Only translate**.
         
