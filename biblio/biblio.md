@@ -39,6 +39,7 @@
  | **RWKV** | [Peng et al., *RWKV: Reinventing RNNs for the Transformer Era* (2023)](https://arxiv.org/abs/2305.13048) |
  | **xLSTM** | [Beck et al., *xLSTM: Extended Long Short-Term Memory* (2024)](https://arxiv.org/abs/2405.04517) |
  | **Barlow Twins** | [Zbontar et al., *Barlow Twins: Self-Supervised Learning via Redundancy Reduction* (2021)](https://arxiv.org/abs/2103.03230) |
+ | **RecursiveMAS** | [Xiyuan Yang, Jiaru Zou1, Rui Pan, Ruizhong Qiu, Pan Lu, Shizhe Diao, Jindong Jiang, Hanghang Tong, Tong Zhang, Markus J. Buehler, Jingrui He, James Zou, *Recursive Multi-Agent Systems, Scaling Agent Collaboration through Latent-space Recursion* (GitHub page) ](https://recursivemas.github.io/)|
 
  | **Thématique** | **Référence clé** |
  |-------------|-------------------|
