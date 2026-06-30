@@ -9,6 +9,7 @@
  | **Couvertures de Markov & Group-Level Models** | [Thestrup Waade, Lundbak Olesen, Friston et al., *As One and Many: Relating Individual and Emergent Group-Level Generative Models in Active Inference* (2025)— [PubMed] ](https://pubmed.ncbi.nlm.nih.gov/40003140/) |
  | **Couvertures imbriquées** | [Ciaunica, Levin, Rosas, Friston et al., *Nested Selves: Self-Organization and Shared Markov Blankets in Prenatal Development in Humans* (2023)](https://onlinelibrary.wiley.com/doi/10.1111/tops.12717) |
  | **Couvertures collectives** | [Thestrup Waade, Lundbak Olesen, Ehrenreich Laursen, Nehrer, Heins, Friston, Mathys, *As One and Many: Relating Individual and Emergent Group-Level Generative Models in Active Inference* (2025)](https://doi.org/10.3390/e27020143) |
+ | **RecursiveMAS** | [Xiyuan Yang, Jiaru Zou1, Rui Pan, Ruizhong Qiu, Pan Lu, Shizhe Diao, Jindong Jiang, Hanghang Tong, Tong Zhang, Markus J. Buehler, Jingrui He, James Zou, *Recursive Multi-Agent Systems, Scaling Agent Collaboration through Latent-space Recursion* (GitHub page) ](https://recursivemas.github.io/)|
 
  | **Thématique** | **Référence clé** |
  |-------------|-------------------|
@@ -23,10 +24,13 @@
  | **Intégration GNWT+RPT** | [Doerig et al., *An integrative, multiscale view on consciousness theories* (2024)](https://osf.io/preprints/psyarxiv/9byzu) *(Intègre GNWT, RPT, IIT, PP, NREP)* |
  | **Intégration GNWT + RPT (multiscale)** | [Storm et al., *An integrative, multiscale view on neural theories of consciousness* (2024)](https://doi.org/10.1016/j.neuron.2024.02.004) |
  | **Écosystèmes d'intelligence (Active Inference)** | [Friston et al., *Designing ecosystems of intelligence from first principles* (2024)](https://doi.org/10.1177/26339137231222481) *(Collective Intelligence)* |
+ |**Architecture cognitive classique**|[Newell, _Unified Theories of Cognition_ (1990)]  |
+ |**ACT-R**|[Anderson, _ACT-R: A Theory of Higher-Level Cognition_ (1997)]  |
+ |**Society of Mind**|[Minsky, _The Society of Mind_ (1986)]  |
+
 
  | **Thématique** | **Référence clé** |
  |-------------|-------------------|
- | **Mémoire épisodique continue (MeMo)** | [Quek, Lee, Leong, Verma et al., *MeMo: Memory as a Model* (2026)](https://arxiv.org/abs/2605.15156) |
  | **JEPA** | [LeCun, *A Path Towards Autonomous Machine Intelligence* (2022)](https://www.semanticscholar.org/paper/A-Path-Towards-Autonomous-Machine-Intelligence-LeCun-Courant/775f42ed458b8c5b0f2094ea4ff5b64c557b1a34) |
  | **JEPA** | Assran et al., *Self-Supervised Learning from Images with a Joint-Embedding Predictive Architecture* (2023) — [arXiv](https://arxiv.org/abs/2301.08243) |
  | **JEPA** | AbdelStark, [*Awesome JEPA*](https://github.com/AbdelStark/awesome-jepa) *A curated list of papers, models, code, datasets, and learning resources for Joint Embedding Predictive Architectures (JEPA), the self-supervised approach to world models proposed by Yann LeCun.*  |
@@ -35,11 +39,30 @@
  | **World Models** | Hafner et al., *Mastering Atari with Discrete World Models* (2021) — [OpenReview](https://openreview.net/forum?id=0oabwyZbOu) |
  | **JEPA / world models** | LeCun, *A Path Towards Autonomous Machine Intelligence* (2022) — [pointer](https://yschoe.github.io/2022/08/24/LeCun-A-path-towards-autonomous-machine-intelligence.html) |
  | **World Models** | [Hafner et al., *Mastering Atari with Discrete World Models* (DreamerV3, 2023)](https://arxiv.org/abs/2010.02193) |
+| **Barlow Twins** | [Zbontar et al., *Barlow Twins: Self-Supervised Learning via Redundancy Reduction* (2021)](https://arxiv.org/abs/2103.03230) |
+
+ | **Thématique** | **Référence clé** |
+ |-------------|-------------------|
  | **SSM / Mamba** | [Gu & Dao, *Mamba: Linear-Time Sequence Modeling with Selective State Spaces* (2023)](https://arxiv.org/abs/2312.00752) |
  | **RWKV** | [Peng et al., *RWKV: Reinventing RNNs for the Transformer Era* (2023)](https://arxiv.org/abs/2305.13048) |
  | **xLSTM** | [Beck et al., *xLSTM: Extended Long Short-Term Memory* (2024)](https://arxiv.org/abs/2405.04517) |
- | **Barlow Twins** | [Zbontar et al., *Barlow Twins: Self-Supervised Learning via Redundancy Reduction* (2021)](https://arxiv.org/abs/2103.03230) |
- | **RecursiveMAS** | [Xiyuan Yang, Jiaru Zou1, Rui Pan, Ruizhong Qiu, Pan Lu, Shizhe Diao, Jindong Jiang, Hanghang Tong, Tong Zhang, Markus J. Buehler, Jingrui He, James Zou, *Recursive Multi-Agent Systems, Scaling Agent Collaboration through Latent-space Recursion* (GitHub page) ](https://recursivemas.github.io/)|
+ 
+
+ | **Thématique** | **Référence clé** |
+ |-------------|-------------------|
+ |**Mémoire temporelle (TCM)**|[Polyn, Norman, Kahana, _A Context Maintenance and Retrieval Model_ (2009)]
+ |**Time Cells (hippocampe)**|[Eichenbaum, _Time Cells in the Hippocampus_ (2014)]  |
+ |**Séquences hippocampiques**|[Buzsáki, _The Hippocampus as a Sequence Generator_ (2006)]|
+ | **Mémoire épisodique continue (MeMo)** | [Quek, Lee, Leong, Verma et al., *MeMo: Memory as a Model* (2026)](https://arxiv.org/abs/2605.15156) |
+ | **Mémoire - Catastrophic Forgetting** | [Kirkpatrick et al., *Overcoming Catastrophic Forgetting* (2017)](https://arxiv.org/abs/1612.00796) |
+ |**Hopfield modernes**|[Ramsauer et al., _Hopfield Networks is All You Need_ (2021)]|
+ |**Dense Associative Memory**|[Krotov & Hopfield, _Dense Associative Memory_ (2021)]|
+ |**Complementary Learning Systems**|[McClelland, McNaughton, O’Reilly (1995)]|
+ | **Sommeil et cognition** | [Walker, *The Role of Sleep in Cognition and Emotion* (2017)](https://pubmed.ncbi.nlm.nih.gov/19338508/) |
+ |**Planification par world model**|[Schrittwieser et al., _MuZero_ (2020)]  |
+ |**Planification dans l’espace latent**|[Hafner et al., _DreamerV3_ (2023)]  |
+ |**Reasoning structuré (LLM)**|[Yao et al., _Tree of Thoughts_ (2023)]  |
+
 
  | **Thématique** | **Référence clé** |
  |-------------|-------------------|
@@ -51,9 +74,6 @@
  | **Dark Triad neural** | [Bakiaj, Pantoja Muñoz, Bizzego, Grecucci, *Unmasking the Dark Triad: A Data Fusion Machine Learning Approach to Characterize the Neural Bases of Narcissistic, Machiavellian and Psychopathic Traits* (2025)](https://onlinelibrary.wiley.com/doi/10.1111/ejn.16674) |
  | **Big Five évolutif** | [Nettle, *Personality: What makes you the way you are* (2007), *(Livre, Oxford University Press)* ](https://www.amazon.com/Personality-Makes-Oxford-Landmark-Science/dp/0199211434) |
  | **TSA computationnel** | [Baron-Cohen, *Autism: the empathizing-systemizing (E-S) theory* (2009)](https://pubmed.ncbi.nlm.nih.gov/19338503/) *(Théorie originelle : 2002)* |
- | **Mémoire épisodique continue** | [Quek, Lee, Leong, Verma et al., *MeMo: Memory as a Model* (2026)](https://arxiv.org/abs/2605.15156) |
- | **Mémoire - Catastrophic Forgetting** | [Kirkpatrick et al., *Overcoming Catastrophic Forgetting* (2017)](https://arxiv.org/abs/1612.00796) |
- | **Sommeil et cognition** | [Walker, *The Role of Sleep in Cognition and Emotion* (2017)](https://pubmed.ncbi.nlm.nih.gov/19338508/) |
  | **Constitutional AI** | [Bai et al., *Constitutional AI: Harmlessness from AI Feedback* (Anthropic, 2022)](https://arxiv.org/abs/2212.08073) |
 
  | **Thématique** | **Référence clé** |
