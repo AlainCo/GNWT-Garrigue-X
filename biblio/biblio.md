@@ -57,11 +57,23 @@
  | **Mémoire - Catastrophic Forgetting** | [Kirkpatrick et al., *Overcoming Catastrophic Forgetting* (2017)](https://arxiv.org/abs/1612.00796) |
  |**Hopfield modernes**|[Ramsauer et al., _Hopfield Networks is All You Need_ (2021)]|
  |**Dense Associative Memory**|[Krotov & Hopfield, _Dense Associative Memory_ (2021)]|
- |**Complementary Learning Systems**|[McClelland, McNaughton, O’Reilly (1995)]|
  | **Sommeil et cognition** | [Walker, *The Role of Sleep in Cognition and Emotion* (2017)](https://pubmed.ncbi.nlm.nih.gov/19338508/) |
+
+ | **Thématique** | **Référence clé** |
+ |-------------|-------------------|
+ |**Complementary Learning Systems**|[McClelland, McNaughton, O’Reilly (1995)]|
  |**Planification par world model**|[Schrittwieser et al., _MuZero_ (2020)]  |
  |**Planification dans l’espace latent**|[Hafner et al., _DreamerV3_ (2023)]  |
  |**Reasoning structuré (LLM)**|[Yao et al., _Tree of Thoughts_ (2023)]  |
+ |**LoRA (Low-Rank Adaptation)**|[Hu et al., _LoRA: Low-Rank Adaptation of Large Language Models_ (2021)]   |
+ |**Adapters (NLP)**|[Houlsby et al., _Parameter-Efficient Transfer Learning for NLP_ (2019)]   |
+ |**PEFT (overview)**|[Han et al., _Parameter-Efficient Fine-Tuning: A Survey_ (2024)]   |
+ |**Continual Learning contraint**|[Kirkpatrick et al., _Overcoming Catastrophic Forgetting_ (2017)]   |
+ |**Synaptic Intelligence**|[Zenke et al., _Continual Learning Through Synaptic Intelligence_ (2017)]   |
+ |**Learning without Forgetting**|[Li & Hoiem, _Learning without Forgetting_ (2016)]   |
+ |**Meta-learning (adaptation rapide)**|[Finn et al., _Model-Agnostic Meta-Learning (MAML)_ (2017)]   |
+ |**Adaptation multimodale / embodiment**|[Tobin et al., _Domain Randomization for Transferring DNNs from Simulation to the Real World_ (2017)]   |
+
 
 
  | **Thématique** | **Référence clé** |

@@ -55,7 +55,7 @@ Uniquement des échanges compressés.
 * communication par résumés (ignitions)
 * identité préservée à toutes les échelles
 
-➡️ Inspiré des Markov blankets imbriquées [\[concepts.docx \| Word\]](https://caissedesdepots-my.sharepoint.com/personal/alain_coetmeur_caissedesdepots_fr/Documents/Microsoft%20Copilot%20Chat%20Files/Copilot%20Notebook%20Uploads/concepts.docx)
+➡️ Inspiré des Markov blankets imbriquées 
 
 ***
 
@@ -73,8 +73,7 @@ Local = comprendre
 Global = partager / arbitrer
 ```
 
-➡️ séparation déjà présente en V1 [\[concepts.docx \| Word\]](https://caissedesdepots-my.sharepoint.com/personal/alain_coetmeur_caissedesdepots_fr/Documents/Microsoft%20Copilot%20Chat%20Files/Copilot%20Notebook%20Uploads/concepts.docx)
-
+➡️ séparation déjà présente en V1 
 ***
 
 ## 2.3 🌍 Modèle du monde : JEPA
@@ -90,7 +89,7 @@ Pas de génération brute.
 comprendre = prédire ce qui va arriver
 ```
 
-➡️ base JEPA + predictive processing [\[README.docx \| Word\]](https://caissedesdepots-my.sharepoint.com/personal/alain_coetmeur_caissedesdepots_fr/Documents/Microsoft%20Copilot%20Chat%20Files/Copilot%20Notebook%20Uploads/README.docx)
+➡️ base JEPA + predictive processing 
 
 ***
 
@@ -118,7 +117,7 @@ Un système sans temps :
 * rejouer le passé
 * simuler le futur
 
-➡️ basé sur Temporal Context Model [\[conscience...temps.docx \| Word\]](https://caissedesdepots-my.sharepoint.com/personal/alain_coetmeur_caissedesdepots_fr/Documents/Microsoft%20Copilot%20Chat%20Files/Copilot%20Notebook%20Uploads/conscience-du-temps.docx)
+➡️ basé sur Temporal Context Model 
 
 ***
 
@@ -137,7 +136,7 @@ Trois composants :
 * stocke sous forme de connaissances internes
 * répond par inférence, pas par recherche
 
-➡️ mémoire = modèle [\[descriptio...-memo.docx \| Word\]](https://caissedesdepots-my.sharepoint.com/personal/alain_coetmeur_caissedesdepots_fr/Documents/Microsoft%20Copilot%20Chat%20Files/Copilot%20Notebook%20Uploads/description-memo.docx)
+➡️ mémoire = modèle 
 
 ***
 
@@ -176,7 +175,7 @@ Elle est orchestrée.
 * simule des scénarios
 * choisit une action
 
-➡️ inspiré des architectures hybrides cognition lente / rapide [\[opinion-ap...ssage.docx \| Word\]](https://caissedesdepots-my.sharepoint.com/personal/alain_coetmeur_caissedesdepots_fr/Documents/Microsoft%20Copilot%20Chat%20Files/Copilot%20Notebook%20Uploads/opinion-apprentissage.docx)
+➡️ inspiré des architectures hybrides cognition lente / rapide 
 
 ***
 
@@ -192,7 +191,187 @@ Trois niveaux :
 | lent   | consolidation (MeMo)   |
 | local  | adaptation des modules |
 
-➡️ évite instabilité et dérive globale [\[opinion-ap...ssage.docx \| Word\]](https://caissedesdepots-my.sharepoint.com/personal/alain_coetmeur_caissedesdepots_fr/Documents/Microsoft%20Copilot%20Chat%20Files/Copilot%20Notebook%20Uploads/opinion-apprentissage.docx)
+➡️ évite instabilité et dérive globale 
+
+
+## 🔧 Adaptation & Plasticité
+
+Tous les systèmes intelligents doivent évoluer.  
+Mais tous les systèmes qui évoluent trop deviennent instables.
+
+Notre architecture adopte un principe simple :
+
+```text
+On ne modifie pas le système en permanence.
+On le stabilise, puis on l’adapte localement.
+```
+
+***
+
+### 🧱 1. Séparation fondamentale
+
+Le système distingue trois niveaux d’apprentissage :
+
+| Niveau                | Rôle                  | Nature |
+| --------------------- | --------------------- | ------ |
+| **Core (JEPA)**       | Comprendre le monde   | Stable |
+| **Adaptation locale** | S’ajuster au contexte | Rapide |
+| **Consolidation**     | Intégrer durablement  | Lent   |
+
+👉 Cette séparation est essentielle pour éviter la dérive globale du système.
+
+***
+
+### 🔒 2. Core stable (compétence)
+
+Chaque agent repose sur un modèle principal (JEPA core) :
+
+* encode les régularités du monde
+* structure les représentations latentes
+* supporte la planification
+
+Propriétés :
+
+* quasi figé en opération
+* mis à jour rarement
+* consolidé hors ligne (phase de sommeil)
+
+```text
+Le core apprend le monde.
+Il ne s’adapte pas à chaque situation.
+```
+
+***
+
+### 🌱 3. Adaptation locale (plasticité contrôlée)
+
+L’adaptation se fait via des modules légers :
+
+* LoRA (Low-Rank Adaptation)
+* adapters
+* couches intermédiaires spécialisées
+
+Caractéristiques :
+
+* faible capacité (évite la dérive)
+* activables dynamiquement
+* spécifiques au contexte
+
+***
+
+#### 🔹 Types d’adaptateurs
+
+Le système introduit explicitement une **couche d’adaptation** entre cognition et monde :
+
+```text
+JEPA → Adaptateurs → Capteurs / Actionneurs
+```
+
+On distingue :
+
+* **Adaptateurs perceptifs**
+  * correction capteurs (bruit, dérive, changement matériel)
+
+* **Adaptateurs moteurs**
+  * traduction action abstraite → exécution physique
+
+* **Adaptateurs dynamiques**
+  * inertie, latence, environnement
+
+* **Adaptateurs contextuels**
+  * modes comportementaux (prudence, exploration, etc.)
+
+***
+
+#### 🧠 Intuition clé
+
+```text
+On ne réapprend pas une compétence.
+On ajuste son interface avec le monde.
+```
+
+***
+
+### ⚙️ 4. Déclenchement de l’adaptation
+
+L’adaptation n’est pas automatique.
+
+Elle est **pilotée par le système conscient** :
+
+* surprise élevée
+* échec répété
+* baisse de confiance
+
+Les modules impliqués :
+
+* Self-model (métacognition)
+* Process Composer (planification)
+
+👉 L’adaptation devient une **décision du système**, pas un effet secondaire.
+
+***
+
+### 🔁 5. Cycle d’adaptation
+
+```text
+1. Exécution normale
+2. Détection de surprise / erreur
+3. Tentative via mémoire
+4. Échec répété → activation adaptation
+5. Ajustement local (LoRA / adapters)
+6. Stabilisation
+7. Consolidation éventuelle (offline)
+```
+
+***
+
+### 🌙 6. Consolidation (rêverie)
+
+Lors des phases hors-ligne :
+
+* replay des expériences
+* simulation via JEPA
+* entraînement contrôlé
+
+Objectifs :
+
+* intégrer les adaptations utiles
+* éviter le sur-apprentissage local
+* maintenir la cohérence globale
+
+👉 Le core n’évolue que lentement.
+
+***
+
+### ⚠️ 7. Pourquoi c’est critique
+
+Sans cette architecture :
+
+* dérive des modèles
+* perte de spécialisation
+* instabilité globale
+* collapse du système multi-agent
+
+Avec elle :
+
+```text
+✅ adaptation rapide
+✅ stabilité globale
+✅ robustesse aux changements
+✅ capacité à opérer en environnement inconnu
+```
+
+***
+
+### 🧭 Résumé
+
+```text
+Core stable + adaptation locale + consolidation lente
+
+= intelligence durable
+```
+
+
 
 ***
 
@@ -210,7 +389,7 @@ Ce signal :
 * guide la planification
 * améliore l’explicabilité
 
-➡️ idée déjà présente en V1 [\[concepts.docx \| Word\]](https://caissedesdepots-my.sharepoint.com/personal/alain_coetmeur_caissedesdepots_fr/Documents/Microsoft%20Copilot%20Chat%20Files/Copilot%20Notebook%20Uploads/concepts.docx)
+➡️ idée déjà présente en V1 
 
 ***
 
@@ -224,7 +403,7 @@ Un budget attentionnel :
 * priorise
 * évite l’explosion du système
 
-➡️ modèle Attention Schema [\[concepts.docx \| Word\]](https://caissedesdepots-my.sharepoint.com/personal/alain_coetmeur_caissedesdepots_fr/Documents/Microsoft%20Copilot%20Chat%20Files/Copilot%20Notebook%20Uploads/concepts.docx)
+➡️ modèle Attention Schema 
 
 ***
 
@@ -242,7 +421,7 @@ Un budget attentionnel :
   Planner           Mémoire           Self-model
 (ProcessComp)   (MeMo + Hopfield)     (Meta)
       │
-  Agents JEPA (modèles du monde)
+  Agents JEPA (core + adaptation layer)
       │
  Environnement
 ```
@@ -318,11 +497,12 @@ GNWT → mémoire → replay → planification
 Le système apprend hors ligne :
 
 * replay des épisodes
-* consolidation (MeMo)
+* consolidation (MeMo + core JEPA)
+* intégration des adaptations locales
 * recalibration
 * détection de collapse
 
-➡️ déjà introduit dans V1 [\[README.docx \| Word\]](https://caissedesdepots-my.sharepoint.com/personal/alain_coetmeur_caissedesdepots_fr/Documents/Microsoft%20Copilot%20Chat%20Files/Copilot%20Notebook%20Uploads/README.docx)
+➡️ déjà introduit dans V1 
 
 ***
 
