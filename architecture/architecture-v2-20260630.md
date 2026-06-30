@@ -73,8 +73,48 @@ Local = comprendre
 Global = partager / arbitrer
 ```
 
-➡️ séparation déjà présente en V1 
+
+### 🧠 IWMT : Modélisation du monde et conscience
+
+Certaines approches récentes proposent de voir la conscience comme un **processus de modélisation intégrée du monde**.
+
+L’Integrated World Modeling Theory (IWMT) synthétise plusieurs idées :
+
+* la conscience correspond à un **modèle du monde unifié et dynamique**
+* ce modèle intègre :
+  * perception
+  * mémoire
+  * prédiction
+  * action
+* la cohérence du modèle est maintenue par des boucles de type **predictive processing / active inference**
+
+```text
+Conscience = capacité à maintenir un modèle cohérent du monde et de soi dans le temps
+```
+
 ***
+
+### 🔗 Position dans l’architecture
+
+Dans cette architecture :
+
+* **JEPA → modèle du monde latent**
+* **GNWT → accès global et unification**
+* **Mémoire → continuité temporelle**
+* **Planner → projection dans le futur**
+
+👉 IWMT peut être vu comme une **lecture unifiée du système**, où :
+
+```text
+l’ensemble de l’architecture = système de world modeling intégré
+```
+
+
+
+***
+
+
+
 
 ## 2.3 🌍 Modèle du monde : JEPA
 

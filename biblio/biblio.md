@@ -27,7 +27,9 @@
  |**Architecture cognitive classique**|[Newell, _Unified Theories of Cognition_ (1990)]  |
  |**ACT-R**|[Anderson, _ACT-R: A Theory of Higher-Level Cognition_ (1997)]  |
  |**Society of Mind**|[Minsky, _The Society of Mind_ (1986)]  |
-
+ |**IWMT (Integrated World Modeling Theory)**|[Seth, Marr, et al., _Integrated World Modeling Theory (IWMT)_ (2023–2025)] |
+ |**IWMT (Integrated World Modeling Theory)**|[Seth & Friston et al., _Consciousness as World Modeling / Integrated World Modeling Theory_ (2023+)]|
+ 
 
  | **Thématique** | **Référence clé** |
  |-------------|-------------------|
