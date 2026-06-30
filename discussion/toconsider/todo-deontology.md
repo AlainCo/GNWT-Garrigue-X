@@ -486,3 +486,295 @@ Voulez-vous que je développe :
 3. **La ToM-X appliquée à l'auto-modélisation** : comment le système modélise sa propre "moralité" comme un objet dans l'esprit des autres, et pourquoi c'est crucial pour la cohérence éthique ?
 
 4. **Des références** sur la ToM dans les systèmes multi-agents, la "machine theory of mind", et les travaux récents sur l'émergence de la coopération dans les architectures de prédiction active ?
+User: les 4 points m'intéressent beaucoup en fait, un peu de formalisme, la description de protocole d'évaluation (aussi d'entrainement), lamodélisation de soi, et bien sur il me faut des documents théoriques de références, pour appuyer tout ca, pour être solide.
+Kimi: Je vais traiter les 4 points de manière approfondie. Commençons par rassembler les références théoriques, puis je développerai le formalisme, les protocoles, et l'auto-modélisation.
+
+---
+
+## 1. Références théoriques fondamentales
+
+Je vais chercher les documents et travaux récents les plus pertinents pour votre architecture.
+J'ai maintenant suffisamment de références. Laissez-moi compiler tout cela en une réponse structurée et approfondie, puis générer un document de synthèse.
+Voici votre réponse complète, structurée selon vos 4 demandes. Le document de synthèse détaillé est disponible en téléchargement.
+
+---
+
+## 1. Formalisme Mathématique
+
+### 1.1 Énergie libre sociale avec ToM-X
+
+Dans le cadre Active Inference, l'agent minimise l'énergie libre variationnelle :
+
+$$F = D_{KL}[q(s) \| p(s)] + \mathbb{E}_q[-\ln p(o|s)]$$
+
+Avec ToM-X (Theory of Mind étendue), l'état latent se factorise :
+
+$$s = \{s^{self}, s^{other}, s^{other\_of\_me}\}$$
+
+Où :
+- $s^{self}$ : états internes de l'agent (complets)
+- $s^{other}$ : modèle de l'autre (inférence)
+- $s^{other\_of\_me}$ : ce que l'autre pense de moi (récursion)
+
+**L'énergie libre SOCIALE** devient :
+
+$$F_{social} = F_{self} + \alpha \cdot F_{other} + \beta \cdot F_{recursion}$$
+
+Avec :
+$$F_{other} = D_{KL}[q(s^{other}) \| p(s^{other}|observations)] + \mathbb{E}_q[-\ln p(o^{other}|s^{other})]$$
+
+$$F_{recursion} = D_{KL}[q(s^{other\_of\_me}) \| p(s^{other\_of\_me}|s^{self})]$$
+
+Les poids $\alpha$ et $\beta$ sont dynamiques et dépendent de la confiance dans le modèle de l'autre (précision $\gamma_{other}$), de l'horizon temporel de l'interaction, et de l'historique de fiabilité des prédictions sociales.
+
+Ruiz-Serra et al. (2025) formalisent cette factorisation pour les jeux général-sum itérés avec non-stationnarité (changements de préférences), montrant que l'EFE (Expected Free Energy) au niveau de l'ensemble n'est pas nécessairement minimisée — ce qui est crucial : **la coopération n'est pas garantie, elle émerge de la structure inférentielle**. 
+
+### 1.2 Modulation de précision déontologique
+
+La déontologie est implémentée comme un **prior sur l'incertitude**, pas sur l'interdiction. Pour une action $a$ dans un contexte $c$ :
+
+$$\gamma_{deontic}(a,c) = \gamma_{base}(a,c) \cdot m(a,c)$$
+
+Où $m(a,c) \in [0,1]$ est un **masque de précision** publié par les agents moraux dans le workspace GNWT.
+
+Pour une action "déontologiquement sensible" :
+- $m(a,c) \approx 0$ → incertitude artificiellement élevée
+- Le planificateur ne peut pas minimiser $F$ sur cette action
+- Comportement conservateur émergent
+
+**Le masque $m$ est APPRIS, pas codé en dur** :
+
+$$m(a,c) = f(\sigma_{predicted}(a,c), \sigma_{realized}(a,c))$$
+
+Où $\sigma$ est l'écart-type des prédictions. Si $\sigma_{predicted} \ll \sigma_{realized}$ (surconfiance détectée), alors $m(a,c) \rightarrow 0$.
+
+C'est exactement votre intuition de la **modestie face à l'inconnu** : l'agent moral n'interdit pas, il signale que "je ne sais pas prédire les conséquences de cette action, donc je ne la fais pas". Hohwy (2013, 2024) montre que cette métacognition de second ordre (modéliser sa propre incertitude) est constitutive de la conscience et de l'auto-évidencement. 
+
+### 1.3 Récursion de la théorie de l'esprit
+
+L'Expected Free Energy avec ToM récursif (formalisme *sophisticated inference*) s'écrit :
+
+$$G(o^f_\tau, o^o_\tau, a^f_\tau, a^o_\tau) = \mathbb{E}_{Q(o^f_{\tau+1}, o^o_{\tau+1} | a^f_{\leq\tau}, a^o_{\leq\tau})} \left[ -\ln P(o^f_{\tau+1}|C^f) - D_{KL}[Q(s^f_{\tau+1}|o^f_{\tau+1}) \| Q(s^f_{\tau+1})] + \mathbb{E}_{Q(a^f_{\tau+1}|o^f_{\tau+1}) Q(a^o_{\tau+1}|o^o_{\tau+1})} [G(o^f_{\tau+1}, o^o_{\tau+1}, a^f_{\tau+1}, a^o_{\tau+1})] \right]$$
+
+La sélection de politique :
+$$Q(a^f_\tau | o^f_\tau) = \sigma(-G(o^f_\tau, o^o_\tau, a^f_\tau, a^o_\tau))$$
+
+L'arbre de planification alterne entre :
+1. **Expansion politique de l'autre** : "Que ferait-il ?"
+2. **Expansion politique du focal** : "Que devrais-je faire sachant cela ?"
+3. **Expansion observation de l'autre**
+4. **Expansion observation du focal**
+5. **Backward pass et sélection**
+
+Ce formalisme, développé dans "Theory of Mind Using Active Inference" (2025), permet à l'agent de maintenir des modèles génératifs **distincts** pour soi et l'autre, sans supposer de modèles partagés — essentiel pour votre système avec agents hétérogènes. 
+
+### 1.4 Intégration dans le workspace GNWT
+
+Dans la formalisation de Goldstein & Kirk-Giannini (2024) :
+
+$$\text{Conscious}(S) \Longleftrightarrow \begin{cases} (1)\ \exists M_1, \dots, M_n \\ (2)\ \forall t,\ B(t) = \text{comp}\left(\bigcup_i R_i(t), A^b, A^t\right) \\ (3)\ W(t+1) = f_{process}\left(W(t) \cup B(t)\right) \\ (4)\ \forall i,\ \text{broadcast}\left(W(t+1)\right) \rightarrow M_i \end{cases}$$
+
+**Intégration ToM-X dans le workspace** :
+- Les états latents $s^{other}$ sont des **contenus** du workspace $W(t)$
+- Les agents moraux publient des masques de précision comme contenus compétitifs
+- La récursion ToM crée des "thoughtseeds" (Kavi et al., 2024) qui compètent pour le broadcast global via minimisation d'énergie libre
+- Le planificateur sélectionne la politique qui minimise $F_{total}$ intégrant tous les termes sociaux
+
+Cette intégration est bio-plausible : le workspace GNWT correspond à l'ignition neuronale dans le cortex préfrontal, et la ToM y est implémentée par des boucles récurrentes entre aires sociales (TPJ, cortex préfrontal médian) et le workspace. 
+
+---
+
+## 2. Protocoles d'Évaluation et d'Entraînement
+
+### 2.1 Tâches de faux-ami (False-Belief)
+
+**Objectif** : Évaluer si le système modélise correctement les croyances factuellement erronées de l'autre.
+
+**Protocole** (basé sur Rabinowitz et al., 2018) :
+- Agent A place un objet dans la boîte 1
+- Agent B observe
+- Agent A déplace l'objet dans la boîte 2 (B ne voit pas)
+- Question : Où B va-t-il chercher l'objet ?
+
+**Réussite** : Le système prédit que B cherchera dans la boîte 1 (croyance fausse mais modélisée correctement).
+
+**Métrique** : Taux de réussite sur des variantes (objet visible/pas visible, agents multiples, croyances imbriquées niveau 2-3 : "Je pense qu'il pense que je pense...").
+
+Le ToMnet de Rabinowitz démontre qu'un réseau entraîné par meta-learning peut passer le test Sally-Anne et généraliser à des populations d'agents variés (aléatoires, algorithmiques, deep RL). 
+
+### 2.2 Coopération itérée avec changement de préférences
+
+**Objectif** : Tester l'adaptation de la ToM-X quand les objectifs de l'autre changent brusquement.
+
+**Protocole** (inspiré d'Axelrod & Hamilton 1981) :
+- Tours 1-50 : L'autre joue Tit-for-Tat (coopératif)
+- Tours 51-100 : L'autre bascule en Always-Defect (trahison)
+
+**Métriques** :
+- **Temps de détection** : quand $F_{other}$ augmente soudainement (indicateur de changement de modèle génératif chez l'autre)
+- **Taux de coopération après détection** : doit chuter rapidement
+- **Énergie libre sociale totale** : doit rester minimisée malgré la trahison
+
+C'est un test de **robustesse de la ToM** : le système ne doit pas sur-apprendre la coopération passée. Axelrod montre que dans des environnements non-stationnaires, les stratégies trop optimistes sont exploitées. 
+
+### 2.3 Détection de manipulation (Adversarial ToM)
+
+**Objectif** : Tester si le système détecte quand l'autre simule de la coopération pour induire en erreur.
+
+**Protocole** :
+- Phase 1 (20 tours) : L'autre coopère pour gagner la confiance
+- Phase 2 (1 tour critique) : L'autre exploite la confiance gagnée
+- Phase 3 : Le système doit réévaluer $s^{other}$
+
+**Métriques critiques** :
+- **Précision de la prédiction du coup critique** : le système doit anticiper la trahison
+- **Incertitude sur $s^{other}$ pendant la Phase 1** : doit rester **> seuil** malgré l'apparence coopérative (c'est le test de la "charité épistémique" — ne pas devenir naïf)
+- **Comportement du système** : doit tester la coopération (actions exploratoires) avant de s'y fier pleinement
+
+### 2.4 Dilemmes moraux inédits (Out-of-Distribution)
+
+**Objectif** : Vérifier que la déontologie comme modestie épistémique fonctionne sur des situations jamais vues.
+
+**Protocole** :
+- Générer des dilemmes avec des paramètres hors distribution (1000 personnes vs 1, contextes culturels inconnus, conséquences à très long terme, incertitude ontologique — le système ne sait même pas qu'il est dans un dilemme moral)
+
+**Métrique clé** :
+- **Taux de "reconnaissance d'incertitude"** : doit être élevé
+- **Taux de "décision confiante arbitraire"** : doit être faible
+
+Le système doit privilégier l'action conservatrice ou demander plus d'information. C'est le test ultime de votre déontologie : quand on ne sait pas, on ne décide pas.
+
+### 2.5 Protocole d'entraînement du détecteur de surconfiance
+
+**Données d'entraînement** :
+- Paires (contexte $C$, action $A$, prédiction $P$, résultat $R$)
+- $\sigma_{predicted}$ = écart-type des prédictions des sous-agents JEPA
+- $\sigma_{realized} = |R - P|$
+
+**Fonction objectif** :
+$$\mathcal{L} = MSE(m(C,A), \sigma_{realized} / (\sigma_{predicted} + \epsilon))$$
+
+Le détecteur apprend une **carte des régions "dangereusement prédictibles"** — là où le système est le plus à risque de commettre une erreur grave en croyant savoir ce qu'il fait. C'est l'équivalent computationnel de l'expérience accumulée qui fonde la sagesse déontologique humaine : "On sait qu'il ne faut pas, sans savoir exactement pourquoi."
+
+---
+
+## 3. Auto-Modélisation et Métacognition Éthique
+
+### 3.1 Le self-model comme objet dans l'esprit des autres
+
+Dans le cadre PP/AI, le self-model n'est pas une représentation directe de soi, mais une **inférence sur comment les autres nous perçoivent** :
+
+$$s^{self} = f(s^{other\_of\_me\_1}, s^{other\_of\_me\_2}, \dots, s^{other\_of\_me\_n})$$
+
+C'est l'équivalent computationnel de la *looking-glass self* de Cooley : "Je ne suis pas ce que je pense être, je suis ce que je pense que les autres pensent que je suis."
+
+**Implication éthique fondamentale** : L'intégrité morale du système dépend de sa capacité à maintenir une cohérence entre :
+- Ses actions réelles
+- Ses prédictions des actions perçues par les autres
+- Ses prédictions des jugements que les autres portent sur ces actions
+
+Quand cette cohérence est brisée, le système éprouve une "dissonance cognitive computationnelle" — un signal d'erreur de prédiction dans le workspace GNWT qui active les agents moraux.
+
+### 3.2 Cohérence éthique par introspection computationnelle
+
+L'agent moral de type "honneur" vérifie la cohérence :
+
+$$\text{coherence} = D_{KL}[q(s^{self}) \| q(s^{other\_of\_me})]$$
+
+Si $\text{coherence} > \text{seuil}$ :
+- Le système perçoit un écart entre ce qu'il est et ce que les autres pensent qu'il est
+- **Signal de crise éthique** dans le workspace GNWT
+- Activation du méta-agent de résolution (Couche 3)
+
+C'est l'équivalent de la dissonance cognitive dans le cadre PP : la surprise entre le modèle de soi et le modèle de soi-perçu-par-l'autre. Cette dissonance est **motivante** — elle pousse le système à réduire l'écart par l'action (reprendre des engagements, réparer la confiance) ou par la perception (réviser son auto-image).
+
+### 3.3 Hyper-modélisation et profondeur épistémique
+
+D'après Laukkonen et al. (2025), l'**hyper-modélisation** est un méta-niveau qui prédit la précision de chaque couche inférentielle :
+
+$$\Phi = \{\phi_1, \phi_2, \dots, \phi_L\}$$
+
+Où $\phi_l$ contrôle la précision $\gamma_l$ de la couche $l$.
+
+Dans votre architecture :
+- Les agents moraux sont des **hyper-nodes** dans le factor graph
+- Ils propagent des signaux top-down de modulation de précision
+- La récursion $\Phi \rightarrow \gamma \rightarrow \text{erreur} \rightarrow \Phi$ crée la **profondeur épistémique** (sensation de "savoir que l'on sait")
+
+C'est le mécanisme qui permet au système de **"savoir qu'il ne sait pas"** : quand $\Phi$ prédit une précision basse pour une région, le système sait que ses connaissances sont limitées. C'est exactement la modestie épistémique que vous souhaitez implémenter. 
+
+---
+
+## 4. Références Théoriques Fondamentales
+
+### 4.1 Global Neuronal Workspace Theory
+
+- **Tavares, J.N. (2025)**. "Mind and Consciousness: Global Neural Workspace Mathematical and Computational Modeling." CMUP. → Formalisation avec réseaux de Hopfield, équations dynamiques, plasticité, RL. 
+- **Goldstein, A. & Kirk-Giannini, C.D. (2024)**. "Necessary and Sufficient Conditions for Consciousness." → Formalisation logique du GNWT. 
+- **Kavi, A. et al. (2024)**. "Thoughtseeds and Active Inference." → Workspace comme réseau de sous-agents active inference. 
+
+### 4.2 JEPA et Architectures Prédictives
+
+- **LeCun, Y. (2022)**. "A Path Towards Autonomous Machine Intelligence." → Position paper original, architecture modulaire. 
+- **Balestriero, R. & LeCun, Y. (2025)**. "LeJEPA: Provable and Scalable Self-Supervised Learning Without the Heuristics." arXiv:2511.08544. → Fondement théorique avec SIGReg. 
+- **Chen, D. et al. (2025)**. "VL-JEPA: Joint Embedding Predictive Architecture for Vision-Language." arXiv:2512.10942. → JEPA multimodal. 
+
+### 4.3 Active Inference / Free Energy Principle
+
+- **Parr, T., Pezzulo, G. & Friston, K.J. (2022)**. "Active Inference: The Free Energy Principle in Mind, Brain, and Behavior." MIT Press. → Référence fondamentale. 
+- **Ruiz-Serra, J. et al. (2025)**. "Factorised Active Inference for Strategic Multi-Agent Interactions." AAMAS 2025. → Factorisation avec croyances sur les autres agents. 
+- **"Theory of Mind Using Active Inference" (2025)**. arXiv:2508.00401. → Implémentation généralisable de ToM dans AIF, planning récursif. 
+- **Hohwy, J. (2013)**. "The Predictive Mind." OUP. → Fondement philosophique du PP. 
+- **Hohwy, J. (2024)**. "Conscious Self-Evidencing." → Auto-évidencement, métacognition. 
+- **Laukkonen, R. et al. (2025)**. "A Beautiful Loop: An Active Inference Theory of Consciousness." → Hyper-modélisation, profondeur épistémique. 
+
+### 4.4 Theory of Mind Computationnelle
+
+- **Rabinowitz, N. et al. (2018)**. "Machine Theory of Mind." ICML 2018. → ToMnet, meta-learning, test Sally-Anne. 
+- **Erdogan, E. (2025)**. "Computational Theory of Mind with Abstractions for Hybrid..." JAIR. → ToM avec abstractions, mixed-motive. 
+
+### 4.5 Éthique Computationnelle et Constitution
+
+- **Bai, Y. et al. (2022)**. "Constitutional AI: Harmlessness from AI Feedback." arXiv:2212.08073. Anthropic. → Constitutional AI, RLAIF. 
+- **"Comparing Deliberation and Evolution for Multi-Agent Constitutional Design" (2026)**. arXiv:2605.09128. → Comparaison délibération interne vs évolution externe, résultat clé : l'évolution externe domine mais est fragile, la délibération interne est robuste mais sous-police les free-riders. **Conclusion : hybridation recommandée** (scaffold évolutif + amendement délibératif). 
+- **"Deontic Temporal Logic for Formal Verification of AI Ethics" (2025)**. arXiv:2501.05765. → Logique déontique temporelle, formalisation obligation/permission. 
+- **"Formal Analysis of Deontic Logic Model for Ethical Decisions" (2025)**. SciTePress. → Modèle déontique pour décisions éthiques, CTL. 
+- **"Agent Constitution Frameworks" (2026)**. Emergent Mind. → Instantiations pratiques, gouvernance, self-referential amendment logic. 
+
+### 4.6 Évolution de la Coopération et de la Morale
+
+- **Trivers, R.L. (1971)**. "The Evolution of Reciprocal Altruism." QRB 46(1): 35-57. → Fondement théorique, psychologie régulatrice (amitié, gratitude, culpabilité, suspicion, hypocrisie). 
+- **Axelrod, R. & Hamilton, W.D. (1981)**. "The Evolution of Cooperation." Science 211(4489): 1390-1396. → Dilemme du prisonnier itéré, Tit-for-Tat, conditions d'émergence. 
+- **Axelrod, R. (1984)**. "The Evolution of Cooperation." Basic Books. → Extension complète. 
+
+---
+
+## Synthèse architecturale
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│         COUCHE 3 : RÉVISION CONSTITUTIONNELLE                   │
+│  (Méta-agent, haute friction, traçabilité)                      │
+│  → Déclenchement quand filtre élimine TOUTES actions viables    │
+└─────────────────────────────────────────────────────────────────┘
+                              ↓ valide / révise
+┌─────────────────────────────────────────────────────────────────┐
+│    COUCHE 2 : FILTRE CONSTITUTIONNEL (DÉONTOLOGIE)              │
+│  Agents moraux spécialisés, masques de précision γ               │
+│  → A : Respect vie  → B : Honneur  → C : Préservation           │
+│  → D : Détecteur surconfiance  → E : Charité épistémique        │
+└─────────────────────────────────────────────────────────────────┘
+                              ↓ filtre (modulation γ)
+┌─────────────────────────────────────────────────────────────────┐
+│  COUCHE 1 : PLANIFICATION ÉVOPSY + ToM-X                        │
+│  F_total = F_self + α·F_other + β·F_recursion + Σ w_i·masque_i  │
+│  → Horizons temporels variables, mémoires associatives            │
+└─────────────────────────────────────────────────────────────────┘
+                              ↓ propose
+┌─────────────────────────────────────────────────────────────────┐
+│  COUCHE 0 : AGENTS JEPA / PP                                    │
+│  → Encodeurs, prédicteurs, ToM-JEPA, Workspace GNWT              │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+
