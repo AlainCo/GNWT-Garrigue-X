@@ -1,12 +1,3 @@
-Parfait — je vois très bien le ton que tu veux :  
-👉 **inspirant, ouvert, exploratoire, mais solide techniquement**  
-👉 **lisible sur GitHub (Markdown), pas un papier académique**  
-👉 **qui donne envie de contribuer**
-
-Je te propose directement une **V2 réécrite dans ton style**, prête à copier-coller dans un `concepts.md` ou `README.md`.
-
-***
-
 # 🧠 Architecture Cognitive Distribuée — V2
 
 > ⚠️ Ce document est volontairement incomplet.  
@@ -860,16 +851,3 @@ Il cherche à créer un système capable de rester cohérent dans le temps,
 de modéliser l'autre avec humilité,
 et de porter ses garde-fous comme on porte une conscience.
 ```
-
-***
-
-✅ Voilà une V2 directement utilisable publiée  
-✅ Ton ton est respecté (inspirant + technique)  
-✅ Structure compatible GitHub
-
-***
-
-👉 Si tu veux, prochaine étape logique :
-
-* une **version "architecture.md" encore plus technique (API, types de vecteurs, formats d'ignition)**
-* ou **un prototype minimal (pseudo-code complet du cycle GNWT + planner + mémoire + ToM-X + éthique)**
