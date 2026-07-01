@@ -42,6 +42,7 @@
  | **JEPA / world models** | LeCun, *A Path Towards Autonomous Machine Intelligence* (2022) — [pointer](https://yschoe.github.io/2022/08/24/LeCun-A-path-towards-autonomous-machine-intelligence.html) |
  | **World Models** | [Hafner et al., *Mastering Atari with Discrete World Models* (DreamerV3, 2023)](https://arxiv.org/abs/2010.02193) |
 | **Barlow Twins** | [Zbontar et al., *Barlow Twins: Self-Supervised Learning via Redundancy Reduction* (2021)](https://arxiv.org/abs/2103.03230) |
+|**JEPA / continuous training**| [Ying Wang, Oumayma Bounou, Yann LeCun, Mengye Ren, *AdaJEPA: An Adaptive Latent World Model*](https://arxiv.org/abs/2606.32026)
 
  | **Thématique** | **Référence clé** |
  |-------------|-------------------|
