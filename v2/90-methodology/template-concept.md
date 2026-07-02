@@ -1,4 +1,4 @@
-# Nom du concept
+# Le concept
 
 ## Résumé
 
