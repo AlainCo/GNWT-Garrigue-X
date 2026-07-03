@@ -93,7 +93,7 @@ Lien clé :
 
 Dans l’architecture :
 - la déontologie peut être vue comme une extension de la modestie épistémique  
-- les règles “dures” sont appliquées lorsque le système ne peut pas se fier à ses prédictions 【1-6155ec】  
+- les règles “dures” sont appliquées lorsque le système ne peut pas se fier à ses prédictions  
 
 ### Limites connues :
 - risque de conservatisme excessif  

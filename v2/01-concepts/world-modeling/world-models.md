@@ -51,7 +51,7 @@ Propriété clé :
 - un world model permet au système de **penser avant d’agir**  
 
 Dans l’architecture :
-- les modèles JEPA jouent le rôle de world model latent 【1-d3a95d】  
+- les modèles JEPA jouent le rôle de world model latent 
 - ces modèles sont utilisés pour simuler des futurs et planifier 
 
 ### Intérêt pour Garrigue-X

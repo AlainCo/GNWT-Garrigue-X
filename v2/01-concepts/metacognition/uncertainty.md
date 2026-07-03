@@ -101,12 +101,12 @@ Dans l’architecture :
 - chaque module expose des signaux :
   - confiance  
   - incertitude  
-  - pertinence 【1-49e50d】  
+  - pertinence   
 
 - ces signaux :
   - modulent la planification  
   - influencent les décisions  
-  - améliorent la robustesse globale 【1-49e50d】  
+  - améliorent la robustesse globale  
 
 ### Limites connues :
 - difficulté d’estimation robuste  

@@ -101,7 +101,7 @@ Lien clé :
 
 Dans l’architecture V3 :
 - ToM-X est un état latent du GNWT  
-- il participe à la simulation et à la décision 【1-c728b1】  
+- il participe à la simulation et à la décision   
 
 ### Limites connues :
 - estimation incertaine des états des autres  

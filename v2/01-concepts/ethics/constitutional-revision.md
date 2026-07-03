@@ -112,7 +112,7 @@ Rôles fonctionnels :
 Dans l’architecture V2 :
 - la révision est déclenchée uniquement :
   - lorsque toutes les actions sont bloquées  
-  - et qu’une catastrophe est prédite 【1-cca1c0】  
+  - et qu’une catastrophe est prédite  
 
 - elle suit une procédure stricte :
   - documentation  

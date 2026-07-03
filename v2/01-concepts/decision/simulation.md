@@ -53,7 +53,7 @@ Propriété clé :
 - la simulation remplace l’essai réel par un **essai interne**  
 
 Dans l’architecture :
-- la simulation repose sur le modèle latent (JEPA) 【1-8d5625】  
+- la simulation repose sur le modèle latent (JEPA)   
 - elle est utilisée par le planner pour explorer des options 
 
 ### Intérêt pour Garrigue-X

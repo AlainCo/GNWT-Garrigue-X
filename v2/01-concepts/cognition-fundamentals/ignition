@@ -49,7 +49,7 @@ Propriété clé :
 - au-dessus du seuil → globalisation  
 
 Selon l’architecture :
-- l’ignition est déclenchée lorsque la **surprise dépasse un seuil adaptatif** 【1-8edca7】  
+- l’ignition est déclenchée lorsque la **surprise dépasse un seuil adaptatif**   
 - ce seuil dépend du **budget attentionnel et du self-model** 
 
 ### Intérêt pour Garrigue-X

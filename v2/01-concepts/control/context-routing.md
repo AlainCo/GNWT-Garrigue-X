@@ -94,7 +94,7 @@ Le système apprend à router de manière auto-supervisée :
 → il découvre implicitement quels modules sont utiles dans quels contextes  
 
 Ce mécanisme est similaire à :
-- l’apprentissage par erreur en architectures prédictives 【1-5e4a62】  
+- l’apprentissage par erreur en architectures prédictives   
 
 ---
 
@@ -203,7 +203,7 @@ Questions encore non résolues.
 
 #### Références récentes
 - Mixture of Experts (routing appris)
-- Adaptation en ligne (AdaJEPA) 【1-5e4a62】  
+- Adaptation en ligne (AdaJEPA)  
 
 #### Ressources complémentaires
 - Article

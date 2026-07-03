@@ -54,10 +54,10 @@ Boucle fondamentale :
 ### Intérêt pour Garrigue-X
   
 Dans l’architecture V2 :
-- le planner simule des futurs et sélectionne des actions minimisant l’erreur attendue 【1-bbfd3a】  
-- les modules JEPA fournissent des **modèles prédictifs latents** utilisés pour ces simulations 【1-bbfd3a】  
+- le planner simule des futurs et sélectionne des actions minimisant l’erreur attendue  
+- les modules JEPA fournissent des **modèles prédictifs latents** utilisés pour ces simulations  
 - l’action est un prolongement naturel du predictive processing  
-- la décision devient un **processus explicite et orchestré (Process Composer)** 【1-bbfd3a】  
+- la décision devient un **processus explicite et orchestré (Process Composer)** 
 
 Exemples :
 - choisir une action qui confirme une hypothèse  

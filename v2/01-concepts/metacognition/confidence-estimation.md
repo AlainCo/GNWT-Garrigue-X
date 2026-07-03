@@ -86,7 +86,7 @@ Lien clé :
 - Planner → adapte la stratégie  
 
 Dans l’architecture V2 :
-- la confiance fait partie des signaux métacognitifs qui modulent la cognition 【1-d66393】  
+- la confiance fait partie des signaux métacognitifs qui modulent la cognition   
 
 ### Limites connues :
 - difficulté de calibration  

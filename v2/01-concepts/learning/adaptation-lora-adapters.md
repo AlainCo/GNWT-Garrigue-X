@@ -219,7 +219,7 @@ Questions encore non résolues.
 ### Références
 
 #### Références récentes
-- AdaJEPA : adaptation locale sans LoRA 【1-cb92b2】  
+- AdaJEPA : adaptation locale sans LoRA   
 - LoRA et PEFT  
 - Adaptateurs modulaires  
 

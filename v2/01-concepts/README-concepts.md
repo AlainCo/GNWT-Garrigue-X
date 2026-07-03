@@ -49,7 +49,7 @@ RPT → Ignition → GNWT
 👉 Cette séparation permet :
 - efficacité locale  
 - rareté du global  
-- stabilité du système 【1-cc5f0a】  
+- stabilité du système   
 
 ---
 
