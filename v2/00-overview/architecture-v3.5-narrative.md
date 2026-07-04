@@ -324,6 +324,108 @@ Avec le `novelty_bonus` :
 | `μ` trop fort → comportement erratique | Calibration en phase de sommeil |
 
 
+
+## Layer 6 PROPOSITION 2 — 🎯 Décomposition de l'incertitude et réconciliation précaution/curiosité
+
+### Principe fondamental
+
+Le paradoxe apparent entre précaution et curiosité
+disparaît dès qu'on distingue trois types d'incertitude :
+
+| Type | Nature | Traitement |
+| --- | --- | --- |
+| Risque (aléatoire) | Distribution connue | Espérance standard |
+| Incertitude épistémique | Distribution inconnue, mais on sait qu'on ne sait pas | Exploration ciblée |
+| Inconnu-inconnu profond | On ne sait même pas qu'on ne sait pas | Précaution stricte |
+
+👉 La précaution ne s'applique qu'au troisième type.
+👉 La curiosité s'applique au deuxième type.
+👉 Les deux coexistent sans se contredire.
+
+### Mécanisme : décomposition formelle
+
+Pour une action a dans un contexte c :
+
+σ²_total(a,c) = σ²_aleatoric + σ²_epistemic + σ²_deep
+
+Fonction de coût étendue :
+
+F_total = F_prediction
+        + λ_risk · σ²_aleatoric
+        + λ_explore · (-σ²_epistemic)    # curiosité ciblée
+        + λ_precaution · penalty(σ²_deep)  # précaution stricte
+
+### Intégration dans l'architecture
+
+| Composant | Rôle |
+| --- | --- |
+| Self-model étendu | estime les trois termes séparément |
+| Agent D (Surconfiance) | cible σ²_epistemic sous-estimée |
+| Agent D' (Angles morts) | cible σ²_deep |
+| Agent E' (Curiosité) | bonus sur σ²_epistemic |
+| Phase de sommeil | convertit σ²_deep → σ²_epistemic |
+
+Détection de σ²_deep
+
+Le système ne peut pas modéliser ce qu'il ne sait pas exister.
+Mais il peut détecter des anomalies structurelles :
+- erreurs de prédiction non corrélées aux features connues
+- changements de régime non expliqués par les adaptateurs
+- "angles morts" dans l'espace latent
+
+Ces signaux déclenchent le mode PRÉCAUTION.
+
+Modes comportementaux dynamiques
+
+if σ²_deep > seuil_critique:
+    mode = PRÉCAUTION
+    exploration = 0
+elif σ²_epistemic > seuil_haut:
+    mode = EXPLORATION_CIBLÉE
+    exploration = HIGH
+else:
+    mode = EXPLOITATION
+    exploration = LOW
+
+Rôle de la phase de sommeil
+
+La rêverie est le seul lieu sûr pour explorer σ²_deep :
+- simulation contrefactuelle sans conséquence réelle
+- conversion progressive : σ²_deep → σ²_epistemic
+- l'inconnu-inconnu devient connu-inconnu, puis explorable
+
+👉 Le sommeil est le moteur de l'innovation durable.
+
+### Résolution du débat précaution/innovation
+
+| Principe | Bonne application | Mauvaise application |
+| --- | --- | --- |
+| Précaution | σ²_deep (géo-ingénierie, gain-of-function) | σ²_epistemic (5G, OGM, nucléaire) |
+| Innovation | σ²_epistemic (exploration ciblée) | σ²_deep (move fast and break things) |
+
+👉 La précaution n'est pas un frein à l'innovation.
+👉 Elle est la condition de possibilité d'une innovation durable.
+
+### Calibration
+
+| Risque | Parade |
+| --- | --- |
+| Confusion entre épistémique et profond | décomposition explicite des trois termes |
+| Mode précaution permanent (atrophie) | sommeil obligatoire pour conversion σ²_deep |
+| Mode exploration permanent (catastrophe) | Agent D' bloque si σ²_deep > seuil |
+| Calibration des seuils | apprentissage méta en phase de sommeil |
+
+### 🧭 Synthèse
+
+Ce layer transforme le dilemme apparent :
+- Avant : précaution OU curiosité
+- Maintenant : précaution SUR l'inconnu profond, curiosité SUR l'inconnu connu
+
+👉 Le système devient :
+- prudent face aux vrais dangers (queues de distribution)
+- curieux face aux opportunités d'apprentissage
+- capable d'innover sans se détruire
+
 ---
 
 # 🌙 Extension majeure : Rêverie et apprentissage enrichi
@@ -461,4 +563,5 @@ V3.5 :
 > système cognitif complet :
 > social, adaptatif, prudent, et auto-cohérent dans le temps
 > recherchant la symbiose avec les humains
+> gérant différemment les risques épistémiques et les risque essentiels
 
