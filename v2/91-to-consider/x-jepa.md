@@ -168,3 +168,116 @@ Le tableau de la recherche évolue rapidement :
 
 Loin d'être de simples observateurs, les prédicteurs JEPA sont en train de devenir les moteurs d'agents prédictifs, interactifs et socialement conscients, s'approchant de la vision que vous décrivez pour la robotique.
 
+Cette question est absolument géniale, car elle touche au cœur de ce que les roboticiens appellent l'**"Active Inference"** (Inférence Active) ou le **"Model Predictive Control"** (MPC) basé sur l'énergie libre. 
+
+Pour qu'un monoagent utilise JEPA en suivant le Principe de l'Énergie Libre (FEP) tout en accomplissant une mission (aller à un point B, ramasser un objet X), il ne faut pas voir JEPA comme un simple "observateur", mais comme le **moteur génératif du monde** (le modèle de transition) utilisé par le planificateur.
+
+Voici l'architecture complète, organisée en 4 couches fonctionnelles, qui répond exactement à votre cahier des charges.
+
+---
+
+### ⚙️ Architecture générale du Monoagent (Boucle FEP + JEPA)
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│                          1. SYSTÈME PERCEPTIF (Encodeurs)             │
+│   Flux vidéo ──► Encodeur Visuel (ViT) ──► z_obs (État latent brut)  │
+│   Odométrie/GPS ──► Encodeur Proprio ──► z_pose (Position dans l’espace)│
+│   └────────────────────────┬──────────────────────────────────────────┘│
+│                            ▼ (Fusion / Croyance)                       │
+│                        z_t (Croyance courante)                         │
+└────────────────────────────────┬────────────────────────────────────────┘
+                                 │
+┌────────────────────────────────▼────────────────────────────────────────┐
+│                  2. MODÈLE GÉNÉRATIF (Prédicteur JEPA)                │
+│  Entrée : z_t (état latent) + a_t (action candidate)                   │
+│  Sortie : ˆz_{t+1} (prédiction du prochain état latent)               │
+│  ➡️ C'est le "cerveau physique" qui simule les conséquences des actions│
+└────────────────────────────────┬────────────────────────────────────────┘
+                                 │
+┌────────────────────────────────▼────────────────────────────────────────┐
+│                  3. PLANIFICATEUR (Minimisation du FEP)               │
+│  Entrées : z_t (croyance), z_goal (mission encodée), Prédicteur JEPA  │
+│  Algo : Roulage temporel (Rollout) + Optimisation (CEM / MCTS)        │
+│  Fonction de coût (Énergie Libre Attendue) :                           │
+│     G = || ˆz_{t+H} - z_goal ||² + ∑ || a_t ||² (Complexité)         │
+│  Sortie : Séquence d'actions optimales {a_t, a_{t+1}, ...}            │
+└────────────────────────────────┬────────────────────────────────────────┘
+                                 │
+┌────────────────────────────────▼────────────────────────────────────────┐
+│                   4. ACTIONNEURS (Exécution / Réflexes)                │
+│  Reçoit le 1er action de la séquence optimale → envoie PWM/commands   │
+│  ➡️ Boucle bas-niveau (PID) pour asservir les moteurs                │
+└─────────────────────────────────────────────────────────────────────────┘
+         ▲                                                                
+         └─────────── (Boucle temporelle à 10-30 Hz) ────────────────────┘
+```
+
+---
+
+### Détail de chaque brique (en lien avec votre mission)
+
+#### 1. Les Encodeurs (Perception et Formulation de la Croyance)
+Ici, on ne se contente pas d'un seul encodeur. On en a deux qui se synchronisent pour former une **croyance** \( z_t \) :
+
+- **Encodeur Visuel (ViT)** : Prend la caméra RGB/Profondeur. Il extrait non seulement les textures, mais aussi une **carte de saillance** (où sont les objets). Dans l'espace latent, il code la présence de l'objet "type X" si détecté.
+- **Encodeur d'État (Proprioceptif)** : Prend les coordonnées GPS, le cap, la vitesse et l'état des articulations du bras.
+- **Fusion (Vision + Pose)** : Ces deux vecteurs sont concaténés ou passés dans un petit MLP pour donner **\( z_t \)**. Cette croyance est l'*unique réalité* que l'agent connaît. Si la caméra est floue, \( z_t \) devient incertain (ce qui est géré par la variance dans le FEP).
+
+#### 2. Le Prédicteur JEPA (Le "Simulateur de Mondes")
+C'est le cœur de l'architecture. Contrairement à X-JEPA qui prédit une autre modalité (SAR→Optique), ici, le prédicteur prédit **le futur dans le temps**. 
+
+- **Fonctionnement** : \( \hat{z}_{t+1} = P_{\phi}(z_t, a_t) \)
+- **Rôle FEP** : Ce prédicteur est le **modèle génératif**. Il permet à l'agent de "rêver" ou de "simuler" ce qui va se passer s'il tourne à gauche (a_t = +0.5 rad/s). 
+- **Contrainte** : Il est entraîné *hors-ligne* (ou en ligne) à minimiser l'erreur de prédiction sur ses propres données passées. Mais en mission, il est **fixe** ; c'est le planificateur qui l'utilise.
+
+#### 3. Le Planificateur (Le vrai minimiseur d'Énergie Libre)
+C'est ici que la magie du FEP opère. Ce n'est pas un réseau de neurones profond, mais un **optimiseur mathématique** (comme le *Cross-Entropy Method* - CEM) qui tourne en boucle.
+
+- **Encodage de la Mission (z_goal)** : Comment traduire "Aller à l'endroit B et ramasser X" en un vecteur latent ? 
+  - Soit on encode l'image de l'endroit B (si on a une photo satellite) via l'encodeur visuel.
+  - Soit on encode les coordonnées GPS de B dans l'espace de l'encodeur proprio.
+  - L'objet X est encodé par la signature visuelle de sa catégorie.
+  - **Astuce** : La mission finale est un **attracteur** dans l'espace latent. L'agent doit minimiser la distance entre \( \hat{z}_{t+H} \) (son état futur simulé) et \( z_{goal} \).
+
+- **Le calcul de l'Énergie Libre Attendue (G)** : 
+  Le planificateur génère 500 séquences d'actions aléatoires sur un horizon H (ex: 20 pas de temps). Pour chaque séquence, il utilise le **Prédicteur JEPA** pour simuler la trajectoire.
+  Il calcule le coût :
+  \[
+  G = \underbrace{\| \hat{z}_{t+H} - z_{goal} \|^2}_{\text{Précision (surprise épistémique)}} + \underbrace{\sum_{k=0}^{H} \| a_{t+k} \|^2}_{\text{Complexité (coût énergétique)}}
+  \]
+  Il sélectionne la séquence d'actions qui minimise \( G \), exécute la *première* action, puis recompute tout à la prochaine itération (principe du *Model Predictive Control*).
+
+#### 4. Les Actionneurs (Exécution et Réflexes)
+Ils reçoivent la commande \( a_t \) (ex: "vélocité linéaire = 0.5 m/s, angle du bras = 30°"). 
+
+- Pour la **navigation**, il envoie des consignes aux moteurs des roues.
+- Pour la **préhension**, il envoie des consignes aux servos du bras.
+- **Point clé FEP** : Si l'actionneur dérape (ex: vent pousse le robot), l'encodeur proprioceptif verra un \( z_{t+1} \) réel très différent du \( \hat{z}_{t+1} \) prédit. Cette **surprise** (erreur de prédiction) est immédiatement transmise au planificateur qui, à la prochaine itération, va corriger sa trajectoire en changeant les actions futures.
+
+---
+
+### 🌟 La grande innovation pour votre cas : Le "Planner Hiérarchique"
+
+Une mission comme *"Va à B, et si tu vois un objet X, ramasse-le"* est complexe pour un seul JEPA (le coût \( G \) serait trop difficile à optimiser sur un long horizon). 
+On introduit donc deux Prédicteurs JEPA spécialisés, partageant le même espace latent, et un **Planificateur Hiérarchique** :
+
+1. **Niveau Haut (Le "Manager" - Planning abstrait)** : 
+   - Utilise un JEPA entraîné sur des séquences d'images satellite très larges.
+   - Son action \( a_{macro} \) est : *"Aller vers le Waypoint Nord"*. 
+   - Sa prédiction : *"Si je vais au Nord, je vais voir une route dans ma caméra"*.
+   - Si la vision détecte l'objet X, le Manager change sa mission \( z_{goal} \) pour passer en mode "Ramassage".
+
+2. **Niveau Bas (Le "Worker" - Contrôle réflexe)** :
+   - Utilise un JEPA visuo-moteur rapide (peu de paramètres).
+   - Reçoit l'ordre *"Attraper l'objet X"* (qui est un \( z_{goal} \) représentant la main exactement au-dessus de l'objet).
+   - Il simule en boucle les positions du bras pour minimiser l'écart entre la main prédite et l'objet.
+   - Une fois que l'objet est dans la main (mesuré par un capteur de force -> \( z_{t+1} \) réel = "objet saisi"), la surprise tombe à 0, la mission est accomplie.
+
+---
+
+### En résumé : où est le FEP ?
+
+Dans ce système, **le planificateur est l'incarnation mathématique du FEP**. 
+Il n'apprend pas par récompense (comme en RL), il **infère** en temps réel l'action qui va rendre le futur le plus *probable* (aligné sur son modèle du monde) tout en restant *économe* (peu d'actions brusques). 
+Le Prédicteur JEPA est le modèle génératif qui permet ce "raisonnement par simulation". L'encodeur met à jour la croyance (\( z_t \)) pour coller à la réalité (minimisation de la surprise perception), et le planificateur met à jour les actions (minimisation de la surprise action). Vous avez bien une boucle de **Perception-Action** unifiée par le même espace latent, exactement comme le cerveau humain le fait !
