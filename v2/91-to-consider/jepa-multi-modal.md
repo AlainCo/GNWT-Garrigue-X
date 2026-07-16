@@ -1247,3 +1247,207 @@ Drone terrestre : "Je vois un trou dans la route qui n'est pas sur la carte"
 Le gap actuel n'est pas conceptuel, c'est **d'intégration** : personne n'a encore assemblé tous ces composants dans un système multi-agent opérationnel. Mais la direction est claire, et c'est un terrain de recherche très fertile.
 
 Tu veux que j'approfondisse un aspect technique, par exemple comment implémenter la mise à jour incrémentale des tokens de carte, ou comment gérer le consensus entre agents avec des observations contradictoires ?
+User: quand tu dit que les token sont appris, je comprend pas trop... c'est par entrainement initial ? parce que la carte elle change, voir elle est fausse, elle manque, elle est incertaine, il y a des nuages, du brouillard, des secrets cartographiques... mais peut être que tu parle de token comme du vocabulaire ?
+Kimi: Tu as tout à fait raison de demander — j'ai mélangué deux choses. Clarifions.
+
+---
+
+## 🎯 Deux types de "tokens" différents
+
+| | **Tokens de vocabulaire** (ce que tu pensais) | **Tokens de carte** (ce que je décrivais mal) |
+|---|---|---|
+| **Quoi** | Embeddings de mots/concepts | Patches spatiaux de la carte |
+| **Appris comment** | Entraînement initial sur corpus | Extraits de l'image/carte en temps réel |
+| **Changent-ils ?** | Non, fixes après entraînement | **Oui, constamment** |
+| **Exemple** | "route" = vecteur [0.2, -0.5, ...] fixe | La cellule (x,y) contient [0.3, 0.8, ...] qui évolue |
+
+Ce que j'ai mal expliqué : dans JEPA, les **shared learnable queries** (le vocabulaire sémantique) sont bien appris par entraînement initial. Mais les **tokens de la carte** eux-mêmes sont des **features extraites** des observations, pas des paramètres fixes.
+
+---
+
+## 🔧 Comment ça marche concrètement
+
+### 1. Le vocabulaire sémantique (appris une fois)
+
+```
+Shared Learnable Queries (s) — appris pendant l'entraînement :
+
+s_1 = [0.12, -0.45, 0.78, ...]  ← concept "route"
+s_2 = [-0.33, 0.91, 0.05, ...]  ← concept "bâtiment"
+s_3 = [0.67, -0.12, -0.44, ...] ← concept "eau"
+...
+s_k = [...]                      ← concept "obstacle"
+
+Ces vecteurs sont des PARAMÈTRES du réseau.
+Ils ne changent PAS après l'entraînement.
+Ils servent d'"ancres" sémantiques.
+```
+
+### 2. Les tokens de carte (extraits en temps réel)
+
+```
+Image du drone aérien (512×512 pixels)
+        │
+        ▼
+   ┌─────────┐
+   │ Patchify│  ← Découpe en patches 16×16
+   │ + Embed │    = 32×32 = 1024 patches
+   └────┬────┘
+        │
+        ▼
+   z_c = [z_1, z_2, ..., z_1024]
+   
+   Chaque z_i est un VECTEUR EXTRAIT de l'image.
+   Il change à chaque nouvelle image !
+   
+   Exemple : z_42 = [0.15, -0.22, 0.91, ...]
+   Ce vecteur EST le "token" de cette cellule spatiale.
+```
+
+### 3. La fusion : vocabulaire + observation
+
+```
+Shared Queries (s) ──┐
+                     ├──→ Cross-Attention ──→ Carte Latente Fusionnée
+Tokens image (z_c) ──┘
+
+La cross-attention dit :
+"Le token z_42 de l'image, à quelle ancre sémantique s_i
+ ressemble-t-il le plus ?"
+
+Résultat : un nouveau token qui combine
+- LA POSITION (d'où vient z_42 dans l'image)
+- LE CONTENU (ce que z_42 décrit visuellement)
+- LA SÉMANTIQUE (quelle ancre s_i est activée)
+```
+
+---
+
+## 🗺️ La carte latente : une grille de tokens dynamiques
+
+```
+Carte Latente (32×32 cellules, chacune un vecteur 768D)
+
+        Col 0   Col 1   Col 2   Col 3
+       ┌───────┬───────┬───────┬───────┐
+Ligne 0│ [0.2, │ [0.1, │ [-0.3,│ [0.8, │
+       │ -0.5, │  0.9, │  0.2, │ -0.1, │
+       │  0.1] │ -0.2] │  0.7] │  0.3] │
+       ├───────┼───────┼───────┼───────┤
+Ligne 1│ [0.3, │ [0.0, │ [0.0, │ [-0.2,│
+       │  0.1, │  0.0, │  0.0, │  0.5, │
+       │ -0.4] │  0.0] │  0.0] │  0.1] │
+       ├───────┼───────┼───────┼───────┤
+Ligne 2│ [0.0, │ [0.0, │ [0.0, │ [0.0, │
+       │  0.0, │  0.0, │  0.0, │  0.0, │
+       │  0.0] │  0.0] │  0.0] │  0.0] │  ← INCONNU (pas encore observé)
+       └───────┴───────┴───────┴───────┘
+
+Chaque cellule est un TOKEN = un vecteur qui évolue :
+- [0.2, -0.5, 0.1, ...] = "probablement une route, traversable"
+- [0.0, 0.0, 0.0, ...] = "inconnu, pas encore vu"
+- [0.8, -0.1, 0.3, ...] = "eau, infranchissable"
+```
+
+---
+
+## 🌫️ Gestion de l'incertitude
+
+Tu as soulevé des points cruciaux. Voici comment on peut les gérer dans ce cadre :
+
+### Nuages / brouillard / occlusion
+
+```
+Observation drone aérien :
+┌─────────┬─────────┬─────────┐
+│  ☁️     │  ☁️     │  🏠     │
+│ [0.0,   │ [0.0,   │ [0.8,   │
+│  0.0,   │  0.0,   │ -0.2,   │
+│  0.0]   │  0.0]   │  0.1]   │
+│         │         │         │
+│ "nuage" │ "nuage" │ "maison"│
+│ → haute │ → haute │ → basse │
+│   incert│   incert│   incert│
+└─────────┴─────────┴─────────┘
+
+On peut ajouter un canal d'incertitude :
+z_i = [features..., σ_i]
+
+Où σ_i = variance / incertitude du token.
+σ élevé = "je ne sais pas, ne fais pas confiance"
+σ faible = "je suis sûr de ce que je vois"
+```
+
+### Carte fausse / obsolète / secrète
+
+```
+Carte théorique (OSM) dit :
+  "C'est une route" → token [0.9, 0.1, 0.0, ...]
+
+Drone terrestre observe :
+  "C'est un champ de mines" → token [0.1, 0.0, 0.9, ...]
+
+Fusion avec attention pondérée :
+  z_fusion = α · z_OSM + (1-α) · z_UGV
+  
+  Si le drone terrestre est proche et confiant :
+  α = 0.1 (on fait confiance à l'observation directe)
+  
+  Si le drone terrestre est loin ou incertain :
+  α = 0.7 (on fait confiance à la carte)
+  
+  Résultat : [0.28, 0.07, 0.65, ...] → "danger probable"
+```
+
+---
+
+## 🔑 La clé : les tokens ne sont PAS le vocabulaire
+
+| | Vocabulaire (Shared Queries) | Tokens de carte |
+|---|---|---|
+| **Nature** | Paramètres du réseau | Features extraites |
+| **Changent ?** | ❌ Non (après entraînement) | ✅ Oui (à chaque observation) |
+| **Rôle** | "Qu'est-ce qu'une route ?" | "Cette cellule contient quoi ?" |
+| **Analogie** | Dictionnaire | Description de scène |
+
+Le vocabulaire sert à **décrire** les tokens. Les tokens décrivent **l'état du monde**.
+
+---
+
+## 🎯 Résumé visuel
+
+```
+ENTRAÎNEMENT (une fois) :
+  Données d'entraînement (images optique + SAR + labels)
+        │
+        ▼
+  Apprend les Shared Queries s
+  Apprend les poids des encodeurs E_θ
+  Apprend la matrice M de PSA
+  Apprend le predictor P_φ
+        │
+        └──→ Modèle figé pour l'inférence
+
+INFÉRENCE (en temps réel, à chaque frame) :
+  Nouvelle image drone aérien
+        │
+        ▼
+  E_θ(x) → z_c (tokens extraits, CHANGENT à chaque frame)
+        │
+        ▼
+  Cross-Attention(z_c, s) → tokens fusionnés
+        │
+        ▼
+  Mise à jour de la carte latente (grille de tokens)
+        │
+        ▼
+  Planification dans l'espace latent
+```
+
+---
+
+## 📌 En une phrase
+
+> **Les "tokens" de la carte sont des features extraites des observations en temps réel — ils changent constamment. Les shared queries sont le vocabulaire sémantique appris une fois — ils servent à interpréter les tokens. C'est la différence entre "ce que je vois" (token dynamique) et "ce que ça signifie" (vocabulaire fixe).**
+
+Est-ce que cette distinction est plus claire maintenant ? Tu veux que j'explique comment on pourrait implémenter le canal d'incertitude σ, ou comment gérer les conflits entre carte théorique et observation réelle ?
