@@ -992,3 +992,258 @@ Ce n'est pas encore fait exactement comme ça, mais les briques existent :
 > **Oui, c'est réaliste et les briques existent.** AnySat prouve que JEPA fonctionne pour 11 capteurs et des échelles extrêmes. Les SLAMs air-sol collaboratifs existent déjà. Ce qui manque, c'est l'**intégration de la carte théorique comme 3ème modalité** et l'**optimisation pour la bande passante radio limitée** entre drones — mais ce sont des extensions naturelles, pas des révolutions.
 
 Tu veux que j'approfondisse un aspect technique, par exemple comment encoder une carte OSM dans un espace latent compatible avec des images, ou comment gérer la communication asynchrone entre drones ?
+User: on m'a parlé de module de planification utilisé en Jepa, dans un tel système multi-modal, est-ce que la carte, le drone aérien, et le/les drones terrestre qui ont vu le terrain, et le voient, pourraient créer une sorte de carte (des tokens c'est ca ?) qui permettrai à un planificateur de prévoir un chemin optimal sur une longue distance, et à s'adapter aux surprise, à ce que le drone terrestre voit, à ce que le drone aérien découvre ? est-ce étudié ?
+Kimi: Oui, absolument — et ce que tu décris est **exactement la direction que prend la recherche actuelle**. Il existe déjà des travaux qui connectent JEPA avec la planification, et ton scénario multi-drone est une extension naturelle et très réaliste. Voici le panorama.
+
+---
+
+## 🧠 JEPA comme World Model : le lien planification
+
+### L'architecture JEPA complète (vision de LeCun)
+
+JEPA n'est pas qu'un encodeur — c'est un **world model** avec 3 composants :
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    WORLD MODEL JEPA                         │
+│                                                             │
+│  ┌─────────────┐    ┌─────────────┐    ┌─────────────┐    │
+│  │   Encoder   │    │  Predictor  │    │   Target    │    │
+│  │   (State)   │───→│  (Dynamics) │    │  Encoder    │    │
+│  │             │    │             │    │   (Future)  │    │
+│  │  s = E(x)   │    │ ŝ = P(s,a)  │    │  s' = E(x') │    │
+│  └─────────────┘    └──────┬──────┘    └─────────────┘    │
+│                            │                                │
+│                            ▼                                │
+│                     ┌─────────────┐                        │
+│                     │   Action    │                        │
+│                     │   (Input)   │                        │
+│                     │      a      │                        │
+│                     └─────────────┘                        │
+│                                                             │
+│  Le Predictor prend : état courant s + action a             │
+│  Et prédit : état futur ŝ' dans l'espace latent             │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**La clé** : le predictor apprend les **dynamiques du monde** — *"si je fais ça, qu'est-ce qui se passe ?"* — directement dans l'espace latent, sans reconstruire de pixels. 
+
+---
+
+## 🎯 ACT-JEPA : JEPA + Planification + Actions
+
+C'est le papier le plus pertinent pour ta question. **ACT-JEPA** (arXiv 2025, auteurité S) unifie JEPA avec l'**Imitation Learning** pour apprendre simultanément :
+1. Un **world model** (prédiction d'états latents futurs)
+2. Une **politique d'actions** (décoder des séquences d'actions)
+
+### Architecture ACT-JEPA
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                      ACT-JEPA                               │
+│                                                             │
+│  Observation o_t (image + état proprioceptif)               │
+│       │                                                     │
+│       ▼                                                     │
+│  ┌─────────────────┐                                        │
+│  │ Context Encoder │──→ s_x (latent state)                 │
+│  │     E_θ         │                                        │
+│  └────────┬────────┘                                        │
+│           │                                                 │
+│     ┌─────┴─────┐                                           │
+│     ▼           ▼                                           │
+│  ┌───────┐   ┌─────────┐                                   │
+│  │Predictor│  │ Action  │                                   │
+│  │  P_φ   │   │ Decoder │                                   │
+│  │        │   │  D_τ    │                                   │
+│  │Predict │   │Predict  │                                   │
+│  │future  │   │actions  │                                   │
+│  │states  │   │a_t:t+n  │                                   │
+│  └───┬────┘   └────┬────┘                                   │
+│      │             │                                         │
+│      ▼             ▼                                         │
+│   ŝ_y (futur)   â_t:t+n (actions)                           │
+│                                                             │
+│  Loss : L1(ŝ_y, s_y) + L1(â, a*)                            │
+│         ↑ world model    ↑ imitation learning               │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**Résultats** : jusqu'à **40% d'amélioration** dans la compréhension du world model et **10% de taux de succès** supérieur aux baselines d'imitation learning seul. 
+
+---
+
+## 🚁 Adaptation à ton scénario multi-drone
+
+Ton idée est de créer une **carte latente partagée** entre 3 agents. Voici comment on pourrait structurer ça :
+
+### Architecture "X-JEPA Drone" proposée
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│              CARTE LATENTE PARTAGÉE (World Model)                   │
+│                                                                     │
+│   ┌─────────────┐    ┌─────────────┐    ┌─────────────┐           │
+│   │   DRONE     │    │   DRONE     │    │   CARTE     │           │
+│   │   AÉRIEN    │    │  TERRESTRE  │    │ THÉORIQUE   │           │
+│   │   (UAV)     │    │   (UGV)     │    │   (OSM/MNT) │           │
+│   └──────┬──────┘    └──────┬──────┘    └──────┬──────┘           │
+│          │                  │                  │                    │
+│          ▼                  ▼                  ▼                    │
+│    ┌───────────┐      ┌───────────┐      ┌───────────┐            │
+│    │  Encoder  │      │  Encoder  │      │  Encoder  │            │
+│    │   Vue     │      │   Vue     │      │   Données │            │
+│    │   haut    │      │   local   │      │   vect.   │            │
+│    └─────┬─────┘      └─────┬─────┘      └─────┬─────┘            │
+│          │                  │                  │                    │
+│          └──────────────────┼──────────────────┘                    │
+│                             ▼                                       │
+│              ┌─────────────────────────┐                            │
+│              │   Shared Latent Map     │◄── Carte du monde en      │
+│              │   (tokens spatiaux)     │    tokens sémantiques      │
+│              │                         │                            │
+│              │  [route][bâtiment][eau] │                            │
+│              │  [obstacle][végétation] │                            │
+│              └─────────────────────────┘                            │
+│                             │                                       │
+│                             ▼                                       │
+│              ┌─────────────────────────┐                            │
+│              │   Predictor + Action    │                            │
+│              │   (planification)       │                            │
+│              │                         │                            │
+│              │  Input: état + action   │                            │
+│              │  Output: état futur     │                            │
+│              │  (rollout latent)       │                            │
+│              └─────────────────────────┘                            │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 🧩 Les "tokens" de ta carte — ce sont quoi exactement ?
+
+Tu as raison de parler de tokens. Dans ce cadre, la **carte latente** est un **grille de tokens sémantiques** :
+
+```
+Carte Latente (ex: 32×32 tokens, chacun 768-dim)
+
+┌─────┬─────┬─────┬─────┐
+│ 🏠  │ 🏠  │ 🌳  │ 🌳  │   ← Chaque cellule = un token
+├─────┼─────┼─────┼─────┤       qui encode le type de
+│ 🛣️  │ 🛣️  │ 🛣️  │ 🌊  │       terrain, la traversabilité,
+├─────┼─────┼─────┼─────┤       les obstacles, etc.
+│ 🌳  │ 🏠  │ 🏠  │ 🛣️  │
+├─────┼─────┼─────┼─────┤
+│ 🌊  │ 🌊  │ 🛣️  │ 🛣️  │
+└─────┴─────┴─────┴─────┘
+
+Chaque token est un vecteur dans l'espace latent (ex: 768D)
+qui capture la sémantique + la géométrie + la dynamique
+```
+
+Ces tokens sont **appris** par le réseau (comme les shared queries de X-JEPA), pas définis à la main. Ils émergent des données.
+
+---
+
+## 🎯 Planification dans l'espace latent
+
+### Comment ça marche concrètement
+
+Le drone terrestre veut aller de A à B. Au lieu de planifier dans l'espace pixel (lourd) ou cartésien (limité), il planifie dans l'espace latent :
+
+```
+Étape 1 : Encoder l'état courant
+  Image locale UGV + carte aérienne partielle + carte OSM
+  → s_t (état latent courant)
+
+Étape 2 : Simuler des actions candidates
+  Pour chaque action candidate a_i (tourner gauche, droite, avancer...):
+    ŝ_{t+1} = Predictor(s_t, a_i)   ← rollout d'un pas
+    ŝ_{t+2} = Predictor(ŝ_{t+1}, a_j)  ← rollout multi-pas
+    ...
+    Score = distance(ŝ_{t+n}, goal_latent) + pénalité obstacles
+
+Étape 3 : Choisir la meilleure séquence d'actions
+  argmin Score(a_sequence)
+
+Étape 4 : Exécuter la première action, observer, réencoder, recommencer
+```
+
+**Avantage** : le rollout se fait en **espace latent** (quelques milliers de dimensions) au lieu de l'espace pixel (millions de dimensions) ou 3D (nuages de points lourds). C'est **rapide** et **riche sémantiquement**. 
+
+---
+
+## 🔄 Adaptation aux surprises
+
+### Le drone aérien découvre un obstacle
+
+```
+AVANT (carte théorique) :
+  [route][route][route][route]   ← traversable
+
+APRÈS (drone aérien survole et voit un accident) :
+  [route][route][🚧obstacle][route]   ← mis à jour
+  
+Le token [🚧obstacle] est propagé dans la carte latente partagée.
+Le drone terrestre, en lisant cette carte, sait qu'il doit contourner.
+Pas besoin de transmettre une image — juste un token mis à jour !
+```
+
+### Le drone terrestre voit quelque chose d'inattendu
+
+```
+Drone terrestre : "Je vois un trou dans la route qui n'est pas sur la carte"
+  → Encode cette observation → nouveau token [🕳️trou]
+  → Met à jour la carte latente partagée
+  → Drone aérien : "Ah, je vais vérifier de plus haut"
+    → Redirige son attention vers cette zone
+    → Confirme/infirme et met à jour la carte globale
+```
+
+---
+
+## 📊 Comparaison avec l'état de l'art
+
+| Approche | Espace de planification | Communication | Adaptation |
+|----------|------------------------|---------------|------------|
+| **SLAM classique** | Carte 3D (nuages de points) | Lourde (octomaps) | Lente |
+| **RL standard** | États bruts (images) | Non collaborative | Par essai-erreur |
+| **JEPA latent (proposé)** | Tokens sémantiques | Légère (embeddings) | Temps réel |
+| **X-JEPA cross-modal** | Multi-modal aligné | Cross-attention | Modality-agnostic |
+
+---
+
+## 🔬 Ce qui existe déjà vs. ce qu'il faut inventer
+
+### ✅ Ce qui existe
+
+| Composant | Référence |
+|-----------|-----------|
+| World model JEPA pour la prédiction | I-JEPA, V-JEPA, ACT-JEPA  |
+| Fusion multi-modal multi-échelle | AnySat (11 capteurs, 0.2m à 250m)  |
+| SLAM collaboratif air-sol | CompSLAM, GRACO dataset  |
+| Cross-attention pour l'alignement | X-JEPA (ce que tu as étudié) |
+| Shared queries sémantiques | X-JEPA  |
+
+### 🔧 Ce qu'il faut inventer / assembler
+
+1. **L'encodeur "carte théorique"** : Comment encoder OSM / MNT / graphe routier dans le même espace latent que des images ? C'est un problème de **cross-modalité non-visuelle** ouvert.
+
+2. **La mise à jour incrémentale** : La carte latente doit pouvoir être **partiellement mise à jour** (un token à la fois) sans tout recalculer.
+
+3. **Le consensus multi-agent** : Quand 3 agents ont des observations contradictoires, comment fusionner ? (moyenne pondérée ? attention ?)
+
+4. **La planification à long terme** : ACT-JEPA fait du rollout court (quelques pas). Pour un chemin de plusieurs kilomètres, il faut une **hiérarchie** de planificateurs (grossier → fin).
+
+---
+
+## 🧠 Résumé
+
+> **Oui, c'est réaliste et les briques existent.** Le scénario que tu décris — une carte latente partagée entre drone aérien, drone terrestre et carte théorique, utilisée pour planifier dans l'espace sémantique et s'adapter aux surprises — est exactement ce que permettent les architectures JEPA world model + cross-attention + shared queries.
+
+Le gap actuel n'est pas conceptuel, c'est **d'intégration** : personne n'a encore assemblé tous ces composants dans un système multi-agent opérationnel. Mais la direction est claire, et c'est un terrain de recherche très fertile.
+
+Tu veux que j'approfondisse un aspect technique, par exemple comment implémenter la mise à jour incrémentale des tokens de carte, ou comment gérer le consensus entre agents avec des observations contradictoires ?
