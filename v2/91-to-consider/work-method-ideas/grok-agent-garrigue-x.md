@@ -241,3 +241,121 @@ Veux-tu que je te donne :
 
 Dis-moi où tu en es avec Obsidian actuellement et on avance pas à pas.
 
+**Oui, on peut (et on doit) adapter le workflow Git + le rôle humain pour que ça colline parfaitement avec le mode agentique + Zettelkasten.**
+
+Voici une organisation claire, éprouvée, et réaliste pour 2026.
+
+### 1. Rôle de l’humain (toi, le décideur)
+
+Tu n’es **pas** un “éditeur de notes” à temps plein. Tu es le **producteur de sens + validateur final**.
+
+#### Routine quotidienne / hebdomadaire (30–90 min max)
+
+| Moment | Action humaine | Où ça se passe |
+|--------|----------------|----------------|
+| **Capture** | Tu jettes tout ce qui arrive (idée, critique, paper, conversation, screenshot) dans `00-Inbox/` (ou tu dis à Hermes “mets ça dans Inbox”). | Inbox + chat Hermes |
+| **Revue Inbox** (quotidienne ou tous les 2 jours) | Tu parcours l’Inbox. Tu décides : atomiser / archiver / ignorer / prioriser. Tu laisses Hermes faire le gros du travail. | Obsidian Graph + Inbox |
+| **Validation** | Tu relis les propositions d’atomes, de liens, de fusions, de résolutions de L-Atoms. Tu approuves, refuses, ou demandes une refinement. | Notes dans `01-Atoms/`, `03-Decisions/` |
+| **Décision stratégique** | Tu prends les vraies décisions (choix d’architecture, priorités roadmap, “on abandonne cette piste”). Tu les formalises dans un ADR. | `03-Decisions/` + `02-Maps/` |
+| **Synthèse / Lecture** | Tu navigues le Graph View, les MOCs, les récits. Tu fais émerger les trous ou les patterns. | Graph View + `02-Maps/` |
+| **Pilotage agents** | Tu donnes des missions haut niveau (“résous les 5 L-Atoms prioritaires”, “génère la roadmap Phase 2”, “atomise ce nouveau paper”). | Chat Hermes ou skills |
+
+**Règle d’or humaine** :  
+Tu ne crées presque **jamais** d’atome à la main. Tu valides, tu orientes, tu trances. Le volume de notes est trop grand pour que tu le fasses manuellement.
+
+**Outils humains essentiels dans Obsidian** :
+- Graph View (filtré par tags/statut)
+- Dataview (listes dynamiques : “tous les L-Atoms non résolus”, “atomes orphelins”, “décisions de la semaine”)
+- Canvas (pour dessiner des relations complexes à la main quand le graphe ne suffit pas)
+- Daily notes (journal de bord léger)
+
+### 2. Gestion Git / GitHub adaptée au mode agentique
+
+Le **Git Flow classique** (feature branches + develop + master + releases) est trop lourd et trop “code-oriented” pour un vault de connaissance. Il crée trop de friction.
+
+Voici le modèle qui marche le mieux avec des agents + Markdown vivant :
+
+#### Stratégie recommandée : **Trunk-Based + Atomic Commits + Human Gate**
+
+```
+main (ou trunk)
+ │
+ ├── (commits atomiques fréquents, souvent faits par Hermes)
+ │
+ └── (PRs optionnelles uniquement pour les changements structurants)
+```
+
+**Règles concrètes :**
+
+1. **Branche principale unique : `main`**
+   - C’est la source de vérité.
+   - Tout le monde (toi + Hermes) travaille dessus (ou presque).
+
+2. **Commits très atomiques et fréquents**
+   - Un commit = une intention claire.
+   - Exemples de messages :
+     - `atom: add C-Couverture_Markov_Imbriquee`
+     - `link: connect L-Deficit_Attention to E-Cycle_Sommeil`
+     - `decision: ADR-014 choose Mamba for N3`
+     - `refactor: merge duplicate anti-fusion atoms`
+     - `inbox: process 2026-07-25 batch`
+   - Hermes peut faire des commits automatiques (via skill git) **après validation humaine** ou selon des règles strictes que tu définis.
+
+3. **Quand utiliser des branches / PRs ?**
+   - **Oui** pour :
+     - Gros refactoring structurel (changement de typologie d’atomes, migration de dossiers)
+     - Expérimentations risquées (nouvelle taxonomie, nouveau skill majeur)
+     - Travail collaboratif (si un jour quelqu’un d’autre contribue)
+   - **Non** pour le flux normal d’atomisation et de liaison (trop de friction).
+
+4. **Workflow typique avec Hermes**
+
+   ```
+   1. Hermes travaille dans le vault (crée/modifie des notes)
+   2. Hermes propose un diff ou un résumé des changements
+   3. Tu valides (ou tu demandes des corrections)
+   4. Hermes fait le commit (ou tu le fais)
+   5. Push sur main
+   ```
+
+   Tu peux même automatiser une partie avec un skill Hermes du type :
+   > “Après validation humaine explicite, commit avec message standardisé et push.”
+
+5. **Protection de `main`**
+   - Sur GitHub : active “Require pull request reviews” seulement pour les branches de feature.
+   - Ou plus simple : `main` protégé + Hermes n’a le droit de push que via un token limité + validation humaine obligatoire pour les commits non triviaux.
+
+6. **Tags / Releases**
+   - Tu tags occasionnellement des “snapshots de connaissance” :
+     - `v0.3-architecture-stabilized`
+     - `v0.5-mvp-roadmap-locked`
+   - Utile pour revenir en arrière mentalement.
+
+#### Variante un peu plus structurée (si tu préfères garder un goût de Git Flow)
+
+```
+main          ← production / vérité
+develop       ← intégration continue des atomes
+feature/*     ← uniquement pour gros changements
+```
+
+Mais la plupart des gens qui font du Zettelkasten agentique abandonnent `develop` assez vite, car ça ajoute de la latence inutile.
+
+### Synthèse pratique
+
+| Élément              | Recommandation                                      | Pourquoi |
+|----------------------|-----------------------------------------------------|----------|
+| Branche principale   | `main` unique                                       | Simplicité + vitesse agents |
+| Fréquence commits    | Très élevée (plusieurs par session)                 | Traçabilité fine |
+| Style de commit      | Atomic + conventionnel (`atom:`, `decision:`, …)    | Lisible par humains et agents |
+| Pull Requests        | Seulement pour changements structurants             | Évite la friction |
+| Rôle humain          | Validateur + décideur stratégique                   | Tu restes le boss |
+| Rôle Hermes          | Exécuteur + proposeur + mainteneur du graphe        | Il fait 80-90 % du volume |
+
+Tu veux que je te propose :
+- Un template de skill Hermes “Git commit + validation humaine” ?
+- Un exemple de Dataview pour surveiller l’état du vault (L-Atoms ouverts, Inbox non traitée, etc.) ?
+- Ou la convention de nommage exacte des fichiers d’atomes ?
+
+Dis-moi ce qui te sera le plus utile en premier.
+
