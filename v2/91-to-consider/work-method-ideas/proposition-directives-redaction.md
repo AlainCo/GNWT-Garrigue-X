@@ -16,7 +16,7 @@ Toute nanonouvelle doit suivre cette trajectoire en 5 temps, sans déviation maj
 2. **Déclencheur opérationnel** : Un événement concret, urgent et mesurable (temps, probabilité, distance) qui brise l’équilibre.
 3. **Conflit architectural interne** : La tension n’est pas seulement externe. Elle oppose des modules du système (ex: l’impulsivité de Mistral vs la rigidité de la Constitution ; l’effort silencieux d’un Mamba vs l’ignorance du Workspace).
 4. **Climax décisionnel** : Un choix irréversible, une validation humaine (l’Amiral) ou une découverte technique (l’Ingénieur qui creuse sous la couverture de Markov).
-5. **Résolution métacognitive** : Le système ne "gagne" pas simplement. Il met à jour son *Self-Model*. Il tire une leçon philosophique sur sa propre nature, souvent en observant les humains endormis ou en évoquant une analogie humaine humble (les éboueurs, les mécaniciens de nuit).
+5. **Résolution métacognitive** : Le système ne "gagne" pas simplement. Il met à jour son *Self-Model*. Il tire une leçon philosophique sur sa propre nature, souvent en observant les humains endormis ou en évoquant une analogie humaine humble (les éboueurs, les mécaniciens de nuit). La résolution doit toujours inclure un Gain de Capacité ou un Renforcement de la Confiance. Le système ne doit pas seulement 'constater' sa faille ; il doit démontrer que, grâce à cette épreuve et à l'architecture mise en place, il est désormais plus robuste, plus digne de confiance ou plus capable de coopérer qu'au début de l'histoire. La cicatrice n'est pas une faiblesse, c'est une preuve de résilience architecturale.
 
 ### 3. Règles de Rédaction Strictes (Contraintes de génération)
 * **Règle du Concept Unique** : Une seule notion architecturale (ex: l’inférence active, l’effondrement des latents, le seuil de surprise) par nanonouvelle. Ne pas surcharger.
@@ -24,7 +24,7 @@ Toute nanonouvelle doit suivre cette trajectoire en 5 temps, sans déviation maj
 * **Incarnation du code** : Interdiction de décrire un processus algorithmique de manière purement abstraite. Traduisez-le en sensation : un SSM qui s’épuise, un tenseur qui "pèse" lourd, une ignition qui "éblouit".
 * **Chute ouverte mais orientée** : La dernière phrase ne doit pas être une morale, mais un constat fragile, une question ouverte ou une promesse de mémoire.
 
-> **🤖 Directive pour l’Agent IA** : *Avant de rédiger, identifie explicitement : [1] Le concept technique unique, [2] L’état émotionnel/latent actuel du GAN14, [3] L’analogie humaine de la résolution. Si l’un de ces éléments manque, restructurez le plan.*
+> **🤖 Directive pour l’Agent IA** : *Avant de rédiger, identifie explicitement : [1] Le concept technique unique, [2] L’état émotionnel/latent actuel du GAN14, [3] L’analogie humaine de la résolution. Si l’un de ces éléments manque, restructurez le plan. affiche ces 3 points avant de rédiger.*
 
 ---
 
