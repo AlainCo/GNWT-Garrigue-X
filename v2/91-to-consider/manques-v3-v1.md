@@ -14,8 +14,8 @@ La V3 n’a pas “oublié” le cœur — elle l’a **compacté dans un narrat
 
 ### ✔ Architecture hiérarchique + Markov blankets
 
-* Toujours structurant (N0 → N6, modules opaques) [\[caissedesd...epoint.com\]](https://caissedesdepots-my.sharepoint.com/personal/alain_coetmeur_caissedesdepots_fr/Documents/Fichiers%20Microsoft%20Copilot%20Chat/architecture.md)
-* API = **résumés d’ignition latents compressés** [\[caissedesd...epoint.com\]](https://caissedesdepots-my.sharepoint.com/personal/alain_coetmeur_caissedesdepots_fr/Documents/Fichiers%20Microsoft%20Copilot%20Chat/architecture.md)
+* Toujours structurant (N0 → N6, modules opaques) [\[corp.com\]](Fichiers%20Microsoft%20Copilot%20Chat/architecture.md)
+* API = **résumés d’ignition latents compressés** [\[corp.com\]](Fichiers%20Microsoft%20Copilot%20Chat/architecture.md)
 
 👉 Pas de perte ici, c’est même renforcé.
 
@@ -25,7 +25,7 @@ La V3 n’a pas “oublié” le cœur — elle l’a **compacté dans un narrat
 
 * Toujours présent :
   * RPT = vie intérieure locale
-  * GNWT = ignition + broadcast [\[caissedesd...epoint.com\]](https://caissedesdepots-my.sharepoint.com/personal/alain_coetmeur_caissedesdepots_fr/Documents/Fichiers%20Microsoft%20Copilot%20Chat/concepts.md)
+  * GNWT = ignition + broadcast [\[corp.com\]](Fichiers%20Microsoft%20Copilot%20Chat/concepts.md)
 
 👉 cohérence forte avec la V2 narrative.
 
@@ -36,7 +36,7 @@ La V3 n’a pas “oublié” le cœur — elle l’a **compacté dans un narrat
 * Même mécanisme :
   * top-down = prédictions
   * bottom-up = erreur / surprise
-  * seuil d’ignition adaptatif [\[caissedesd...epoint.com\]](https://caissedesdepots-my.sharepoint.com/personal/alain_coetmeur_caissedesdepots_fr/Documents/Fichiers%20Microsoft%20Copilot%20Chat/architecture.md)
+  * seuil d’ignition adaptatif [\[corp.com\]](Fichiers%20Microsoft%20Copilot%20Chat/architecture.md)
 
 👉 même meilleure intégration dans V3 (plus opérationnelle).
 
@@ -44,13 +44,13 @@ La V3 n’a pas “oublié” le cœur — elle l’a **compacté dans un narrat
 
 ### ✔ Attention scheduler (budget)
 
-* présent explicitement [\[caissedesd...epoint.com\]](https://caissedesdepots-my.sharepoint.com/personal/alain_coetmeur_caissedesdepots_fr/Documents/Fichiers%20Microsoft%20Copilot%20Chat/architecture.md)
+* présent explicitement [\[corp.com\]](Fichiers%20Microsoft%20Copilot%20Chat/architecture.md)
 
 ***
 
 ### ✔ Self-model + métacognition
 
-* présent (méta-vecteur, confiance) [\[caissedesd...epoint.com\]](https://caissedesdepots-my.sharepoint.com/personal/alain_coetmeur_caissedesdepots_fr/Documents/Fichiers%20Microsoft%20Copilot%20Chat/architecture.md)
+* présent (méta-vecteur, confiance) [\[corp.com\]](Fichiers%20Microsoft%20Copilot%20Chat/architecture.md)
 
 ***
 
@@ -76,7 +76,7 @@ Ici, V3 garde les idées… mais **les rend moins visibles ou moins structurante
 
 * IWMT explicitement :
   * conscience = world model intégré
-  * système = modèle du monde global [\[caissedesd...epoint.com\]](https://caissedesdepots-my.sharepoint.com/personal/alain_coetmeur_caissedesdepots_fr/Documents/Fichiers%20Microsoft%20Copilot%20Chat/architecture-v3-narrative.md)
+  * système = modèle du monde global [\[corp.com\]](Fichiers%20Microsoft%20Copilot%20Chat/architecture-v3-narrative.md)
 
 ### V3
 
@@ -99,7 +99,7 @@ Ici, V3 garde les idées… mais **les rend moins visibles ou moins structurante
 
 ### Avant
 
-* cycle en 9 étapes (percevoir → simuler → agir → dormir…) [\[caissedesd...epoint.com\]](https://caissedesdepots-my.sharepoint.com/personal/alain_coetmeur_caissedesdepots_fr/Documents/Fichiers%20Microsoft%20Copilot%20Chat/architecture-v3-narrative.md)
+* cycle en 9 étapes (percevoir → simuler → agir → dormir…) [\[corp.com\]](Fichiers%20Microsoft%20Copilot%20Chat/architecture-v3-narrative.md)
 
 ### V3
 
@@ -117,7 +117,7 @@ Ici, V3 garde les idées… mais **les rend moins visibles ou moins structurante
 
 * TCM clairement central :
   * temps comme dimension interne
-  * navigation temporelle [\[caissedesd...epoint.com\]](https://caissedesdepots-my.sharepoint.com/personal/alain_coetmeur_caissedesdepots_fr/Documents/Fichiers%20Microsoft%20Copilot%20Chat/architecture-v3-narrative.md)
+  * navigation temporelle [\[corp.com\]](Fichiers%20Microsoft%20Copilot%20Chat/architecture-v3-narrative.md)
 
 ### V3
 
@@ -144,7 +144,7 @@ Je te fais une liste **priorisée (impact fort → faible)**
 
 ### Avant (concepts.md)
 
-* profils = réglages probabilistes (précision, seuils) [\[caissedesd...epoint.com\]](https://caissedesdepots-my.sharepoint.com/personal/alain_coetmeur_caissedesdepots_fr/Documents/Fichiers%20Microsoft%20Copilot%20Chat/concepts.md)
+* profils = réglages probabilistes (précision, seuils) [\[corp.com\]](Fichiers%20Microsoft%20Copilot%20Chat/concepts.md)
 * liens :
   * autisme → pondération sensorielle
   * dark triad → décision rapide
@@ -192,7 +192,7 @@ Tu perds :
   * agents moraux
   * masques γ
   * conflit moral = ignition
-  * révision constitutionnelle [\[caissedesd...epoint.com\]](https://caissedesdepots-my.sharepoint.com/personal/alain_coetmeur_caissedesdepots_fr/Documents/Fichiers%20Microsoft%20Copilot%20Chat/architecture-v3-narrative.md)
+  * révision constitutionnelle [\[corp.com\]](Fichiers%20Microsoft%20Copilot%20Chat/architecture-v3-narrative.md)
 
 ***
 
@@ -230,7 +230,7 @@ et surtout :
   * self / other / other-of-me
   * recursion
   * agentivité
-  * anti-paranoïa [\[caissedesd...epoint.com\]](https://caissedesdepots-my.sharepoint.com/personal/alain_coetmeur_caissedesdepots_fr/Documents/Fichiers%20Microsoft%20Copilot%20Chat/architecture-v3-narrative.md)
+  * anti-paranoïa [\[corp.com\]](Fichiers%20Microsoft%20Copilot%20Chat/architecture-v3-narrative.md)
 
 ***
 
@@ -263,7 +263,7 @@ Tu perds :
 
 ### Présent dans concepts.md
 
-* exploration par gain d’information [\[caissedesd...epoint.com\]](https://caissedesdepots-my.sharepoint.com/personal/alain_coetmeur_caissedesdepots_fr/Documents/Fichiers%20Microsoft%20Copilot%20Chat/concepts.md)
+* exploration par gain d’information [\[corp.com\]](Fichiers%20Microsoft%20Copilot%20Chat/concepts.md)
 
 ### V3
 
@@ -305,7 +305,7 @@ Tu perds :
 * super structurant :
   * JEPA stable
   * LoRA local
-  * consolidation lente [\[caissedesd...epoint.com\]](https://caissedesdepots-my.sharepoint.com/personal/alain_coetmeur_caissedesdepots_fr/Documents/Fichiers%20Microsoft%20Copilot%20Chat/architecture-v3-narrative.md)
+  * consolidation lente [\[corp.com\]](Fichiers%20Microsoft%20Copilot%20Chat/architecture-v3-narrative.md)
 
 ***
 
@@ -326,7 +326,7 @@ Tu perds :
 
 ### Dans les concepts
 
-* Φ = **thermomètre critique d’intégration** [\[caissedesd...epoint.com\]](https://caissedesdepots-my.sharepoint.com/personal/alain_coetmeur_caissedesdepots_fr/Documents/Fichiers%20Microsoft%20Copilot%20Chat/concepts.md)
+* Φ = **thermomètre critique d’intégration** [\[corp.com\]](Fichiers%20Microsoft%20Copilot%20Chat/concepts.md)
 
 ### Dans V3
 
