@@ -1,8 +1,6 @@
 📘 Mode d'Emploi v4 : Système Éditorial Zettelkasten — "Romancier-Ingénieur"
 Document de référence à sauvegarder sous `00_Meta/MODE_EMPLOI.md`
 
-Cette version 4 corrige les incohérences de la v3 (nombre d'agents, nombre de couches), ajoute des métriques de succès pour chaque niveau, clarifie les critères de passage entre niveaux, et renforce les exemples concrets.
-
 ---
 
 ## 0. L'Identité du Projet : Le Romancier-Ingénieur
