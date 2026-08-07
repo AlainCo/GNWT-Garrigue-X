@@ -47,3 +47,45 @@ Pour l'incarnation, trois grandes pistes de recherche (ou "questions ouvertes") 
 #### C. L'approche par curriculum (Initialisation incrémentale)
 *   **La piste :** Plutôt que d'entraîner un World Model incarné à partir de zéro (*cold start*) sur des données physiques rares, la voie la plus prometteuse consiste à utiliser les étapes intermédiaires du spectre.
 *   **Comment :** On peut pré-entraîner un modèle sur du texte (ou du *Next-Latent Prediction*) pour qu'il acquière une compréhension générale du monde et de la causalité, puis l'affiner progressivement en introduisant des contraintes physiques et des actions motrices. Le LLM sert alors d'initialisation intelligente pour le World Model incarné, capitalisant sur la connaissance accumulée dans ses activations internes.
+
+### USER
+Je viens de voir passer ce papier qui semble proposer une sorte de LLM mais en architecture Jepa: https://arxiv.org/abs/2509.14252
+j'imagine qu'ils ont changé l'architecture transformer/roken , mais je n'ai pas compris les détails ?
+
+### ASSISTANT
+C'est une excellente question qui fait parfaitement suite à notre discussion précédente ! Vous touchez ici du doigt l'une des implémentations concrètes du fameux "spectre continu" entre LLMs et World Models.
+
+Pour répondre directement à votre intuition : **Non, ils n'ont pas changé l'architecture Transformer ni abandonné les tokens.** 
+
+Le génie du papier **LLM-JEPA** (publié fin 2025), c'est justement d'avoir greffé la philosophie du JEPA sur une architecture LLM standard (ils l'ont testé sur Llama3, Gemma2, OLMo) sans en modifier les fondations. L'innovation ne se situe pas dans le *modèle*, mais dans la **fonction de coût (la loss)** utilisée pendant l'entraînement.
+
+Voici les détails de leur approche et pourquoi c'est une piste majeure.
+
+### 1. Le principe : Une double objective
+Le papier part d'un constat : en vision, prédire des pixels (l'espace d'entrée) est une mauvaise idée car il y a trop de bruit imprédictible. Prédire dans l'espace latent (JEPA) est bien supérieur. Mais en langage, prédire le prochain token fonctionne déjà très bien. 
+
+Leur solution est donc d'additionner deux objectifs pendant l'entraînement :
+$$ \mathcal{L}_{Totale} = \mathcal{L}_{LLM} + \lambda \cdot \mathcal{L}_{JEPA} $$
+*   **$\mathcal{L}_{LLM}$ (Génératif) :** La perte classique (Cross-Entropy) pour prédire le prochain mot. Cela permet au modèle de garder sa capacité à générer du texte.
+*   **$\mathcal{L}_{JEPA}$ (Abstrait) :** Une perte qui force le modèle à aligner ses représentations internes (latentes) de deux concepts liés.
+
+### 2. Comment fonctionne le mécanisme JEPA dans un LLM ?
+Pour faire du JEPA, il faut deux "vues" différentes d'une même information. Par exemple, dans leur papier, ils utilisent des paires comme `(Description textuelle d'un bug GitHub, le Code correctif)` ou `(Énoncé d'un problème de maths, sa solution)`.
+
+Voici la mécanique en 3 étapes :
+
+*   **L'Encodeur (Enc) :** Pour obtenir la représentation latente d'une vue (ex: le texte), ils récupèrent simplement l'état caché (*hidden state*) du tout dernier token de la dernière couche du Transformer. C'est l'équivalent de "l'embedding" global de la phrase.
+*   **Le Prédicteur (Pred) :** C'est là que se trouve l'astuce architecturale. Au lieu de créer un nouveau réseau de neurones pour faire la prédiction (ce qui alourdirait le modèle), **ils réutilisent les poids du LLM lui-même**. Ils ajoutent des tokens spéciaux `[PRED]` à la fin de la séquence du texte, et laissent le mécanisme de *Self-Attention* du Transformer traiter l'information pour générer la prédiction latente.
+*   **La Cible :** Le modèle est puni si la représentation latente qu'il a *prédite* pour le texte n'est pas similaire (via une distance cosinus) à la représentation latente *réelle* du code associé.
+
+*Note technique : Pour éviter que le modèle ne "triche" en regardant la réponse pendant l'entraînement, ils font passer le texte et le code dans le Transformer lors de deux passes (forward passes) distinctes pour préserver le masque causal.*
+
+### 3. Pourquoi est-ce une piste cruciale (notamment pour les agents incarnés) ?
+
+Si l'on regarde ce papier sous l'angle des **World Models** et de l'IA incarnée que nous évoquions plus tôt, cette approche résout plusieurs problèmes majeurs :
+
+1.  **Zéro surcoût à l'inférence (Le Saint Graal) :** Le JEPA n'est utilisé *que* pour l'apprentissage (comme un regulariseur). Une fois le modèle entraîné, on jette la perte JEPA et les tokens `[PRED]`. À l'inférence, c'est un Transformer standard, rapide, qui génère du texte token par token. On obtient la "compréhension profonde" du JEPA avec la vitesse du LLM.
+2.  **Forcer l'abstraction plutôt que le par cœur :** Un LLM classique peut apprendre à recracher une solution de code par cœur sans la comprendre. En l'obligeant à faire correspondre son espace latent (le sens profond du problème) avec l'espace latent de la solution, le modèle est forcé de construire une représentation structurée du monde.
+3.  **Résistance à l'oubli catastrophique (Overfitting) :** Les auteurs montrent que cette méthode est extrêmement robuste lors du *fine-tuning* sur de petites bases de données. Pour un robot (agent incarné) qu'on voudrait spécialiser sur une tâche physique précise sans qu'il n'oublie le sens commun acquis sur Internet, ajouter une loss de type LLM-JEPA est une piste extrêmement prometteuse pour stabiliser son "World Model" interne.
+
+En résumé, ce papier prouve qu'on n'a pas besoin de jeter les Transformers aux orties pour faire du JEPA. Il suffit de changer **ce que l'on demande au modèle d'apprendre** (aligner des concepts latents) plutôt que **comment il le recrache** (prédire le prochain mot).
