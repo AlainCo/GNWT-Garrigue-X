@@ -4169,3 +4169,1050 @@ print(response["messages"][-1].content)
 - Les "jointures" se font naturellement via le LLM qui passe les résultats d'une base à l'autre
 
 **C'est exactement pour ça que LangGraph + LLM est puissant :** tu délègues au LLM la partie "compréhension et planification" qui serait infernale à coder en dur. Ton job, c'est de lui donner les bons outils et le bon contexte.
+
+### USER
+Pour le scraping et al recherche, y a t'il besoin de service locaux (dans un docker compose par exemple), ou est-ce des services distants ou des bibliothèques seulement ? et pour les MCP ?
+
+### ASSISTANT
+**Excellente question !** La réponse est **mixte** : certains outils sont des services distants (API), d'autres sont des bibliothèques Python, et quelques-uns peuvent être auto-hébergés. Voici le détail.
+
+---
+
+## 🔍 Recherche Web : Services Distants (API)
+
+### Ce que Tu Utilises : Des API Cloud
+
+**Tavily, Exa, Brave Search, Perplexity** sont tous des **services distants**. Tu n'installes rien sur ton serveur, tu appelles leur API.
+
+```python
+# Tavily (service distant)
+from tavily import TavilyClient
+
+tavily = TavilyClient(api_key="tvly-xxxxxxxx")
+results = tavily.search(query="robotique distribuée")
+# → Appelle https://api.tavily.com/search
+```
+
+**Avantages :**
+- ✅ Zéro infrastructure à gérer
+- ✅ Toujours à jour
+- ✅ Résultats de qualité
+
+**Inconvénients :**
+- ❌ Dépend d'Internet
+- ❌ Coût (mais gratuit pour ton usage : 1000 req/mois pour Tavily)
+- ❌ Latence réseau
+
+**Pas besoin de Docker pour ça.**
+
+---
+
+## 🕷️ Scraping : 3 Options (Local, Hybride, ou Distant)
+
+### Option 1 : Service Distant (Firecrawl Cloud)
+```python
+from firecrawl import FirecrawlApp
+
+app = FirecrawlApp(api_key="fc-xxxxxxxx")
+result = app.scrape_url("https://arxiv.org/abs/2301.12345")
+# → Appelle https://api.firecrawl.dev/v1/scrape
+```
+**Pas besoin de Docker.** C'est une API comme Tavily.
+
+### Option 2 : Auto-hébergé (Firecrawl Self-Hosted)
+Firecrawl propose une version que tu peux installer sur ton serveur :
+
+```yaml
+# docker-compose.yml (ajout)
+firecrawl:
+  image: mendable/firecrawl:latest
+  ports:
+    - "3002:3002"
+  environment:
+    - OPENAI_API_KEY=${OPENAI_API_KEY}
+```
+**Avantage :** Gratuit, pas de limite
+**Inconvénient :** Plus lourd à maintenir
+
+### Option 3 : Bibliothèque Python Pure (Crawl4AI, Jina)
+```python
+# Crawl4AI (bibliothèque locale)
+from crawl4ai import AsyncWebCrawler
+
+async def scrape():
+    async with AsyncWebCrawler() as crawler:
+        result = await crawler.arun(url="https://arxiv.org/...")
+        return result.markdown
+
+# Jina Reader (bibliothèque qui appelle une API gratuite)
+import requests
+response = requests.get("https://r.jina.ai/https://arxiv.org/...")
+```
+**Pas besoin de Docker.** C'est du Python pur.
+
+---
+
+## 🎯 Ma Recommandation pour Ton Projet
+
+**Commence avec des services distants (API) :**
+
+```python
+# Recherche web
+from tavily import TavilyClient
+
+# Scraping
+from firecrawl import FirecrawlApp
+
+# Multi-modèles
+from litellm import completion
+```
+
+**Avantages :**
+- ✅ Setup ultra-rapide (5 minutes)
+- ✅ Zéro maintenance
+- ✅ Suffisant pour 1 Mo de Markdown
+- ✅ Tu peux migrer vers l'auto-hébergé plus tard si besoin
+
+**Coût pour ton usage :**
+- Tavily : gratuit (1000 req/mois)
+- Firecrawl : 500 crédits gratuits
+- OpenRouter : ~$0.01-0.05 par requête complexe
+
+**Total : < $10/mois pour démarrer**
+
+---
+
+## 🔌 MCP (Model Context Protocol) : Bibliothèque Python
+
+**MCP n'est PAS un service distant.** C'est un **protocole standard** que tu implémentes dans ton code Python.
+
+### Deux Façons d'Utiliser MCP :
+
+#### 1. MCP Server (Tu Exposes Tes Outils)
+Tu crées un serveur MCP qui expose tes outils (recherche, scraping, etc.) :
+
+```python
+# mcp_server.py
+from mcp.server import Server
+from tavily import TavilyClient
+from firecrawl import FirecrawlApp
+
+app = Server("research-tools")
+
+@app.tool()
+def search_web(query: str) -> str:
+    """Recherche sur le web via Tavily."""
+    tavily = TavilyClient(api_key="...")
+    results = tavily.search(query=query)
+    return str(results)
+
+@app.tool()
+def scrape_url(url: str) -> str:
+    """Scrape une URL via Firecrawl."""
+    app = FirecrawlApp(api_key="...")
+    result = app.scrape_url(url)
+    return result['markdown']
+
+# Lancer le serveur
+if __name__ == "__main__":
+    app.run(transport="stdio")  # ou "http" pour réseau
+```
+
+**Tes agents LangGraph peuvent appeler ces outils via MCP.**
+
+#### 2. MCP Client (Tes Agents Consomment des Outils MCP)
+Si tu utilises des outils MCP créés par d'autres (ex: un MCP server pour Obsidian) :
+
+```python
+from mcp import ClientSession
+from mcp.client.stdio import stdio_client
+
+# Connexion à un MCP server externe
+async with stdio_client("obsidian-mcp-server") as (read, write):
+    async with ClientSession(read, write) as session:
+        await session.initialize()
+        
+        # Appeler un outil MCP
+        result = await session.call_tool(
+            "search_notes",
+            arguments={"query": "robotique"}
+        )
+```
+
+**Pas besoin de Docker pour MCP.** C'est du Python pur.
+
+---
+
+## 📊 Tableau Récapitulatif
+
+| Outil | Type | Docker ? | Gratuit ? | Où ça tourne ? |
+|-------|------|----------|-----------|----------------|
+| **Tavily** | API distante | ❌ Non | ✅ Freemium | Cloud Tavily |
+| **Exa** | API distante | ❌ Non | ❌ Payant | Cloud Exa |
+| **Firecrawl Cloud** | API distante | ❌ Non | ✅ Freemium | Cloud Firecrawl |
+| **Firecrawl Self-Hosted** | Service local | ✅ Oui | ✅ Oui | Ton serveur |
+| **Crawl4AI** | Bibliothèque Python | ❌ Non | ✅ Oui | Ton serveur |
+| **Jina Reader** | API gratuite | ❌ Non | ✅ Oui | Cloud Jina |
+| **MCP Server** | Bibliothèque Python | ❌ Non | ✅ Oui | Ton serveur |
+| **MCP Client** | Bibliothèque Python | ❌ Non | ✅ Oui | Ton serveur |
+
+---
+
+## 🐳 Docker Compose Complet (Tes Bases + Optional Scraping)
+
+```yaml
+version: '3.8'
+
+services:
+  # === BASES DE DONNÉES (Obligatoires) ===
+  postgres:
+    image: postgres:16-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: mythos
+      POSTGRES_PASSWORD: mythos_pass
+      POSTGRES_DB: vault
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  qdrant:
+    image: qdrant/qdrant:latest
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - qdrant_data:/qdrant/storage
+
+  neo4j:
+    image: neo4j:5-community
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    environment:
+      NEO4J_AUTH: neo4j/mythos_pass
+    volumes:
+      - neo4j_data:/data
+
+  # === SCRAPING AUTO-HÉBERGÉ (Optionnel) ===
+  # firecrawl:
+  #   image: mendable/firecrawl:latest
+  #   ports:
+  #     - "3002:3002"
+  #   environment:
+  #     - OPENAI_API_KEY=${OPENAI_API_KEY}
+
+volumes:
+  postgres_data:
+  qdrant_data:
+  neo4j_data:
+```
+
+**Ce qui manque dans ce Docker Compose :**
+- ❌ Tavily (API distante)
+- ❌ Firecrawl Cloud (API distante)
+- ❌ MCP (bibliothèque Python)
+- ❌ Tes agents LangGraph (ton code Python)
+
+**Ces outils tournent dans ton application Python, pas dans Docker.**
+
+---
+
+## 🎯 Architecture Complète de Ton Système
+
+```
+┌─────────────────────────────────────────────────────────┐
+│  TON SERVEUR (VPS ou Local)                             │
+│                                                         │
+│  ┌──────────────────────────────────────────────────┐  │
+│  │  Docker Compose                                  │  │
+│  │  ┌──────────┐  ┌──────────┐  ┌──────────┐       │  │
+│  │  │PostgreSQL│  │  Qdrant  │  │  Neo4j   │       │  │
+│  │  │  :5432   │  │  :6333   │  │  :7474   │       │  │
+│  │  └──────────┘  └──────────┘  └──────────┘       │  │
+│  └──────────────────────────────────────────────────┘  │
+│                         ▲                              │
+│                         │ Connexion DB                 │
+│  ┌──────────────────────────────────────────────────┐  │
+│  │  Application Python (Tes Agents LangGraph)       │  │
+│  │                                                  │  │
+│  │  ┌──────────────┐  ┌──────────────┐             │  │
+│  │  │  MCP Server  │  │  Outils      │             │  │
+│  │  │  (expose     │  │  Python      │             │  │
+│  │  │   tes tools) │  │  (scraping,  │             │  │
+│  │  └──────────────┘  │   recherche) │             │  │
+│  │                    └──────────────┘             │  │
+│  └──────────────────────────────────────────────────┘  │
+│                         │                              │
+│                         │ Appels API                   │
+│                         ▼                              │
+└─────────────────────────────────────────────────────────┘
+                         │
+         ┌───────────────┼───────────────┐
+         │               │               │
+         ▼               ▼               ▼
+    ┌─────────┐    ┌──────────┐    ┌──────────┐
+    │ Tavily  │    │ Firecrawl│    │OpenRouter│
+    │  (API)  │    │  (API)   │    │  (API)   │
+    └─────────┘    └──────────┘    └──────────┘
+    (Cloud)        (Cloud)        (Cloud)
+```
+
+---
+
+## 🚀 Plan d'Action Pragmatique
+
+### Phase 1 : Setup Minimal (Jour 1)
+```bash
+# 1. Docker pour les bases
+docker-compose up -d
+
+# 2. Installer les bibliothèques Python
+pip install tavily-python firecrawl-py litellm langgraph mcp
+
+# 3. Tester un appel API
+python -c "from tavily import TavilyClient; print(TavilyClient(api_key='...').search('test'))"
+```
+
+### Phase 2 : Créer Tes Outils MCP (Jour 2)
+```python
+# mcp_server.py
+from mcp.server import Server
+from tavily import TavilyClient
+
+app = Server("research-tools")
+
+@app.tool()
+def search_web(query: str) -> str:
+    tavily = TavilyClient(api_key="...")
+    return str(tavily.search(query=query))
+
+if __name__ == "__main__":
+    app.run(transport="stdio")
+```
+
+### Phase 3 : Intégrer dans LangGraph (Jour 3)
+```python
+from langgraph.prebuilt import create_react_agent
+from langchain_openai import ChatOpenAI
+
+agent = create_react_agent(
+    ChatOpenAI(model="gpt-4"),
+    tools=[search_web, scrape_url, query_metadata, search_vectors, query_graph]
+)
+```
+
+---
+
+## 🎬 En Résumé
+
+**Recherche web et scraping :**
+- ✅ **Services distants (API)** : Tavily, Firecrawl Cloud, Exa → Pas besoin de Docker
+- ✅ **Bibliothèques Python** : Crawl4AI, Jina → Pas besoin de Docker
+- ⚠️ **Auto-hébergé** : Firecrawl Self-Hosted → Docker optionnel
+
+**MCP :**
+- ✅ **Bibliothèque Python** → Pas besoin de Docker
+- Tu crées ton propre MCP server dans ton code
+
+**Docker Compose :**
+- ✅ **Obligatoire** : PostgreSQL, Qdrant, Neo4j (tes bases de données)
+- ❌ **Optionnel** : Firecrawl Self-Hosted (si tu veux éviter les API payantes)
+- ❌ **Inutile** : Tavily, MCP, tes agents Python (ça tourne dans ton app)
+
+**Pour ton projet (1 Mo de Markdown) :**
+- Commence avec les API distantes (Tavily, Firecrawl Cloud)
+- Docker uniquement pour les 3 bases de données
+- MCP en bibliothèque Python dans ton code
+- Tu pourras migrer vers l'auto-hébergé plus tard si les coûts deviennent problématiques
+
+C'est l'approche la plus rapide et la moins coûteuse pour démarrer.
+
+### USER
+j'ai échangé avec un gars du domaine et lui me parle de composite retrieval, avec PostgresQL et pgvector, de me faire un graphe métier à la main (je suis développeur, c'est mon travail parfois). Il me conseille de bien structurer mes besoins un par un, de faire des requêtes spécialisées, des prompts spécialisés, des bases avec un schéma et une ontologie bien précise. donc la base réseau, il me dit qu'il faut oublier, et que je peux faire le réseau en relationnel moi même...  sinon mon projet à bougé, et là, j'ai déjà plus de 5Mo de markdown, surtout des documents de recherche, et de longues conversations avec plein d'idées à creuser...  et ca va grossir, je commence à me demander si je vais pas dépasser les volumes pour "amateur". qu'en pense tu ?
+
+### ASSISTANT
+**Ton expert a RAISON sur presque tout.** Son approche est plus mature et pragmatique que ce que je t'ai proposé initialement. Laisse-moi t'expliquer pourquoi, et te rassurer sur les volumes.
+
+---
+
+## 🎯 L'Analyse de l'Avis de Ton Expert
+
+### Ce Qu'il Dit et Pourquoi C'est Pertinent
+
+#### 1. "Composite Retrieval avec PostgreSQL + pgvector"
+**✅ EXCELLENT CONSEIL.**
+
+Au lieu de 3 bases séparées (PostgreSQL + Qdrant + Neo4j), tu peux tout faire dans **PostgreSQL** avec :
+- **pgvector** : pour la recherche vectorielle (remplace Qdrant)
+- **Tables relationnelles classiques** : pour les métadonnées (remplace le besoin de DuckDB)
+- **Tables de relations** : pour le graphe métier (remplace Neo4j)
+
+**Avantages :**
+- ✅ Une seule base à maintenir
+- ✅ Transactions ACID sur tout
+- ✅ Jointures SQL entre métadonnées, vecteurs et relations
+- ✅ Backups simplifiés
+- ✅ Écosystème Python mature (psycopg2, SQLAlchemy)
+
+**Exemple concret :**
+```sql
+-- Une seule requête qui combine TOUT
+SELECT 
+    n.title,
+    n.type,
+    n.statut,
+    r.relation,
+    cible.title as cible,
+    (n.embedding <=> query_vector) as distance  -- Recherche vectorielle
+FROM notes n
+LEFT JOIN relations r ON n.id = r.source_id
+LEFT JOIN notes cible ON r.target_id = cible.id
+WHERE n.type = 'concept'
+AND n.statut = 'validé'
+ORDER BY distance
+LIMIT 10;
+```
+
+**Tu ne peux PAS faire ça avec 3 bases séparées.** C'est un avantage massif.
+
+---
+
+#### 2. "Graphe Métier à la Main"
+**✅ EXCELLENT CONSEIL, et c'est le point le plus important.**
+
+GraphRAG automatique (Microsoft GraphRAG) a des limites :
+- ❌ Coûteux en tokens LLM pour l'indexation
+- ❌ Génère des entités génériques parfois inutiles
+- ❌ Difficile à contrôler finement
+- ❌ Pas adapté à un corpus qui évolue constamment
+
+**Un graphe métier fait à la main** signifie :
+- ✅ Tu définis **ton ontologie** (types d'entités, types de relations)
+- ✅ Tu contrôles **exactement** ce qui est extrait
+- ✅ Tu peux faire évoluer le schéma progressivement
+- ✅ Beaucoup moins coûteux en tokens LLM
+
+**Exemple d'ontologie pour ton projet :**
+```sql
+-- Types d'entités
+CREATE TABLE entity_types (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR UNIQUE  -- 'Personnage', 'Concept', 'Architecture', 'Limite', 'Lieu'
+);
+
+-- Types de relations
+CREATE TABLE relation_types (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR UNIQUE  -- 'Étudie', 'Inspire', 'Limité_Par', 'Situé_Dans'
+);
+
+-- Entités
+CREATE TABLE entities (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR,
+    type_id INT REFERENCES entity_types(id),
+    properties JSONB,  -- Métadonnées flexibles
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Relations
+CREATE TABLE relations (
+    id SERIAL PRIMARY KEY,
+    source_id INT REFERENCES entities(id),
+    target_id INT REFERENCES entities(id),
+    type_id INT REFERENCES relation_types(id),
+    properties JSONB,
+    weight FLOAT DEFAULT 1.0
+);
+
+-- Index pour accélérer les traversals
+CREATE INDEX idx_relations_source ON relations(source_id);
+CREATE INDEX idx_relations_target ON relations(target_id);
+```
+
+**Avec ça, tu peux faire des requêtes de graphe en SQL :**
+```sql
+-- Trouver les chemins de Elias vers les Limites
+WITH RECURSIVE chemin AS (
+    -- Point de départ
+    SELECT 
+        e.id, 
+        e.name, 
+        ARRAY[e.name] as path,
+        0 as depth
+    FROM entities e
+    WHERE e.name = 'Elias'
+    
+    UNION ALL
+    
+    -- Traversal récursif
+    SELECT 
+        e2.id,
+        e2.name,
+        c.path || e2.name,
+        c.depth + 1
+    FROM chemin c
+    JOIN relations r ON r.source_id = c.id
+    JOIN entities e2 ON e2.id = r.target_id
+    WHERE c.depth < 5  -- Limite de profondeur
+)
+SELECT * FROM chemin
+WHERE EXISTS (
+    SELECT 1 FROM entities e 
+    JOIN entity_types et ON e.type_id = et.id 
+    WHERE e.id = chemin.id AND et.name = 'Limite'
+);
+```
+
+**C'est du graphe en SQL pur.** Pas besoin de Neo4j.
+
+---
+
+#### 3. "Structurer les Besoins Un par Un"
+**✅ LE CONSEIL LE PLUS IMPORTANT.**
+
+Plutôt que de faire un système générique qui fait tout, ton expert te dit de :
+1. **Lister tes cas d'usage précis** (ex: "trouver les concepts liés à un personnage")
+2. **Créer un outil spécialisé pour chaque cas**
+3. **Avoir un prompt spécialisé pour chaque outil**
+4. **Avoir un schéma de base adapté à chaque besoin**
+
+**Exemple pour ton projet :**
+
+| Besoin | Outil Spécialisé | Prompt Spécialisé | Requête SQL |
+|--------|-----------------|-------------------|-------------|
+| "Trouver les personnages validés" | `search_characters` | "Extrais les personnages du texte" | `SELECT * FROM entities WHERE type='Personnage'` |
+| "Trouver les concepts liés à X" | `find_related_concepts` | "Quels concepts sont liés à {X} ?" | `SELECT ... FROM relations JOIN entities ...` |
+| "Trouver les passages sur Y" | `search_passages` | "Cherche les passages sur {Y}" | `SELECT ... FROM notes WHERE embedding <=> query` |
+| "Générer une note Zettelkasten" | `generate_zettel` | "Crée une note sur {sujet}" | N/A |
+
+**Avantages :**
+- ✅ Chaque outil est optimisé pour son cas
+- ✅ Les prompts sont calibrés précisément
+- ✅ Moins d'erreurs, plus de fiabilité
+- ✅ Plus facile à déboguer
+
+---
+
+#### 4. "Oublier la Base Réseau (Neo4j)"
+**✅ PERTINENT pour ton volume.**
+
+Pour 5 Mo de Markdown :
+- ❌ Neo4j Community : 300 Mo de RAM, complexité d'administration
+- ✅ PostgreSQL avec tables de relations : 100 Mo de RAM, tout-en-un
+
+**Les seules raisons d'utiliser Neo4j :**
+- Des milliards de relations
+- Des requêtes de graphe très complexes (plus de 10 niveaux de profondeur)
+- Besoin de visualisation native
+
+**Pour ton projet : PostgreSQL suffit largement.**
+
+---
+
+## 📊 Les Volumes : RASSURE-TOI
+
+### 5 Mo de Markdown, C'est QUOI en Réalité ?
+
+| Métrique | Valeur | Limite PostgreSQL |
+|----------|--------|-------------------|
+| **Taille brute** | 5 Mo | Illimitée (To) |
+| **Nombre de mots** | ~1,25 M | - |
+| **Nombre de chunks** (500 mots/chunk) | ~2 500 | - |
+| **Nombre de vecteurs** | ~2 500 | Des millions |
+| **RAM nécessaire** | ~100 Mo | - |
+| **Disque nécessaire** | ~50 Mo | - |
+| **Temps d'indexation** | ~5-10 min | - |
+
+**5 Mo, c'est MINUSCULE pour PostgreSQL + pgvector.**
+
+### Et Si Ça Grossit ?
+
+| Volume | Mots | Chunks | Vecteurs | Faisable Amateur ? |
+|--------|------|--------|----------|-------------------|
+| **5 Mo** | 1,25 M | 2 500 | 2 500 | ✅ Très facile |
+| **50 Mo** | 12,5 M | 25 000 | 25 000 | ✅ Facile |
+| **500 Mo** | 125 M | 250 000 | 250 000 | ✅ Faisable |
+| **5 Go** | 1,25 Md | 2,5 M | 2,5 M | ⚠️ Complexe mais possible |
+| **50 Go** | 12,5 Md | 25 M | 25 M | ❌ Nécessite une équipe |
+
+**Tu peux monter jusqu'à 500 Mo sans problème en amateur.** Au-delà, ça devient plus complexe mais reste possible.
+
+### Les VRAIES Limites pour un Amateur
+
+**Ce qui va te limiter, ce n'est PAS le volume de données.** C'est :
+
+1. **Le coût des tokens LLM** 💰
+   - Indexation avec extraction d'entités : ~$0.01-0.05 par 1000 mots
+   - Pour 5 Mo : ~$10-50
+   - Pour 50 Mo : ~$100-500
+   - Pour 500 Mo : ~$1000-5000
+
+2. **Le temps de développement** ⏱️
+   - Structurer ton ontologie : 1-2 semaines
+   - Créer tes outils spécialisés : 2-4 semaines
+   - Intégrer LangGraph : 1-2 semaines
+
+3. **La maintenance** 🔧
+   - Backups
+   - Mises à jour
+   - Débogage
+
+**Pour 5 Mo, tu es LARGEMENT dans les limites d'un amateur passionné.**
+
+---
+
+## 🏗️ Architecture Révisée (Selon les Conseils de Ton Expert)
+
+### Vue d'Ensemble
+
+```
+┌─────────────────────────────────────────────────────────┐
+│  TON SERVEUR                                            │
+│                                                         │
+│  ┌──────────────────────────────────────────────────┐  │
+│  │  Docker Compose                                  │  │
+│  │                                                  │  │
+│  │  ┌──────────────────────────────────────────┐   │  │
+│  │  │  PostgreSQL + pgvector + Apache AGE     │   │  │
+│  │  │              :5432                       │   │  │
+│  │  │                                          │   │  │
+│  │  │  Tables :                                │   │  │
+│  │  │  - notes (métadonnées + embedding)       │   │  │
+│  │  │  - entities (entités du graphe)          │   │  │
+│  │  │  - relations (relations du graphe)       │   │  │
+│  │  │  - chunks (chunks vectoriels)            │   │  │
+│  │  └──────────────────────────────────────────┘   │  │
+│  └──────────────────────────────────────────────────┘  │
+│                         ▲                              │
+│                         │ SQL                          │
+│  ┌──────────────────────────────────────────────────┐  │
+│  │  Application Python (LangGraph)                  │  │
+│  │                                                  │  │
+│  │  Outils Spécialisés :                            │  │
+│  │  - search_metadata(sql)                          │  │
+│  │  - search_vectors(query, filters)                │  │
+│  │  - query_graph(cypher_ou_sql)                    │  │
+│  │  - extract_entities(text)                        │  │
+│  │  - generate_zettel(concept)                      │  │
+│  └──────────────────────────────────────────────────┘  │
+│                         │                              │
+│                         │ API                          │
+│                         ▼                              │
+└─────────────────────────────────────────────────────────┘
+         │               │               │
+         ▼               ▼               ▼
+    ┌─────────┐    ┌──────────┐    ┌──────────┐
+    │ Tavily  │    │ Firecrawl│    │OpenRouter│
+    └─────────┘    └──────────┘    └──────────┘
+```
+
+### Docker Compose Simplifié
+
+```yaml
+version: '3.8'
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg16  # PostgreSQL + pgvector
+    container_name: mythos_postgres
+    environment:
+      POSTGRES_USER: mythos
+      POSTGRES_PASSWORD: mythos_pass
+      POSTGRES_DB: vault
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+```
+
+**C'est TOUT.** Une seule base pour :
+- Métadonnées (frontmatter)
+- Recherche vectorielle (pgvector)
+- Graphe métier (tables de relations)
+
+### Schéma de Base Complet
+
+```sql
+-- 1. Activer pgvector
+CREATE EXTENSION IF NOT EXISTS vector;
+
+-- 2. Table des notes (métadonnées + contenu)
+CREATE TABLE notes (
+    id SERIAL PRIMARY KEY,
+    file_path VARCHAR UNIQUE NOT NULL,
+    title VARCHAR,
+    type VARCHAR,  -- 'concept', 'personnage', 'architecture', etc.
+    statut VARCHAR DEFAULT 'brouillon',
+    tags TEXT[],
+    liens TEXT[],
+    content TEXT,
+    modified TIMESTAMP DEFAULT NOW()
+);
+
+-- 3. Table des chunks (pour la recherche vectorielle)
+CREATE TABLE chunks (
+    id SERIAL PRIMARY KEY,
+    note_id INT REFERENCES notes(id) ON DELETE CASCADE,
+    chunk_index INT,
+    content TEXT,
+    embedding vector(1536)  -- Dimension OpenAI text-embedding-3-small
+);
+
+-- Index pour accélérer la recherche vectorielle
+CREATE INDEX idx_chunks_embedding ON chunks 
+USING ivfflat (embedding vector_cosine_ops) WITH (lists = 100);
+
+-- 4. Types d'entités (ontologie)
+CREATE TABLE entity_types (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR UNIQUE NOT NULL,
+    description TEXT
+);
+
+-- Insérer tes types
+INSERT INTO entity_types (name, description) VALUES
+    ('Personnage', 'Un personnage fictif'),
+    ('Concept', 'Un concept scientifique ou technique'),
+    ('Architecture', 'Une architecture technique'),
+    ('Limite', 'Une limitation technique ou éthique'),
+    ('Lieu', 'Un lieu fictif'),
+    ('Événement', 'Un événement dans la fiction');
+
+-- 5. Types de relations (ontologie)
+CREATE TABLE relation_types (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR UNIQUE NOT NULL,
+    description TEXT
+);
+
+-- Insérer tes relations
+INSERT INTO relation_types (name, description) VALUES
+    ('Étudie', 'Un personnage étudie un concept'),
+    ('Inspire', 'Un concept inspire une architecture'),
+    ('Limité_Par', 'Une architecture est limitée par une limite'),
+    ('Situé_Dans', 'Un événement se situe dans un lieu'),
+    ('Interagit_Avec', 'Un personnage interagit avec un autre');
+
+-- 6. Entités
+CREATE TABLE entities (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR NOT NULL,
+    type_id INT REFERENCES entity_types(id),
+    properties JSONB DEFAULT '{}',
+    source_note_id INT REFERENCES notes(id),
+    created_at TIMESTAMP DEFAULT NOW(),
+    UNIQUE(name, type_id)
+);
+
+-- Index pour accélérer les recherches
+CREATE INDEX idx_entities_name ON entities(name);
+CREATE INDEX idx_entities_type ON entities(type_id);
+CREATE INDEX idx_entities_properties ON entities USING gin(properties);
+
+-- 7. Relations
+CREATE TABLE relations (
+    id SERIAL PRIMARY KEY,
+    source_id INT REFERENCES entities(id) ON DELETE CASCADE,
+    target_id INT REFERENCES entities(id) ON DELETE CASCADE,
+    type_id INT REFERENCES relation_types(id),
+    properties JSONB DEFAULT '{}',
+    weight FLOAT DEFAULT 1.0,
+    source_note_id INT REFERENCES notes(id),
+    created_at TIMESTAMP DEFAULT NOW(),
+    UNIQUE(source_id, target_id, type_id)
+);
+
+-- Index pour accélérer les traversals
+CREATE INDEX idx_relations_source ON relations(source_id);
+CREATE INDEX idx_relations_target ON relations(target_id);
+CREATE INDEX idx_relations_type ON relations(type_id);
+```
+
+---
+
+## 🔧 Outils Spécialisés (Selon les Conseils de Ton Expert)
+
+### Outil 1 : Recherche de Métadonnées
+```python
+@tool
+def search_metadata(type_filter: str = None, statut: str = None, tag: str = None) -> str:
+    """Recherche des notes par métadonnées."""
+    conditions = []
+    params = []
+    
+    if type_filter:
+        conditions.append("type = %s")
+        params.append(type_filter)
+    if statut:
+        conditions.append("statut = %s")
+        params.append(statut)
+    if tag:
+        conditions.append("%s = ANY(tags)")
+        params.append(tag)
+    
+    where = " AND ".join(conditions) if conditions else "1=1"
+    
+    query = f"""
+        SELECT file_path, title, type, statut, tags
+        FROM notes
+        WHERE {where}
+        ORDER BY modified DESC
+        LIMIT 20
+    """
+    
+    with conn.cursor() as cur:
+        cur.execute(query, params)
+        results = cur.fetchall()
+    
+    return format_results(results)
+```
+
+### Outil 2 : Recherche Vectorielle
+```python
+@tool
+def search_passages(query: str, type_filter: str = None, k: int = 5) -> str:
+    """Recherche sémantique dans les chunks."""
+    # Embedding de la requête
+    query_embedding = get_embedding(query)
+    
+    sql = """
+        SELECT 
+            c.content,
+            n.title,
+            n.type,
+            1 - (c.embedding <=> %s::vector) as similarity
+        FROM chunks c
+        JOIN notes n ON c.note_id = n.id
+        WHERE 1=1
+    """
+    params = [query_embedding]
+    
+    if type_filter:
+        sql += " AND n.type = %s"
+        params.append(type_filter)
+    
+    sql += " ORDER BY c.embedding <=> %s::vector LIMIT %s"
+    params.extend([query_embedding, k])
+    
+    with conn.cursor() as cur:
+        cur.execute(sql, params)
+        results = cur.fetchall()
+    
+    return format_results(results)
+```
+
+### Outil 3 : Requête de Graphe
+```python
+@tool
+def query_graph(entity_name: str, target_type: str, max_depth: int = 3) -> str:
+    """Trouve les chemins depuis une entité vers un type cible."""
+    sql = """
+        WITH RECURSIVE chemin AS (
+            SELECT 
+                e.id, 
+                e.name,
+                et.name as type,
+                ARRAY[e.name] as path,
+                ARRAY[rt.name] as relations,
+                0 as depth
+            FROM entities e
+            JOIN entity_types et ON e.type_id = et.id
+            LEFT JOIN relations r ON r.source_id = e.id
+            LEFT JOIN relation_types rt ON r.type_id = rt.id
+            WHERE e.name = %s
+            
+            UNION ALL
+            
+            SELECT 
+                e2.id,
+                e2.name,
+                et2.name,
+                c.path || e2.name,
+                c.relations || rt2.name,
+                c.depth + 1
+            FROM chemin c
+            JOIN relations r ON r.source_id = c.id
+            JOIN entities e2 ON e2.id = r.target_id
+            JOIN entity_types et2 ON e2.type_id = et2.id
+            JOIN relation_types rt2 ON r.type_id = rt2.id
+            WHERE c.depth < %s
+        )
+        SELECT path, relations, type
+        FROM chemin
+        WHERE type = %s
+        LIMIT 10
+    """
+    
+    with conn.cursor() as cur:
+        cur.execute(sql, (entity_name, max_depth, target_type))
+        results = cur.fetchall()
+    
+    return format_results(results)
+```
+
+---
+
+## 🎯 Plan de Migration (Depuis Ton Architecture Actuelle)
+
+### Étape 1 : Installer PostgreSQL + pgvector
+```bash
+docker run -d \
+  --name mythos_postgres \
+  -e POSTGRES_USER=mythos \
+  -e POSTGRES_PASSWORD=mythos_pass \
+  -e POSTGRES_DB=vault \
+  -p 5432:5432 \
+  -v mythos_data:/var/lib/postgresql/data \
+  pgvector/pgvector:pg16
+```
+
+### Étape 2 : Créer le Schéma
+```bash
+psql -h localhost -U mythos -d vault -f schema.sql
+```
+
+### Étape 3 : Indexer tes 5 Mo de Markdown
+```python
+# Script d'indexation
+import psycopg2
+import frontmatter
+from pathlib import Path
+from openai import OpenAI
+
+client = OpenAI()
+
+conn = psycopg2.connect(...)
+
+for md_file in Path("mon_projet/").rglob("*.md"):
+    post = frontmatter.load(md_file)
+    
+    # 1. Insérer la note
+    cur.execute("""
+        INSERT INTO notes (file_path, title, type, statut, tags, content)
+        VALUES (%s, %s, %s, %s, %s, %s)
+        RETURNING id
+    """, [str(md_file), post.metadata.get('title'), ...])
+    note_id = cur.fetchone()[0]
+    
+    # 2. Chunker et embedder
+    chunks = chunk_text(post.content, size=500, overlap=50)
+    for i, chunk in enumerate(chunks):
+        embedding = client.embeddings.create(
+            model="text-embedding-3-small",
+            input=chunk
+        ).data[0].embedding
+        
+        cur.execute("""
+            INSERT INTO chunks (note_id, chunk_index, content, embedding)
+            VALUES (%s, %s, %s, %s)
+        """, [note_id, i, chunk, embedding])
+
+conn.commit()
+```
+
+### Étape 4 : Extraire les Entités (Graphe Métier)
+```python
+# Extraction d'entités avec LLM
+def extract_entities(note_id: int, content: str):
+    prompt = f"""
+    Extrais les entités de ce texte selon cette ontologie :
+    
+    Types d'entités : Personnage, Concept, Architecture, Limite, Lieu, Événement
+    Types de relations : Étudie, Inspire, Limité_Par, Situé_Dans, Interagit_Avec
+    
+    Texte : {content}
+    
+    Réponds en JSON :
+    {{
+      "entities": [
+        {{"name": "...", "type": "...", "properties": {{}}}}
+      ],
+      "relations": [
+        {{"source": "...", "target": "...", "type": "..."}}
+      ]
+    }}
+    """
+    
+    response = llm.invoke(prompt)
+    data = json.loads(response.content)
+    
+    # Insérer dans la base
+    for entity in data['entities']:
+        insert_entity(entity)
+    
+    for relation in data['relations']:
+        insert_relation(relation)
+```
+
+---
+
+## 📊 Coûts Réalistes pour Ton Projet
+
+### Pour 5 Mo de Markdown
+
+| Opération | Coût Estimé | Temps |
+|-----------|-------------|-------|
+| **Indexation vectorielle** | ~$1-2 | 5 min |
+| **Extraction d'entités** | ~$5-10 | 10 min |
+| **Requête simple** | ~$0.001-0.01 | 1-3 sec |
+| **Requête complexe (multi-étapes)** | ~$0.05-0.10 | 5-10 sec |
+
+### Pour 50 Mo de Markdown (si tu grossis)
+
+| Opération | Coût Estimé | Temps |
+|-----------|-------------|-------|
+| **Indexation vectorielle** | ~$10-20 | 30 min |
+| **Extraction d'entités** | ~$50-100 | 1-2 h |
+| **Requête simple** | ~$0.001-0.01 | 1-3 sec |
+| **Requête complexe** | ~$0.05-0.10 | 5-10 sec |
+
+### Pour 500 Mo de Markdown (cas extrême)
+
+| Opération | Coût Estimé | Temps |
+|-----------|-------------|-------|
+| **Indexation vectorielle** | ~$100-200 | 3-5 h |
+| **Extraction d'entités** | ~$500-1000 | 10-20 h |
+| **Requête simple** | ~$0.001-0.01 | 1-3 sec |
+| **Requête complexe** | ~$0.05-0.10 | 5-10 sec |
+
+**Même à 500 Mo, c'est faisable en amateur.** Le coût total reste < $1500, ce qui est raisonnable pour un projet passionnant.
+
+---
+
+## 🎬 En Résumé
+
+### L'Avis de Ton Expert
+**Il a RAISON sur presque tout :**
+- ✅ PostgreSQL + pgvector pour le composite retrieval
+- ✅ Graphe métier à la main (pas GraphRAG automatique)
+- ✅ Oublier Neo4j pour ton volume
+- ✅ Structurer les besoins un par un
+- ✅ Requêtes et prompts spécialisés
+
+### Les Volumes
+**RASSURE-TOI :**
+- 5 Mo de Markdown, c'est MINUSCULE pour PostgreSQL
+- Tu peux monter jusqu'à 500 Mo sans problème en amateur
+- Les vraies limites sont le coût LLM et le temps de développement, pas le volume
+
+### Architecture Révisée
+**Une seule base PostgreSQL avec :**
+- pgvector pour la recherche vectorielle
+- Tables relationnelles pour les métadonnées
+- Tables de relations pour le graphe métier
+- Tout jointurable en SQL
+
+### Plan d'Action
+1. **Migrer vers PostgreSQL + pgvector** (1 jour)
+2. **Définir ton ontologie** (2-3 jours)
+3. **Indexer tes 5 Mo** (1 jour)
+4. **Créer tes outils spécialisés** (1-2 semaines)
+5. **Intégrer LangGraph** (1 semaine)
+
+**Ton projet est parfaitement faisable en amateur, même avec 5 Mo de données.** L'approche de ton expert est la bonne : pragmatique, maîtrisable, et évolutive.
