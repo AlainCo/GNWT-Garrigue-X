@@ -5216,3 +5216,751 @@ def extract_entities(note_id: int, content: str):
 5. **Intégrer LangGraph** (1 semaine)
 
 **Ton projet est parfaitement faisable en amateur, même avec 5 Mo de données.** L'approche de ton expert est la bonne : pragmatique, maîtrisable, et évolutive.
+
+### USER
+on m'a parlé de supabase avec pgvector, mais je ne connais pas. c'est visibkement basé sur postgresql, et ca ressemble à une plateforme de développement/execution
+
+### ASSISTANT
+**Excellente question !** Supabase est effectivement une option très intéressante, et elle coche beaucoup de cases pour ton projet. Laisse-moi t'expliquer.
+
+---
+
+## 🎯 C'est Quoi Supabase ?
+
+**Supabase est un "Backend as a Service" (BaaS) open-source basé sur PostgreSQL.** C'est une alternative à Firebase, mais avec une différence fondamentale : **tes données restent dans une vraie base PostgreSQL**, pas dans une base propriétaire.
+
+### Ce Que Supabase Ajoute à PostgreSQL
+
+```
+┌─────────────────────────────────────────────────────────┐
+│  SUPABASE                                               │
+│                                                         │
+│  ┌──────────────────────────────────────────────────┐  │
+│  │  PostgreSQL (la base de données)                 │  │
+│  │  + pgvector (recherche vectorielle)              │  │
+│  │  + pg_cron (tâches planifiées)                   │  │
+│  │  + PostGIS (données géographiques)               │  │
+│  └──────────────────────────────────────────────────┘  │
+│                         ▲                              │
+│                         │                              │
+│  ┌──────────────────────────────────────────────────┐  │
+│  │  Couche Supabase (ce qu'ils ajoutent)            │  │
+│  │                                                  │  │
+│  │  - API REST auto-générée (PostgREST)             │  │
+│  │  - API GraphQL auto-générée                      │  │
+│  │  - Authentification (Auth)                       │  │
+│  │  - Stockage de fichiers (Storage)                │  │
+│  │  - Temps réel (Realtime)                         │  │
+│  │  - Fonctions serverless (Edge Functions)         │  │
+│  │  - Dashboard web (SQL Editor, Table Editor)      │  │
+│  └──────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────┘
+```
+
+**En résumé :** Supabase, c'est PostgreSQL + pgvector + une couche de services qui facilitent le développement.
+
+---
+
+## 🔗 Le Lien avec pgvector
+
+**pgvector est inclus NATIVEMENT dans Supabase.** Pas besoin de l'installer ou de le configurer.
+
+```sql
+-- Dans Supabase, tu peux directement faire :
+CREATE EXTENSION IF NOT EXISTS vector;
+
+CREATE TABLE chunks (
+    id SERIAL PRIMARY KEY,
+    content TEXT,
+    embedding vector(1536)  -- pgvector est déjà là !
+);
+
+-- Recherche vectorielle
+SELECT content, 1 - (embedding <=> query_vector) as similarity
+FROM chunks
+ORDER BY embedding <=> query_vector
+LIMIT 5;
+```
+
+**C'est exactement ce que tu veux pour ton RAG.**
+
+---
+
+## ☁️ Les Deux Modes de Supabase
+
+### Mode 1 : Cloud Managé (supabase.com)
+
+**Ce que c'est :** Tu crées un compte sur supabase.com, ils hébergent ta base PostgreSQL dans leur cloud.
+
+**Avantages :**
+- ✅ **Free tier généreux** : 500 Mo de base de données, 5 Go de stockage, 2 projets gratuits
+- ✅ Zéro administration (pas de Docker, pas de backups à gérer)
+- ✅ Dashboard web pour gérer ta base
+- ✅ API REST/GraphQL auto-générée
+- ✅ Authentification incluse
+- ✅ pgvector inclus
+
+**Inconvénients :**
+- ❌ Tes données sont chez eux (cloud AWS)
+- ❌ Dépend d'Internet
+- ❌ Limites du free tier (500 Mo de DB)
+- ❌ Si tu dépasses, ça devient payant ($25/mois pour le Pro)
+
+**Pour ton projet (5 Mo de Markdown) :** Le free tier est **LARGEMENT suffisant**. 5 Mo, c'est 1% de la limite gratuite.
+
+---
+
+### Mode 2 : Auto-hébergé (Self-Hosted)
+
+**Ce que c'est :** Tu installes Supabase sur ton propre serveur (VPS ou local) via Docker.
+
+```yaml
+# docker-compose.yml (Supabase self-hosted)
+version: '3.8'
+
+services:
+  postgres:
+    image: supabase/postgres:15
+    environment:
+      POSTGRES_PASSWORD: ton_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  api:
+    image: supabase/postgres-api:latest
+    ports:
+      - "8000:8000"
+    environment:
+      POSTGRES_URL: postgresql://postgres:ton_password@postgres:5432/postgres
+
+  studio:
+    image: supabase/studio:latest
+    ports:
+      - "3000:3000"  # Dashboard web
+
+volumes:
+  postgres_data:
+```
+
+**Avantages :**
+- ✅ Contrôle total de tes données
+- ✅ Pas de dépendance à un cloud externe
+- ✅ Pas de limites de volume (tant que ton serveur le permet)
+- ✅ Gratuit (tu paies juste ton serveur)
+
+**Inconvénients :**
+- ❌ Plus complexe à installer et maintenir
+- ❌ Tu dois gérer les backups
+- ❌ Tu dois gérer les mises à jour
+
+**Pour ton projet :** Si tu as déjà un VPS ou un serveur local, c'est une excellente option.
+
+---
+
+## 📊 Comparaison pour Ton Projet
+
+| Critère | PostgreSQL Auto-hébergé | Supabase Cloud | Supabase Auto-hébergé |
+|---------|------------------------|----------------|----------------------|
+| **Coût** | Gratuit | Gratuit (500 Mo) | Gratuit |
+| **Administration** | ⚠️ Moyenne | ✅ Zéro | ⚠️ Moyenne |
+| **Contrôle des données** | ✅ Total | ❌ Cloud | ✅ Total |
+| **Dashboard web** | ❌ Non | ✅ Oui | ✅ Oui |
+| **API REST auto** | ❌ Non | ✅ Oui | ✅ Oui |
+| **pgvector** | ⚠️ À installer | ✅ Inclus | ✅ Inclus |
+| **Auth intégrée** | ❌ Non | ✅ Oui | ✅ Oui |
+| **Storage fichiers** | ❌ Non | ✅ Oui | ✅ Oui |
+| **Temps réel** | ❌ Non | ✅ Oui | ✅ Oui |
+| **Complexité setup** | ⭐⭐ | ⭐ Très simple | ⭐⭐⭐ |
+
+---
+
+## 🎯 Est-ce Pertinent pour TON Projet ?
+
+### OUI, si :
+- ✅ Tu veux un **démarrage ultra-rapide** (Supabase Cloud)
+- ✅ Tu veux un **dashboard web** pour gérer ta base sans SQL
+- ✅ Tu veux une **API REST auto-générée** pour tes agents
+- ✅ Tu veux **éviter l'administration** de PostgreSQL
+- ✅ Tu restes dans les **500 Mo** (free tier)
+
+### NON, si :
+- ❌ Tu veux un **contrôle total** sans dépendance cloud (→ Supabase auto-hébergé ou PostgreSQL pur)
+- ❌ Tu dépasses les **500 Mo** (→ PostgreSQL pur ou Supabase Pro à $25/mois)
+- ❌ Tu veux **éviter toute couche d'abstraction** (→ PostgreSQL pur)
+
+---
+
+## 🚀 Comment Ça S'Intègre avec Ton Architecture
+
+### Option A : Supabase Cloud (Le Plus Simple)
+
+```python
+# Installation
+pip install supabase
+
+# Connexion
+from supabase import create_client
+
+supabase = create_client(
+    "https://ton-projet.supabase.co",
+    "ton_api_key"
+)
+
+# 1. Recherche vectorielle (pgvector)
+response = supabase.rpc("match_chunks", {
+    "query_embedding": [0.1, 0.2, 0.3, ...],
+    "match_threshold": 0.5,
+    "match_count": 5
+}).execute()
+
+# 2. Requête SQL
+response = supabase.table("notes").select("*").eq("type", "concept").execute()
+
+# 3. Stockage de fichiers (si besoin)
+supabase.storage.from_("vault").upload("notes/concept.md", file_content)
+```
+
+**Avantage :** Tu n'as AUCUN serveur à gérer. Tout est dans le cloud Supabase.
+
+**Inconvénient :** Tes données sont chez eux, et tu dépends d'Internet.
+
+---
+
+### Option B : Supabase Auto-hébergé (Le Plus Flexible)
+
+```python
+# Même code que ci-dessus, mais avec ton URL locale
+from supabase import create_client
+
+supabase = create_client(
+    "http://localhost:8000",  # Ton serveur Supabase local
+    "ton_api_key"
+)
+
+# Le reste est identique
+response = supabase.rpc("match_chunks", {...}).execute()
+```
+
+**Avantage :** Contrôle total, pas de dépendance cloud.
+
+**Inconvénient :** Tu dois gérer le Docker Compose de Supabase.
+
+---
+
+### Option C : PostgreSQL Pur (Le Plus Direct)
+
+```python
+# Pas de Supabase, juste PostgreSQL + pgvector
+import psycopg2
+
+conn = psycopg2.connect(
+    host="localhost",
+    port=5432,
+    database="vault",
+    user="mythos",
+    password="mythos_pass"
+)
+
+# Requêtes SQL directes
+cur = conn.cursor()
+cur.execute("""
+    SELECT content, 1 - (embedding <=> %s::vector) as similarity
+    FROM chunks
+    ORDER BY embedding <=> %s::vector
+    LIMIT 5
+""", [query_embedding, query_embedding])
+```
+
+**Avantage :** Contrôle total, pas de couche d'abstraction.
+
+**Inconvénient :** Pas de dashboard, pas d'API auto, plus de travail manuel.
+
+---
+
+## 💡 Ma Recommandation pour Ton Projet
+
+### Si Tu Veux Démarrer RAPIDEMENT :
+**→ Supabase Cloud (free tier)**
+
+```bash
+# 1. Crée un compte sur supabase.com
+# 2. Crée un projet (gratuit)
+# 3. Active pgvector (déjà inclus)
+# 4. Connecte ton code Python
+
+pip install supabase
+```
+
+**Pourquoi :**
+- ✅ 5 minutes pour démarrer
+- ✅ Dashboard web pour explorer tes données
+- ✅ API REST auto-générée
+- ✅ Gratuit pour 5 Mo de Markdown
+- ✅ Tu peux migrer vers l'auto-hébergé plus tard si besoin
+
+---
+
+### Si Tu Veux le CONTRÔLE TOTAL :
+**→ Supabase Auto-hébergé sur ton VPS**
+
+```bash
+# 1. Clone le repo Supabase
+git clone https://github.com/supabase/supabase
+cd supabase/docker
+
+# 2. Configure les variables d'environnement
+cp .env.example .env
+# Édite .env avec tes mots de passe
+
+# 3. Lance
+docker-compose up -d
+
+# 4. Accède au dashboard
+# http://localhost:3000
+```
+
+**Pourquoi :**
+- ✅ Contrôle total de tes données
+- ✅ Pas de dépendance cloud
+- ✅ Dashboard web quand même
+- ✅ Gratuit (tu paies juste ton VPS)
+
+---
+
+### Si Tu Veux la SIMPLICITÉ MAXIMALE :
+**→ PostgreSQL pur avec pgvector**
+
+```bash
+# Un seul container Docker
+docker run -d \
+  --name mythos_postgres \
+  -e POSTGRES_USER=mythos \
+  -e POSTGRES_PASSWORD=mythos_pass \
+  -e POSTGRES_DB=vault \
+  -p 5432:5432 \
+  -v mythos_data:/var/lib/postgresql/data \
+  pgvector/pgvector:pg16
+```
+
+**Pourquoi :**
+- ✅ Pas de couche d'abstraction
+- ✅ Contrôle total
+- ✅ Léger
+- ✅ Tu connais déjà SQL
+
+---
+
+## 🎬 En Résumé
+
+**Supabase, c'est PostgreSQL + pgvector + des services ajoutés (dashboard, API, auth, storage).**
+
+**Pour ton projet (5 Mo de Markdown, système agentique) :**
+
+| Besoin | Solution Recommandée |
+|--------|---------------------|
+| **Démarrage rapide** | Supabase Cloud (free tier) |
+| **Contrôle total** | Supabase Auto-hébergé |
+| **Simplicité maximale** | PostgreSQL pur + pgvector |
+
+**Mon conseil :**
+1. **Commence avec Supabase Cloud** pour valider ton architecture (5 minutes de setup)
+2. **Si ça te plaît**, migre vers Supabase Auto-hébergé sur ton VPS
+3. **Si tu préfères le SQL pur**, passe à PostgreSQL + pgvector directement
+
+**Dans tous les cas, pgvector est inclus et tu peux faire exactement ce que tu veux : recherche vectorielle, métadonnées, et graphe métier en SQL.**
+
+C'est une excellente option pour ton projet, et le free tier de Supabase Cloud te suffira largement pour démarrer avec tes 5 Mo de Markdown.
+
+### USER
+on me parle de zparse: https://zparse.io/  pour l'alimentation du RAG. ca semble très riche, avecdes fonctions PDF aussi. qu'estce que cet outil ? j'ai l'impression qu'on ne peut pas l'autohéberger, et que c'est payant si on crée trop de pipeline ... y a t'il des outils d'alimentation libres, autohébergables ?
+
+
+### ASSISTANT
+**Tu as vu juste : Zparse est une plateforme cloud payante, pas auto-hébergeable.** Mais il existe d'excellentes alternatives open-source et auto-hébergeables. Voici le détail.
+
+---
+
+## 🔍 Zparse : Plateforme Cloud Payante
+
+### Ce Que C'est
+**Zparse** est une plateforme no-code/low-code d'extraction de données depuis des documents (PDF scannés, Excel, XML, APIs legacy) vers des RAGs .
+
+### Modèle Économique
+- **Free tier** : €0/mois (limitations sur le nombre de pipelines/mappings) 
+- **Pro** : €29/mois (plus de pipelines) 
+- **Enterprise** : Sur devis 
+
+### Le Problème
+- ❌ **Cloud uniquement** : Tu ne peux pas l'auto-héberger
+- ❌ **Payant** au-delà du free tier
+- ❌ **Dépendance** à leur infrastructure
+
+**Conclusion : Ce n'est pas adapté à ton projet si tu veux du contrôle total.**
+
+---
+
+## ✅ Les Alternatives Open-Source Auto-Hébergeables
+
+### 🥇 **Docling** (IBM) - Le Plus Complet
+
+**C'est quoi :** Framework open-source créé par IBM Research pour convertir des documents non structurés en données structurées .
+
+**Licence :** MIT (100% gratuit, usage commercial inclus) 
+
+**Fonctionnalités :**
+- ✅ PDF (avec OCR), DOCX, PPTX, images, HTML
+- ✅ Détection de **tables**, **formules**, **ordre de lecture**
+- ✅ Modèle intégré (~258M paramètres) pour comprendre la mise en page 
+- ✅ Sortie en Markdown, JSON, ou directement dans LlamaIndex/LangChain
+- ✅ **Auto-hébergeable** : tourne sur ton serveur, zéro dépendance cloud
+
+**Installation :**
+```bash
+pip install docling
+```
+
+**Exemple d'utilisation :**
+```python
+from docling.document_converter import DocumentConverter
+
+converter = DocumentConverter()
+result = converter.convert("article_scientifique.pdf")
+
+# Export en Markdown
+markdown = result.document.export_to_markdown()
+
+# Export en JSON (structuré)
+json_data = result.document.export_to_dict()
+```
+
+**Avantages :**
+- ✅ Gratuit, open-source, MIT
+- ✅ Excellent pour les articles scientifiques (tables, formules)
+- ✅ Intégration native avec LlamaIndex/LangChain
+- ✅ Auto-hébergeable sur ton VPS
+
+**Inconvénients :**
+- ⚠️ Plus lourd (~258M paramètres si tu utilises le modèle vision)
+- ⚠️ Plus lent que des parsers plus simples
+
+---
+
+### 🥈 **Marker** - Le Meilleur pour les Articles Académiques
+
+**C'est quoi :** Bibliothèque Python pour convertir des PDF en Markdown, spécialement optimisée pour les articles scientifiques .
+
+**Licence :** Open-source (GPL v3) 
+
+**Fonctionnalités :**
+- ✅ PDF, EPUB, MOBI → Markdown
+- ✅ Excellent pour les **articles académiques** (références, équations)
+- ✅ Supprime les éléments "bruit" (en-têtes, pieds de page)
+- ✅ Préserve la mise en page originale 
+- ✅ **Auto-hébergeable** : bibliothèque Python pure
+
+**Installation :**
+```bash
+pip install marker-pdf
+```
+
+**Exemple d'utilisation :**
+```python
+from marker.converters.pdf import PdfConverter
+
+converter = PdfConverter()
+markdown = converter("article_scientifique.pdf")
+```
+
+**Avantages :**
+- ✅ Gratuit, open-source
+- ✅ Excellent pour les PDFs académiques
+- ✅ Rapide et léger
+- ✅ Sortie en Markdown propre
+
+**Inconvénients :**
+- ⚠️ Moins bon pour les documents complexes (tables multiples, présentations)
+
+---
+
+### 🥉 **Unstructured** - Le Plus Flexible (64+ Formats)
+
+**C'est quoi :** Bibliothèque Python open-source pour ingérer et pré-traiter 64+ formats de documents .
+
+**Licence :** Apache 2.0 (gratuit, usage commercial inclus) 
+
+**Fonctionnalités :**
+- ✅ PDF, HTML, Word, Excel, PowerPoint, images, emails...
+- ✅ Extraction d'éléments sémantiques (titres, tables, images, texte) 
+- ✅ Métadonnées riches
+- ✅ **Auto-hébergeable** : bibliothèque Python locale
+- ⚠️ Version cloud payante aussi disponible (pour l'entreprise) 
+
+**Installation :**
+```bash
+pip install unstructured
+```
+
+**Exemple d'utilisation :**
+```python
+from unstructured.partition.pdf import partition_pdf
+
+elements = partition_pdf("document.pdf")
+
+# Filtrer par type
+for element in elements:
+    if element.category == "Title":
+        print(f"Titre : {element.text}")
+    elif element.category == "Table":
+        print(f"Table : {element.text}")
+```
+
+**Avantages :**
+- ✅ Gratuit (version open-source)
+- ✅ 64+ formats supportés
+- ✅ Extraction sémantique (pas juste du texte brut)
+- ✅ Intégration avec PostgreSQL via pgai 
+
+**Inconvénients :**
+- ⚠️ Version open-source limitée (la version cloud a plus de fonctionnalités)
+- ⚠️ Plus complexe à configurer
+
+---
+
+### 🏅 **LiteParse** (LlamaIndex) - Le Plus Rapide et Léger
+
+**C'est quoi :** Bibliothèque open-source de parsing de documents créée par l'équipe LlamaIndex .
+
+**Licence :** Open-source (gratuit) 
+
+**Fonctionnalités :**
+- ✅ PDF, DOCX, HTML, images
+- ✅ **Pas de GPU requis** : tourne sur CPU
+- ✅ **Ultra-rapide** : ~500 pages en 2 secondes sur hardware standard 
+- ✅ Écrit en Rust (performance)
+- ✅ Pas de LLM, pas de tokens, pas de limites 
+- ✅ **Auto-hébergeable** : bibliothèque locale
+
+**Installation :**
+```bash
+pip install liteparse
+```
+
+**Exemple d'utilisation :**
+```python
+from liteparse import LiteParse
+
+parser = LiteParse()
+result = parser.parse("document.pdf")
+
+# Export en Markdown
+markdown = result.to_markdown()
+
+# Accès aux éléments avec bounding boxes
+for element in result.elements:
+    print(f"Type: {element.type}, Text: {element.text}")
+    print(f"Position: {element.bbox}")
+```
+
+**Avantages :**
+- ✅ Gratuit, open-source
+- ✅ Ultra-rapide (Rust, pas de LLM)
+- ✅ Léger (pas de GPU requis)
+- ✅ Sortie Markdown avec métadonnées spatiales
+
+**Inconvénients :**
+- ⚠️ Moins précis que Docling pour les documents très complexes
+- ⚠️ Pas de détection avancée de tables/formules
+
+---
+
+## 📊 Comparatif des Alternatives
+
+| Outil | Licence | Formats | Auto-hébergé | Vitesse | Complexité | Meilleur pour |
+|-------|---------|---------|--------------|---------|------------|---------------|
+| **Docling** | MIT | PDF, DOCX, PPTX, images | ✅ | ⚠️ Moyenne | ⭐⭐ | Articles scientifiques, tables, formules |
+| **Marker** | GPL v3 | PDF, EPUB, MOBI | ✅ | ✅ Rapide | ⭐ | Articles académiques, équations |
+| **Unstructured** | Apache 2.0 | 64+ formats | ✅ | ⚠️ Variable | ⭐⭐⭐ | Multi-formats, extraction sémantique |
+| **LiteParse** | Open-source | PDF, DOCX, HTML | ✅ | 🚀 Ultra-rapide | ⭐ | Parsing rapide, documents simples |
+
+---
+
+## 🎯 Ma Recommandation pour Ton Projet
+
+### Pour tes 5 Mo de Markdown + Futurs Documents
+
+**Stack Recommandée :**
+
+1. **Marker** pour les articles scientifiques PDF
+   - Excellent pour les articles académiques que tu vas probablement ingérer
+   - Rapide, léger, sortie Markdown propre
+
+2. **Docling** pour les documents complexes
+   - Si tu as des PDFs avec tables, formules, mises en page complexes
+   - Plus précis, mais plus lent
+
+3. **LiteParse** pour les documents simples
+   - Si tu veux parser rapidement des documents HTML, DOCX simples
+   - Ultra-rapide, pas de GPU requis
+
+### Exemple de Pipeline d'Ingestion
+
+```python
+# pipeline_ingestion.py
+from pathlib import Path
+from marker.converters.pdf import PdfConverter
+from docling.document_converter import DocumentConverter
+import frontmatter
+
+def ingester_document(file_path: Path, db_conn):
+    """Ingestion d'un document dans PostgreSQL."""
+    
+    # 1. Parser selon le type
+    if file_path.suffix == ".pdf":
+        # Utiliser Marker pour les PDFs
+        converter = PdfConverter()
+        markdown = converter(str(file_path))
+    elif file_path.suffix in [".docx", ".pptx"]:
+        # Utiliser Docling pour les Office docs
+        converter = DocumentConverter()
+        result = converter.convert(str(file_path))
+        markdown = result.document.export_to_markdown()
+    elif file_path.suffix == ".md":
+        # Déjà en Markdown
+        with open(file_path) as f:
+            markdown = f.read()
+    else:
+        print(f"Format non supporté : {file_path.suffix}")
+        return
+    
+    # 2. Extraire le frontmatter si présent
+    if file_path.suffix == ".md":
+        post = frontmatter.load(file_path)
+        metadata = post.metadata
+        content = post.content
+    else:
+        metadata = {}
+        content = markdown
+    
+    # 3. Insérer dans PostgreSQL
+    cur = db_conn.cursor()
+    cur.execute("""
+        INSERT INTO notes (file_path, title, type, statut, tags, content)
+        VALUES (%s, %s, %s, %s, %s, %s)
+        RETURNING id
+    """, [
+        str(file_path),
+        metadata.get('title', file_path.stem),
+        metadata.get('type', 'article'),
+        metadata.get('statut', 'brouillon'),
+        metadata.get('tags', []),
+        content
+    ])
+    note_id = cur.fetchone()[0]
+    
+    # 4. Chunker et embedder
+    from llama_index.core.node_parser import SentenceSplitter
+    parser = SentenceSplitter(chunk_size=512, chunk_overlap=50)
+    chunks = parser.split_text(content)
+    
+    from openai import OpenAI
+    client = OpenAI()
+    
+    for i, chunk in enumerate(chunks):
+        embedding = client.embeddings.create(
+            model="text-embedding-3-small",
+            input=chunk
+        ).data[0].embedding
+        
+        cur.execute("""
+            INSERT INTO chunks (note_id, chunk_index, content, embedding)
+            VALUES (%s, %s, %s, %s)
+        """, [note_id, i, chunk, embedding])
+    
+    db_conn.commit()
+    print(f"✅ Ingesté : {file_path.name} ({len(chunks)} chunks)")
+
+# Utilisation
+for md_file in Path("mon_projet/").rglob("*.pdf"):
+    ingester_document(md_file, db_conn)
+```
+
+---
+
+## 🚀 Architecture Complète avec Parsing
+
+```
+┌─────────────────────────────────────────────────────────┐
+│  TON SERVEUR                                            │
+│                                                         │
+│  ┌──────────────────────────────────────────────────┐  │
+│  │  Docker Compose                                  │  │
+│  │                                                  │  │
+│  │  ┌──────────────────────────────────────────┐   │  │
+│  │  │  PostgreSQL + pgvector                   │   │  │
+│  │  │  - notes (métadonnées + contenu)         │   │  │
+│  │  │  - chunks (vecteurs)                     │   │  │
+│  │  │  - entities (graphe métier)              │   │  │
+│  │  │  - relations                             │   │  │
+│  │  └──────────────────────────────────────────┘   │  │
+│  └──────────────────────────────────────────────────┘  │
+│                         ▲                              │
+│                         │                              │
+│  ┌──────────────────────────────────────────────────┐  │
+│  │  Pipeline d'Ingestion (Python)                   │  │
+│  │                                                  │  │
+│  │  1. Parser les documents :                       │  │
+│  │     - Marker (PDFs académiques)                  │  │
+│  │     - Docling (documents complexes)              │  │
+│  │     - LiteParse (documents simples)              │  │
+│  │                                                  │  │
+│  │  2. Extraire les métadonnées (LLM si besoin)     │  │
+│  │                                                  │  │
+│  │  3. Chunker + Embedder                           │  │
+│  │                                                  │  │
+│  │  4. Insérer dans PostgreSQL                      │  │
+│  └──────────────────────────────────────────────────┘  │
+│                         │                              │
+│                         │ API                          │
+│                         ▼                              │
+└─────────────────────────────────────────────────────────┘
+         │               │               │
+         ▼               ▼               ▼
+    ┌─────────┐    ┌──────────┐    ┌──────────┐
+    │ Tavily  │    │ Firecrawl│    │OpenRouter│
+    └─────────┘    └──────────┘    └──────────┘
+```
+
+---
+
+## 🎬 En Résumé
+
+### Zparse
+- ❌ Cloud uniquement, pas auto-hébergeable
+- ❌ Payant au-delà du free tier (€29/mois)
+- ❌ Dépendance à leur infrastructure
+
+### Alternatives Open-Source Auto-Hébergeables
+
+| Besoin | Outil Recommandé |
+|--------|-----------------|
+| **Articles scientifiques PDF** | **Marker** (rapide, léger, excellent pour l'académique) |
+| **Documents complexes (tables, formules)** | **Docling** (IBM, MIT, très précis) |
+| **Multi-formats (64+)** | **Unstructured** (flexible, mais complexe) |
+| **Parsing rapide et léger** | **LiteParse** (Rust, ultra-rapide, pas de GPU) |
+
+### Pour Ton Projet
+**Stack recommandée :**
+- **Marker** pour les PDFs académiques
+- **Docling** pour les documents Office complexes
+- **PostgreSQL + pgvector** pour le stockage (métadonnées + vecteurs + graphe métier)
+
+**Coût :** 100% gratuit (tu paies juste ton VPS et les tokens LLM pour l'embedding/extraction d'entités).
+
+**Avantages :**
+- ✅ Contrôle total
+- ✅ Auto-hébergeable
+- ✅ Pas de dépendance cloud
+- ✅ Pas de limites de volume
+- ✅ Intégration native avec LlamaIndex/LangChain
+
+Tu as tout ce qu'il faut pour construire un pipeline d'ingestion robuste, gratuit, et adapté à ton projet Mythos/Logos.
