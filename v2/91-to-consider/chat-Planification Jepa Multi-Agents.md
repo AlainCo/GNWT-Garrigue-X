@@ -370,3 +370,179 @@ Pour des agents robots autonomes évoluant ensemble dans des environnements comp
 SJEPA prouve que l'avenir des modèles de monde (World Models) n'est pas dans des Transformers de plus en plus gros, mais dans la **Neuro-Symbolique Latente**. 
 
 L'idée à retenir pour votre architecture est celle-ci : **Ne laissez pas votre réseau de neurones apprendre les "règles du jeu".** Utilisez le réseau de neurones (le JEPA) pour *trouver la bonne représentation de l'espace*, et utilisez un moteur de régression symbolique pour *extraire les règles du jeu* dans cet espace. Vous obtenez alors un agent qui possède l'intuition et la perception rapide du Système 1, mais dont le modèle du monde est régi par la logique implacable et extrapolable du Système 2.
+
+### USER
+Je suis tombé sur ce papier https://arxiv.org/abs/2608.05720 qui semble souhaiter améliorer la réprésentation world model de systèmes Jepa en s'assurant (je n'ai pas compris comment), que des situations physiques similaires ont des représentations internes similaires (si j'ai bien compris). Peux tu m'expliquer ce que dit se papier, pusi le replacer dans le contexte de ce dont on a discuté, et voir s'il y a de bonnes idées à reprendre ?
+
+### ASSISTANT
+C'est une excellente trouvaille qui vient pointer une faille massive et silencieuse dans la plupart des architectures de World Models actuelles. Le papier que vous avez trouvé s'appelle **PhyLatent** (Zeng et al., août 2026). 
+
+Votre intuition est encore une fois parfaitement juste : ce papier démontre que **prédire le futur ne suffit pas à comprendre la physique du monde**, et que les méthodes qu'on croyait suffisantes pour structurer l'espace latent (comme SIGReg, vu dans CR-JEPA) ont un angle mort catastrophique.
+
+Voici l'explication de ce papier, pourquoi il remet en cause certaines certitudes, et comment il s'intègre comme une pièce maîtresse de votre architecture cognitive.
+
+---
+
+### 1. Le Problème : L'Illusion de la "Belle Sphère"
+Jusqu'à présent (notamment avec **CR-JEPA** et **LeWorldModel**), on utilisait des régularisations statistiques globales comme **SIGReg** ou **VICReg**. Leur but est d'empêcher l'effondrement global (*collapse*) en forçant le nuage de points de l'espace latent à former une belle sphère isotrope (bien aérée, avec de la variance).
+
+**Le constat brutal de PhyLatent :** 
+Une belle sphère globale ne garantit absolument pas que la **topologie locale** respecte la physique. Les auteurs identifient **3 modes d'échec physiques** (les "Collapses") qui ruinent la planification, même si SIGReg est parfait :
+
+1. **L'Effondrement de l'Invariance Physique (Le modèle est distrait) :**
+   * *Le problème :* Le robot voit un bloc rouge. On change la luminosité de la pièce ou on ajoute du bruit sur la caméra. L'état physique (la position du bloc) n'a pas bougé d'un millimètre, mais **le vecteur latent change drastiquement**.
+   * *La conséquence :* Le modèle du monde "croit" que la luminosité est une variable d'état physique au même titre que la position.
+2. **L'Effondrement de l'Identifiabilité Physique (Le modèle est aveugle) :**
+   * *Le problème :* Deux états physiques radicalement différents (ex: le bloc est à gauche VS le bloc est à droite) se retrouvent mappés sur le **même point** ou des points très proches dans l'espace latent.
+   * *La conséquence :* Le planificateur ne peut plus distinguer deux situations réelles.
+3. **L'Effondrement de la Dynamique Contrefactuelle (Le modèle est fataliste) :**
+   * *Le problème :* C'est le plus grave pour la planification. Si le robot imagine deux actions différentes (ex: "pousser à gauche" vs "pousser à droite"), les trajectoires latentes futures de ces deux branches **se croisent ou s'effondrent l'une sur l'autre**.
+   * *La conséquence :* Le modèle est incapable de dire "Si je fais A, il se passe X. Si je fais B, il se passe Y". Il génère un futur moyen et flou (le problème classique des JEPAs vectoriels).
+
+### 2. La Solution : PhyLatent (Forcer la Topologie Physique)
+Pour résoudre cela, PhyLatent n'ajoute pas de nouveaux capteurs, mais ajoute des **contraintes d'entraînement topologiques** (les "Training Pathways") pour sculpter l'espace latent :
+
+*   **SVIC (Static Visual Invariance Constraint) :** Pendant l'entraînement, on prend l'image, on change la couleur, la luminosité et la texture, mais on *garde l'état du simulateur identique*. On force mathématiquement l'encodeur à produire **exactement le même vecteur latent** pour l'image originale et l'image perturbée. Le modèle est forcé d'apprendre à ignorer l'apparence pour ne garder que la physique.
+*   **Counterfactual Branch Separation :** On force explicitement les prédictions latentes issues d'actions différentes à s'éloigner les unes des autres dans l'espace latent.
+*   **Latent Denoising :** On régularise la structure locale de l'espace pour que les états proches physiquement soient proches mathématiquement.
+
+**Résultat sur la Planification (MPC) :**
+Sur la tâche "TwoRooms" (navigation complexe), le JEPA classique avec SIGReg plafonne à 81% de succès. **PhyLatent explose le score à 98.0%** avec exactement la même architecture et le même planificateur. La représentation de l'espace latent était tout simplement le goulot d'étranglement.
+
+---
+
+### 3. Mise en Perspective : Le Puzzle s'Assemble
+
+PhyLatent vient corriger et compléter les papiers que nous avons analysés précédemment. Voici comment il s'articule avec votre "Cerveau Artificiel" :
+
+#### A. PhyLatent vs CR-JEPA (SIGReg) : Le Macro vs Le Micro
+*   **CR-JEPA (SIGReg)** s'assure que l'espace latent est statistiquement sain au niveau **macroscopique** (pas d'effondrement global, bonne distribution des concepts sémantiques comme "aéroport" ou "forêt").
+*   **PhyLatent** s'assure que l'espace latent est physiquement sain au niveau **microscopique** (les lois de la mécanique newtonienne sont respectées dans la géométrie du vecteur).
+*   *Idée à retenir :* Pour votre robot, il faudra probablement combiner les deux. SIGReg pour la sémantique cross-modale (Lidar/Caméra), et PhyLatent pour la dynamique sensorimotrice.
+
+#### B. PhyLatent vs UWM-JEPA : Deux armes contre le Contrefactuel
+Vous vous souvenez de **UWM-JEPA** (les matrices de densité et prédicteurs unitaires) ?
+*   **UWM-JEPA** résolvait le "Counterfactual Collapse" en changeant la *géométrie mathématique* (passer des vecteurs aux matrices quantiques pour préserver l'entropie).
+*   **PhyLatent** résout le même problème en gardant des vecteurs classiques, mais en ajoutant des *pertes contrastives* (forcer les branches à se séparer).
+*   *Idée à retenir :* Si vous trouvez les matrices de densité trop lourdes à implémenter sur votre GPU, PhyLatent offre une alternative purement géométrique et vectorielle pour préserver les futurs multiples.
+
+#### C. PhyLatent vs SJEPA : Invariants vs Équations
+*   **SJEPA** cherchait à extraire des **équations symboliques** ($F = ma$) dans l'espace latent.
+*   **PhyLatent** ne cherche pas d'équations, mais cherche des **invariants géométriques** (la distance entre deux états latents doit être proportionnelle à l'énergie physique dépensée).
+*   *Idée à retenir :* SJEPA est parfait pour les règles logiques/discontinues (ex: règles d'un jeu, logique multi-agent). PhyLatent est parfait pour la physique continue (ex: dynamique du bras robotique, inertie du châssis).
+
+---
+
+### 4. L'Impact sur la Planification (FEP / OODA) et le Multi-Agent
+
+C'est ici que PhyLatent devient indispensable pour votre agent basé sur l'Active Inference de Friston et la boucle OODA.
+
+#### Pour l'Active Inference (Minimisation de l'Énergie Libre)
+Le FEP repose sur le calcul de la "Surprise" (l'erreur de prédiction). 
+Si votre modèle du monde souffre de *Physical Invariance Collapse* (il confond la position de l'objet avec la luminosité), alors quand le nuage passe et que la lumière change, le robot calcule une **Surprise massive**. Le FEP va alors ordonner au robot d'agir pour "minimiser cette surprise"... en essayant de changer la luminosité de la pièce au lieu d'attraper l'objet !
+**PhyLatent "nettoie" l'Énergie Libre.** Il garantit que la Surprise ne se déclenche QUE pour de vraies violations physiques, rendant les actions épistémiques (curiosité) et pragmatiques (but) enfin rationnelles.
+
+#### Pour le Multi-Agent (Theory of Mind)
+Le "Counterfactual Dynamics Collapse" est **l'ennemi mortel de la Theory of Mind**.
+Quand votre robot observe un agent humain, il doit maintenir dans son espace latent plusieurs branches contrefactuelles : 
+*   *Branche A : L'humain va me tendre l'objet.*
+*   *Branche B : L'humain va garder l'objet.*
+Si l'espace latent s'effondre (comme le démontre PhyLatent), ces deux intentions fusionnent en une seule représentation "moyenne" et floue. Le robot ne peut plus anticiper. La contrainte de *Counterfactual Branch Separation* de PhyLatent est exactement ce qu'il faut pour forcer le World Model à maintenir des "croyances multiples" sur les intentions des autres agents.
+
+---
+
+### 💡 Les 3 Idées Concrètes à Reprendre pour votre Architecture
+
+1. **L'Augmentation "État-Indépendante" (SVIC) :**
+   Lors de l'entraînement de votre encodeur (type JEPA/ViT), n'utilisez pas juste des augmentations d'images classiques. Créez un pipeline où vous perturbez massivement l'apparence (filtres, bruit, masques aléatoires) *tout en forçant le loss à maintenir le vecteur latent strictement identique à l'image non-perturbée*. C'est le meilleur moyen de désintoxiquer le réseau de la "tyrannie des pixels".
+2. **La Perte de Séparation Contrefactuelle :**
+   Dans votre modèle de dynamique (le Mamba ou le Transformer qui prédit le futur), ajoutez une perte qui pénalise le modèle si deux séquences d'actions différentes (ex: tourner à gauche vs tourner à droite) produisent des états latents futurs trop proches. Forcez l'arbre de décision à s'ouvrir dans l'espace latent.
+3. **Le Test de la "Topologie Physique" :**
+   Ne jugez plus la qualité de votre World Model uniquement sur sa capacité à prédire le futur (Loss de prédiction). Créez des métriques d'évaluation comme celles de PhyLatent : "Si je change la lumière, mon vecteur latent bouge-t-il ?" (Il ne doit pas bouger). "Si je prends deux états物理ques opposés, sont-ils éloignés dans l'espace latent ?" (Ils doivent l'être).
+
+**En conclusion :** PhyLatent prouve que l'ère des JEPAs "naïfs" (qui se contentent de prédire des embeddings en espérant que la physique émerge toute seule) est révolue. Pour faire de la robotique autonome et de l'Active Inference, **l'espace latent doit être explicitement sculpté pour obéir aux lois de la physique et de la causalité**, avant même qu'on ne le confie au planificateur.
+
+### USER
+par la même quipe il me semble, j'ai vu ce papier qui semble associer un espace Jepa avec un monde 3D, et se focaliser sur l'état prédit et non l'état observé, pour améliorer la prédiction, notamment en faisant disparaitre des objets des observations (pas clair comment). peux tu m'expliquer ce que dit ce papier, le mettre en perspective avec ce dont on discute, puis voir s'il y a de bonnes idées à prendre ? 
+https://arxiv.org/abs/2608.05774
+
+### ASSISTANT
+
+
+### USER
+par la même équipe il me semble, j'ai vu ce papier https://arxiv.org/abs/2608.05774 qui semble associer un espace Jepa avec un monde 3D, et se focaliser sur l'état prédit et non l'état observé, pour améliorer la prédiction, notamment en faisant disparaitre des objets des observations (pas clair comment). peux tu m'expliquer ce que dit ce papier, le mettre en perspective avec ce dont on discute, puis voir s'il y a de bonnes idées à prendre ? 
+
+
+### ASSISTANT
+
+
+### USER
+j'ai vu ce papier https://arxiv.org/abs/2608.05774 . peux tu m'expliquer ce que dit ce papier, le mettre en perspective avec ce dont on discute, puis voir s'il y a de bonnes idées à prendre ? 
+
+
+### ASSISTANT
+C'est une pièce absolument fascinante et indispensable du puzzle que nous construisons. Le papier sur lequel vous êtes tombé, **SR-JEPA (Spatial/Scene Representation JEPA)** , fait franchir une étape dimensionnelle cruciale à notre architecture : **le passage de la 2D (images planes) à la 3D volumétrique native (nuages de points / LiDAR)**.
+
+Jusqu'à présent, nous avons parlé de capteurs (CR-JEPA), de dynamique temporelle (Mamba/PV-RNN), de logique (SJEPA) et de métacognition (Friston). Mais un robot incarné n'évolue pas dans une image 2D ; il évolue dans un espace 3D où les objets ont un volume, où l'occlusion est permanente, et où la gravité et la physique spatiale dictent les règles.
+
+Voici l'explication de SR-JEPA, et pourquoi il est le **cortex spatial** qu'il manquait à votre agent robotique.
+
+---
+
+### 1. Le Problème : L'Amnésie Spatiale et l'Occlusion
+Les JEPAs classiques (comme I-JEPA ou X-JEPA) opèrent sur des grilles 2D. Si vous cachez un objet dans une image, le réseau essaie de deviner les pixels manquants. Mais dans le monde réel d'un robot (avec un LiDAR ou une caméra de profondeur), les objets sont constamment **cachés, manipulés, ou sortent du champ de vision**.
+*   Si un agent adverse passe derrière un pilier, un modèle 2D "l'oublie" immédiatement car les pixels ont disparu.
+*   Si un robot manipulateur pose une tasse sur une table, puis qu'un autre objet vient la masquer, le modèle ne sait plus qu'elle est là.
+C'est le problème de la **permanence de l'objet** et de la **grammaire spatiale** (ex: "s'il y a un clavier et une souris sur ce bureau, il *devrait* y avoir un écran en face").
+
+### 2. La Solution SR-JEPA : L'Imagination Volumétrique
+SR-JEPA est un JEPA **"point-natif"** . Il ne projette pas le monde en 2D. Il travaille directement sur les nuages de points 3D de la scène.
+L'innovation radicale du papier est la suivante : au lieu de masquer des petits patchs aléatoires pendant l'entraînement, **les auteurs suppriment des ENTITÉS 3D ENTIÈRES** de la scène . 
+
+À la place de l'objet supprimé, ils ne laissent qu'une "sonde" : une petite forme géométrique sans signification (une *shape-free query* de 32 points) placée au centroïde (au centre de gravité) de l'objet manquant .
+*   **Le résultat :** Le prédicteur du JEPA est capable, uniquement grâce au contexte spatial 3D environnant, de "remplir" cette sonde avec l'identité sémantique et la géométrie de l'objet manquant . 
+*   Le modèle a appris la **"grammaire des scènes 3D"** sans aucune étiquette sémantique ni langage . Il "sait" qu'à cet endroit précis de cette pièce, les lois physiques et statistiques de l'environnement dictent qu'il doit y avoir une chaise, ou une tasse, ou un autre agent.
+
+---
+
+### 3. Mise en Perspective : L'Intégration dans l'Architecture Cognitive (Friston / Boyd)
+
+Si l'on replace SR-JEPA dans notre grande architecture (Active Inference, OODA, GNWT, SJEPA), il devient le moteur de **l'Inférence Spatiale et de la Mémoire de Travail Volumétrique**.
+
+#### A. La Solution à l'Occlusion en Multi-Agent (Theory of Mind Spatiale)
+Dans un environnement multi-agent, vos adversaires ou partenaires vont constamment se cacher. 
+Grâce à SR-JEPA, votre robot ne perd pas la trace d'un agent qui passe derrière un mur. Le modèle du monde (le JEPA) maintient une **"représentation fantôme" (latent ghost state)** à la coordonnée 3D où l'agent est censé se trouver, basée sur la trajectoire et la physique de la pièce. Le Global Workspace (GNWT) peut alors continuer à raisonner sur les intentions de cet agent "invisible" en se basant sur cette prédiction latente 3D.
+
+#### B. Le Moteur de la Curiosité Spatiale (Valeur Épistémique)
+C'est ici que le lien avec Karl Friston (Active Inference) devient explosif.
+Imaginez que votre robot entre dans une cuisine. SR-JEPA scanne la table et génère ses prédictions latentes. 
+*   **Le Prior (L'attente) :** SR-JEPA prédit qu'il *doit* y avoir un couteau à côté de l'assiette (basé sur la grammaire de la scène).
+*   **L'Observation (La réalité) :** Les capteurs LiDAR ne renvoient aucun point à cet endroit (la zone est vide).
+*   **La Surprise (Erreur de Prédiction) :** Il y a une divergence massive entre l'état latent "imaginé" par SR-JEPA et la réalité sensorielle. 
+
+Dans le cadre de l'Énergie Libre Attendue (EFE), cette erreur génère une **Valeur Épistémique massive**. La boucle OODA (étape *Orient/Decide*) ordonne alors au robot de générer une action de curiosité : *"Je dois bouger ma tête ou me déplacer autour de la table pour vérifier si le couteau est tombé par terre, ou si ma compréhension de cette scène est fausse."* SR-JEPA transforme l'espace vide en "source d'information potentielle".
+
+#### C. Le Couplage avec FF-JEPA (Planification Hiérarchique)
+Vous vous souvenez de **FF-JEPA** (le planificateur qui génère des sous-objectifs latents) ?
+Avec SR-JEPA, le planificateur de haut niveau ne génère plus seulement des concepts abstraits. Il peut générer des **coordonnées spatiales 3D vides** (des "trous" dans la scène). Le planificateur demande à SR-JEPA : *"Si je me téléporte à ces coordonnées X,Y,Z, quelle est la probabilité que j'y trouve un objet manipulable ou un allié ?"*. SR-JEPA remplit la sonde, et le planificateur évalue si le déplacement en vaut la peine.
+
+---
+
+### 💡 Les 3 Idées Concrètes à Reprendre pour votre Robot
+
+Voici comment vous pouvez implémenter les concepts de SR-JEPA dans votre architecture robotique :
+
+1. **L'Entraînement par "Masquage d'Entités" (Entity-Centric Masking) :**
+   Si vous entraînez votre propre modèle de monde sur les données de votre robot (LiDAR/Caméra 3D), ne masquez pas des boîtes aléatoires. Utilisez un algorithme de clustering simple (comme DBSCAN) pour identifier les objets dans la scène 3D, et **supprimez des objets entiers** pendant l'entraînement. Forcez votre réseau à prédire *ce qui manque* en se basant sur le contexte de la pièce. C'est le meilleur moyen de lui apprendre la physique et les "affordances" de l'environnement.
+
+2. **Les "Sondes Spatiales" pour la Planification de Trajectoire (Path Planning) :**
+   Au lieu d'utiliser des cartes d'occupation classiques (Occupancy Grids) qui sont binaires (Libre / Occupé), utilisez des **Sondes Latentes** (comme les 32 points de SR-JEPA). Quand le robot planifie sa trajectoire (via Mamba ou un algorithme A*), il "jette" des sondes latentes dans les zones d'ombre ou occluses. Le JEPA évalue la "densité sémantique" de ces zones. Le robot évitera ainsi de planifier un chemin vers un endroit que le JEPA "devine" être encombré, même si le capteur ne le voit pas encore.
+
+3. **La Mémoire de Travail 3D (Le "Blackboard" du GNWT) :**
+   Dans notre architecture, le Global Neuronal Workspace (GNWT) servait de tableau noir pour les concepts. Avec SR-JEPA, le tableau noir devient une **Carte Volumétrique Sémantique**. Le GNWT ne stocke pas des mots, il stocke des nuages de points latents où les objets disparus sont maintenus "en vie" par le prédicteur, permettant au robot de raisonner sur des entités qui ne sont plus dans son champ de vision immédiat (crucial pour le combat tactique ou la coopération multi-agent).
+
+### En Résumé
+
+**SR-JEPA** prouve que les architectures prédictives latentes (JEPA) ne sont pas limitées à la sémantique visuelle 2D. Elles peuvent apprendre la **topologie, la physique et la grammaire spatiale de notre monde 3D**. 
+
+En combinant **PhyLatent** (qui force la physique newtonienne dans les vecteurs), **SR-JEPA** (qui gère la permanence des objets et la grammaire spatiale 3D), **SJEPA** (qui extrait les règles logiques), et le tout orchestré par **l'Active Inference de Friston** (qui décide où regarder pour réduire l'incertitude), vous avez littéralement sous les yeux le blueprint complet du système nerveux d'un agent artificiel autonome, capable de survie, de curiosité et de tactique dans le monde physique réel.
