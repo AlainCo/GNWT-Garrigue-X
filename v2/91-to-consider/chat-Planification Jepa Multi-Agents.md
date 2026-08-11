@@ -834,3 +834,283 @@ Ils ont adopté **la même architecture cognitive** que celle que nous avons dé
 3.  Un **Générateur Détaillé Court-Terme** (type VAE/LDM) pour l'ancrage sensoriel et la physique fine.
 
 L'astuce du **Diffusion Forcing** pour pré-entraîner ce système est une avancée méthodologique majeure que vous devriez absolument explorer pour entraîner le "cerveau" de votre robot à comprendre la causalité profonde de son environnement avant même d'essayer de le contrôler.
+
+### USER
+J'ai vu ce papier sur https://arxiv.org/abs/2608.06799 PSG-Jepa qui semble ajouter des contraintes au world model pour qu'il soit plus proche de la physique. peux tu m'expliquer le contenu de ce papier, puis le mettre en perspective avec ce dont on discute, et voir si certaines idées sont à garder ?
+
+### ASSISTANT
+C'est une excellente trouvaille qui vient clore et compléter de manière spectaculaire notre réflexion sur la "topologie" des espaces latents ! Le papier **PSG-JEPA (Physical State Grounding for JEPA)**  attaque le dernier grand angle mort des modèles de monde visuels : **l'oubli du corps propre (l'ego)**.
+
+Jusqu'à présent, avec des modèles comme PhyLatent, nous avons vu comment forcer le JEPA à comprendre la physique *externe* (les objets, la gravité, la lumière). Mais un robot n'est pas une caméra flottante ; c'est un corps articulé. PSG-JEPA pose la question fondamentale : *"La prédiction vers l'avant suffit-elle ?"* . La réponse est non, car le modèle peut apprendre à prédire la scène tout en "oubliant" où se trouvent ses propres bras ou ses propres roues dans l'espace latent.
+
+Voici l'explication de ce papier, son lien profond avec nos concepts précédents (PhyLatent, Friston), et les idées concrètes à en tirer.
+
+---
+
+### 1. Le Problème : Le Syndrome de la "Caméra Désincarnée"
+Les JEPAs classiques (comme I-JEPA ou LeWorldModel) sont entraînés uniquement sur des séquences d'images (ou de nuages de points) et des actions abstraites. 
+*   **Le défaut :** L'objectif de prédiction forward ($z_{t+1} = f(z_t, a_t)$) n'oblige pas mathématiquement le vecteur latent $z_t$ à encoder explicitement l'état physique réel du robot (ex: l'angle exact de ses articulations, la position 3D de sa pince). 
+*   **La conséquence :** Le modèle peut apprendre une représentation sémantique brillante de la pièce, mais être incapable de faire de la planification motrice fine ou de la manipulation, car l'espace latent est "déconnecté" de la cinématique réelle du robot.
+
+### 2. La Solution PSG-JEPA : Le "Grounding" Physique (Ancrage)
+Pour sculpter l'espace latent et le forcer à respecter la robotique, les auteurs ajoutent **deux objectifs d'ancrage (grounding objectives)** pendant l'entraînement  :
+
+1.  **L'Ancrage Statique (Proprioceptive State Grounding) :** 
+    *   *Le principe :* On force le vecteur latent individuel $z_t$ à contenir l'information proprioceptive exacte du robot à l'instant $t$ (ex: les angles des moteurs, la position de l'effecteur) .
+    *   *L'effet :* Le modèle ne peut plus "halluciner" une scène sans savoir exactement comment son propre corps est configuré dans cette scène. L'espace latent devient "identifiable" physiquement.
+2.  **L'Ancrage Dynamique (Action Consequence Grounding) :**
+    *   *Le principe :* On force la *transition* entre deux états latents ($z_t \rightarrow z_{t+k}$) à correspondre mathématiquement aux changements physiques réels des articulations sur cet horizon de temps .
+    *   *L'effet :* La "vitesse" et la "direction" dans l'espace latent respectent les contraintes cinématiques du robot. On ne peut pas "téléporter" le bras dans l'espace latent d'une manière qui serait physiquement impossible pour les moteurs réels.
+
+**Le génie de l'approche :** Ces contraintes (et les petites têtes de réseau qui les calculent) ne sont utilisées **QUE PENDANT L'ENTRAÎNEMENT** . Une fois le modèle entraîné, on jette ces têtes. À l'inférence (pour la planification en temps réel), le JEPA reste ultra-léger et rapide, mais son espace latent a été "sculpté" pour obéir aux lois de la mécanique.
+
+---
+
+### 3. Mise en Perspective : Le Puzzle s'Assemble (PhyLatent + PSG-JEPA + Friston)
+
+Ce papier est le **complément exact** de **PhyLatent** (dont nous parlions juste avant). Ensemble, ils forment le cadre ultime pour l'espace latent d'un agent incarné :
+
+| Concept | PhyLatent (L'Environnement) | PSG-JEPA (Le Corps Propre) |
+| :--- | :--- | :--- |
+| **Cible** | La physique *externe* (Objets, scènes, invariance à la lumière). | La physique *interne* (Proprioception, cinématique, schéma corporel). |
+| **Contrainte** | Invariance visuelle, séparation contrefactuelle. | Grounding proprioceptif, transitions cinématiques. |
+| **Résultat** | Le modèle comprend le **Monde**. | Le modèle comprend son **Corps dans le Monde**. |
+
+#### Le Lien Ultime avec Karl Friston (Le Schéma Corporel)
+Dans le cadre du Principe de l'Énergie Libre (FEP) et de l'Active Inference, le cerveau doit minimiser deux types d'erreurs de prédiction :
+1.  **L'erreur extéroceptive** (ce que je vois : la caméra, le LiDAR).
+2.  **L'erreur proprioceptive** (ce que je ressens : la tension de mes muscles, l'angle de mes articulations).
+
+Un JEPA classique ne minimise que l'erreur extéroceptive. **PSG-JEPA force l'unification des deux dans le même espace latent.** Il crée ce qu'en neurosciences on appelle le **Schéma Corporel** (Body Schema) : une représentation latente unifiée où "voir la tasse" et "sentir mon bras tendu" sont encodés dans la même géométrie mathématique. C'est la condition *sine qua non* pour qu'un agent FEP puisse planifier des actions de préhension ou d'interaction physique.
+
+#### Le Lien avec le Multi-Agent et la Manipulation
+Pour qu'un robot interagisse avec un autre agent (ex: lui tendre un objet, le pousser, ou l'esquiver), il doit connaître la position exacte de son propre effecteur par rapport à l'autre. Si l'espace latent "oublie" la proprioception (comme les JEPAs classiques), le robot peut imaginer une trajectoire visuellement cohérente mais cinématiquement impossible (ex: traverser son propre chassis ou tordre un moteur). L'ancrage dynamique de PSG-JEPA garantit que les "rollouts" imaginés par le planificateur (MPC ou FEP) sont **physiquement exécutables** par le hardware réel.
+
+---
+
+### 💡 Les 3 Idées Puissantes à Reprendre pour votre Architecture
+
+Voici comment vous pouvez implémenter la philosophie de PSG-JEPA dans votre pipeline d'entraînement (que vous utilisiez un Mamba, un Transformer ou un PV-RNN comme modèle de dynamique) :
+
+#### 1. La Tête Proprioceptive "Fantôme" (Training-Time Only)
+Pendant l'entraînement de votre World Model, ajoutez une petite tête de réseau (un simple MLP) qui prend le vecteur latent $z_t$ en entrée et essaie de deviner l'état proprioceptif du robot (ex: un vecteur de 7 floats pour les angles des 7 moteurs du bras).
+*   **La Loss :** Ajoutez une MSE Loss entre la prédiction de cette tête et la vraie proprioception du robot.
+*   **L'astuce :** Cette perte "tire" sur l'encodeur visuel pour qu'il intègre la conscience du corps dans la représentation sémantique de la scène. À l'inférence, vous supprimez cette tête : le calcul est gratuit, mais la représentation latente est "ancrée".
+
+#### 2. La Perte de Cohérence Cinématique ($\Delta z \approx \Delta \text{Joints}$)
+Au lieu de laisser le modèle de dynamique (votre Mamba/JEPA) apprendre des transitions purement statistiques, forcez la distance ou la direction entre $z_t$ et $z_{t+k}$ dans l'espace latent à être corrélée avec le mouvement physique réel des articulations sur cette même période. Cela empêche le modèle de créer des "raccourcis" magiques dans son imagination qui violeraient les lois de la robotique.
+
+#### 3. Le "Goal-Conditioned Planning" sur Espace Latent Gelé
+L'un des résultats majeurs de PSG-JEPA est qu'il permet de faire de la planification conditionnée par un but (*Goal-Conditioned Planning*) directement sur les latents gelés . Parce que l'espace latent respecte à la fois la sémantique de la scène (grâce au JEPA) et la cinématique du robot (grâce au Grounding), un algorithme de recherche simple (comme A* ou CEM) peut trouver un chemin dans l'espace latent qui est garanti d'être une trajectoire moteur valide. C'est infiniment plus puissant que de planifier dans l'espace des pixels ou dans l'espace des angles moteurs bruts (qui est trop vaste et non-sémantique).
+
+### En Résumé
+
+Avec **PSG-JEPA**, nous avons trouvé la dernière pièce du puzzle de la perception incarnée. 
+*   **CR-JEPA** apprend à fusionner les capteurs.
+*   **SR-JEPA** apprend la grammaire spatiale 3D.
+*   **PhyLatent** apprend la physique des objets externes.
+*   **PSG-JEPA** apprend la conscience du corps propre (proprioception et cinématique).
+
+Si vous entraînez votre World Model avec ces 4 contraintes (qui peuvent toutes être appliquées simultanément via des têtes auxiliaires pendant le pre-training, puis jetées à l'inférence), vous obtiendrez un espace latent d'une richesse inouïe : un espace où le robot "sait" ce qu'il voit, où il "comprend" la physique de la pièce, et où il "sent" exactement la position de ses propres membres, le tout encodé dans un seul vecteur mathématique manipulable par votre planificateur FEP / Active Inference. C'est très exactement ce dont un agent autonome a besoin pour survivre et interagir dans le monde réel.
+
+### USER
+Voici un autre papier qui semble aussi aller dans ces directions https://arxiv.org/abs/2608.07409 .  peux tu m'expliquer le contenu de ce papier, le mettre en perspective avec ce dont on discute, et voir si certaines idées sont à garder ?
+
+### ASSISTANT
+C'est une excellente trouvaille ! Ce papier **UniJEPA** (août 2026, accepté à ICML 2026)  apporte une pièce maîtresse au puzzle que nous construisons depuis le début de notre veille : **l'unification théorique et pratique** de toutes les variantes de JEPAs que nous avons étudiées.
+
+Laissez-moi vous expliquer pourquoi ce papier est si important et comment il s'articule avec notre architecture cognitive.
+
+---
+
+## 1. Le Problème : La Fragmentation des JEPAs
+
+Les auteurs identifient un problème que nous avons implicitement observé tout au long de nos discussions : les JEPAs se sont fragmentés en **familles disjointes** avec des objectifs incompatibles  :
+
+| Famille JEPA | Objectif | Ce qu'il apprend |
+|--------------|----------|------------------|
+| **I-JEPA** | Prédire les parties masquées d'une image | Structure spatiale |
+| **Image World Models** | Prédire les transformations photométriques | Invariance aux changements d'apparence |
+| **V-JEPA 2, DINO-WM** | Prédire les états temporels futurs | Dynamique temporelle |
+
+**Le problème** : Chaque famille utilise son propre encodeur, son propre prédicteur, ses propres régulariseurs anti-collapse. Impossible de combiner leurs forces dans un seul modèle cohérent.
+
+---
+
+## 2. La Solution UniJEPA : L'Unification dans un Espace Latent Unique
+
+UniJEPA propose une architecture qui **apprend simultanément** deux types de prédictions dans le **même espace latent**  :
+
+### A. Prédiction Photométrique (Niveau Image)
+- **Objectif** : Prédire comment l'image change sous différentes transformations (éclairage, couleur, contraste)
+- **Ce que ça apprend** : La **structure invariante** — ce qui reste constant malgré les changements superficiels
+- **Analogie** : "C'est la même chaise, qu'elle soit éclairée par le soleil ou dans l'ombre"
+
+### B. Prédiction Temporelle (Niveau Vidéo)
+- **Objectif** : Prédire l'état latent futur à partir de l'état présent
+- **Ce que ça apprend** : La **dynamique équivariante** — comment les choses évoluent de manière prévisible dans le temps
+- **Analogie** : "Si je pousse cette chaise, elle va glisser de 30 cm vers la droite"
+
+### C. L'Innovation Méthodologique
+UniJEPA réussit cette unification avec une simplicité remarquable  :
+- **Un seul objectif end-to-end** : next-embedding prediction loss + Gaussian regularizer
+- **Anti-collapse prouvé mathématiquement** : Pas besoin de tricks comme EMA, stop-gradient, ou encodeurs pré-entraînés
+- **Un seul hyperparamètre** de loss (contre 3-5 pour les autres méthodes)
+
+---
+
+## 3. Mise en Perspective : Comment UniJEPA Unifie nos Lectures Précédentes
+
+Ce papier est la **synthèse architecturale** de presque tous les concepts que nous avons explorés :
+
+### A. UniJEPA vs PhyLatent (Invariance Physique)
+Vous vous souvenez que **PhyLatent** identifiait le "Physical Invariance Collapse" — quand le modèle confond les changements d'apparence avec les changements physiques  ?
+
+**UniJEPA résout ce problème à la racine** :
+- La **prédiction photométrique** force explicitement le modèle à apprendre l'invariance aux changements d'apparence
+- La **prédiction temporelle** force le modèle à apprendre la vraie dynamique physique
+- Les deux coexistent dans le même espace latent sans interférence
+
+C'est exactement ce dont votre robot a besoin : distinguer "la lumière a changé" (invariance) de "l'objet a bougé" (équivariance).
+
+### B. UniJEPA vs CR-JEPA (Têtes Découplées)
+**CR-JEPA** utilisait des têtes de projection séparées pour intra-modal vs cross-modal . 
+
+**UniJEPA va plus loin** : au lieu de séparer les têtes, il unifie les **objectifs d'apprentissage** dans le même espace. C'est plus élégant et plus puissant.
+
+### C. UniJEPA vs HWM et Orbis 2 (Hiérarchie)
+**HWM** et **Orbis 2** utilisaient des architectures hiérarchiques avec des modèles à différentes échelles temporelles [[4,5]].
+
+**UniJEPA montre que la hiérarchie peut émerger naturellement** :
+- La prédiction photométrique apprend les **features bas-niveau** (textures, couleurs)
+- La prédiction temporelle apprend les **dynamiques haut-niveau** (mouvements, causalité)
+- Les deux partagent le même espace latent, créant une hiérarchie implicite
+
+### D. UniJEPA et l'Active Inference (Friston)
+C'est ici que le lien devient fascinant. Dans le cadre du **Principe de l'Énergie Libre** :
+
+- **Prédiction photométrique** → Minimise la surprise sur les **états sensoriels** (extéroception)
+- **Prédiction temporelle** → Minimise la surprise sur les **transitions d'états** (dynamique du monde)
+
+UniJEPA crée un modèle génératif qui peut simultanément :
+1. Reconnaître les objets malgré les variations sensorielles (invariance)
+2. Prédire comment le monde évolue (équivariance)
+3. Planifier des actions pour minimiser l'énergie libre future
+
+---
+
+## 4. Les Idées Nouvelles à Garder pour Votre Robot
+
+Voici les **3 innovations clés** de UniJEPA à intégrer dans votre architecture :
+
+### 💡 Idée 1 : L'Espace Latent Unifié (Le "Cortex Associatif")
+
+Au lieu d'avoir plusieurs encodeurs spécialisés (un pour la vision, un pour la dynamique, un pour la sémantique), **entraînez UN SEUL encodeur** avec des objectifs multiples :
+
+```
+Perte totale = λ₁ × Perte_prédiction_temporelle 
+             + λ₂ × Perte_prédiction_photométrique
+             + λ₃ × Régulariseur_Gaussien
+```
+
+**Pourquoi c'est puissant** :
+- L'espace latent capture **simultanément** la structure spatiale ET la dynamique temporelle
+- Les représentations sont plus riches et plus robustes
+- Un seul modèle à maintenir et optimiser
+
+### 💡 Idée 2 : Invariance + Équivariance (Le Duo Magique)
+
+C'est le concept le plus profond du papier  :
+
+| Propriété | Ce que ça signifie | Exemple robotique |
+|-----------|-------------------|-------------------|
+| **Invariance** | Ce qui ne change pas malgré les transformations | Reconnaître une tasse qu'elle soit rouge ou bleue, éclairée ou dans l'ombre |
+| **Équivariance** | Comment les choses changent de manière prévisible | Si je tourne la tasse de 90°, sa représentation latente tourne aussi de 90° |
+
+**Pour votre robot** :
+- **Invariance** = robustesse aux conditions changeantes (lumière, météo, capteurs bruités)
+- **Équivariance** = capacité à prédire les conséquences des actions
+
+C'est exactement ce dont un agent autonome a besoin pour survivre dans le monde réel.
+
+### 💡 Idée 3 : Planification Zero-Shot par Prédiction
+
+UniJEPA montre qu'après un post-training action-conditionné, on peut faire de la **planification zero-shot** en traitant les features de but comme des cibles de prédiction .
+
+**Comment ça marche** :
+1. Le robot observe l'état actuel : $z_{current}$
+2. Il encode le but désiré : $z_{goal}$
+3. Il cherche la séquence d'actions qui minimise : $\|z_{goal} - Predictor(z_{current}, actions)\|$
+
+**Pourquoi c'est révolutionnaire** :
+- Pas besoin d'entraîner un planificateur séparé
+- La planification émerge naturellement de la capacité de prédiction
+- Jusqu'à **10x plus rapide** que les modèles génératifs (pas de sampling itératif)
+
+---
+
+## 5. L'Architecture Cognitive Complète (Version Finale)
+
+En intégrant UniJEPA avec tous les autres papiers que nous avons analysés, voici l'architecture cognitive ultime pour votre robot :
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  ÉTAGE 4 : PLANIFICATION (Active Inference / FEP)           │
+│  • Calcule l'Énergie Libre Attendue (EFE)                   │
+│  • Équilibre Valeur Pragmatique + Valeur Épistémique        │
+│  • Planification zero-shot par prédiction de but            │
+└────────────────────────┬────────────────────────────────────┘
+                         │
+┌────────────────────────▼────────────────────────────────────┐
+│  ÉTAGE 3 : MODÈLE DU MONDE (UniJEPA + Mamba)                │
+│  • Espace latent unifié                                     │
+│  • Prédiction temporelle (équivariance)                     │
+│  • Prédiction photométrique (invariance)                    │
+│  • Anti-collapse garanti mathématiquement                   │
+└────────────────────────┬────────────────────────────────────┘
+                         │
+┌────────────────────────▼────────────────────────────────────┐
+│  ÉTAGE 2 : ENCODAGE MULTI-MODAL (CR-JEPA / SR-JEPA)         │
+│  • Fusion capteurs (caméra, LiDAR, proprioception)          │
+│  • Alignement cross-modal                                   │
+│  • Représentation 3D spatiale                               │
+└────────────────────────┬────────────────────────────────────┘
+                         │
+┌────────────────────────▼────────────────────────────────────┐
+│  ÉTAGE 1 : PERCEPTION SENSORIELLE                           │
+│  • Capteurs bruts (RGB, depth, IMU, etc.)                   │
+└─────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 6. Synthèse : Pourquoi UniJEPA est un Papier Charnière
+
+**UniJEPA** n'apporte pas juste une amélioration incrémentale — il **résout le problème de fragmentation** qui empêchait les JEPAs de devenir une architecture cognitive complète.
+
+**Ce qu'il prouve** :
+1. **L'unification est possible** : On peut apprendre spatial + temporel + photométrique dans le même espace
+2. **La simplicité gagne** : Un seul loss, un seul hyperparamètre, pas de tricks
+3. **L'émergence de la hiérarchie** : Invariance (bas-niveau) + équivariance (haut-niveau) créent naturellement une représentation multi-échelle
+
+**Ce que ça change pour votre robot** :
+- Vous n'avez plus besoin de choisir entre "bon en perception" ou "bon en planification"
+- Le même modèle peut faire les deux, de manière cohérente
+- La planification devient un sous-produit naturel de la prédiction
+
+---
+
+## Conclusion : Le Puzzle est (Presque) Complet
+
+Avec UniJEPA, nous avons maintenant :
+- ✅ **Perception multi-modale** (CR-JEPA, SR-JEPA)
+- ✅ **Modèle du monde unifié** (UniJEPA)
+- ✅ **Dynamique temporelle efficace** (Mamba/SSM, MTS3)
+- ✅ **Planification hiérarchique** (HWM, FF-JEPA)
+- ✅ **Gestion de l'incertitude** (UA-JEPA, Active Inference)
+- ✅ **Raisonnement symbolique** (GNWT, SJEPA)
+- ✅ **Ancrage physique** (PSG-JEPA, PhyLatent)
+
+Il ne manque plus qu'une chose : **l'intégration de tout cela dans un système temps réel sur GPU**, avec des mécanismes d'attention et de mémoire à long terme. Mais architecturalement, nous avons maintenant tous les pièces du puzzle pour construire un agent cognitif autonome basé sur l'Active Inference.
+
+Votre intuition de lier tous ces papiers était juste : ils convergent tous vers la même architecture cognitive, et UniJEPA est la pièce qui les unifie.
