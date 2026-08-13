@@ -1466,3 +1466,363 @@ Vous avez maintenant :
 Ces quatre approches, combinées avec nos précédentes découvertes (UniJEPA, SR-JEPA, PSG-JEPA, PhyLatent), forment une architecture cognitive remarquablement complète pour un agent autonome.
 
 L'idée la plus profonde de JEPA-WAM est peut-être celle-ci : **un robot intelligent ne doit pas seulement comprendre la physique du monde, il doit comprendre la structure logique des tâches qu'il accomplit**. Et cette structure peut être apprise via un JEPA conditionné par le langage, opérant dans le même espace latent que le modèle du monde physique.
+
+### USER
+Ce papier semble attaquer un problème plus technique d'analyse de scène complexe avec des acteurs aux intentions variés.
+https://arxiv.org/abs/2608.01049
+Peux tu m'expliquer le contenu de ce papier, le mettre en perspective avec ce dont on discute, et voir si certaines idées sont à garder ?
+
+### ASSISTANT
+Excellent ! Vous avez mis le doigt sur un papier qui attaque **exactement** le problème pratique le plus difficile pour un agent autonome : comprendre et prédire ce qui va se passer dans une scène **dense, chaotique et multi-agent** — typiquement un carrefour indien, un marché de rue, ou toute situation urbaine où les règles explicites (feux, marquages au sol) sont absentes et où tout repose sur la **négociation sociale implicite** entre agents hétérogènes.
+
+Voici l'analyse complète de **FactorJEPA** et sa place dans notre architecture cognitive.
+
+---
+
+## 1. Le Problème : Le Mur des Scènes Denses (DENSEWORLD)
+
+Les JEPAs existants (V-JEPA 2, DINO-WM, etc.) sont entraînés et évalués sur des scènes **"propres"** :
+- Routes à voies bien marquées
+- Agents homogènes (voitures)
+- Règles explicites (feux, stop)
+- Occlusions limitées
+
+**FactorJEPA** s'attaque à un régime radicalement différent qu'ils appellent **DENSEWORLD**  :
+- **Limites spatiales floues** : Pas de marquage, trottoirs poreux, routes qui deviennent places
+- **Hétérogénéité extrême** : Piétons, vélos, motos, voitures, camions, animaux, charrettes... tous mélangés
+- **Occlusions permanentes** : Les agents disparaissent et réapparaissent constamment
+- **Négociation sociale rapide** : Pas de règles explicites, tout passe par des micro-signaux (regard, vitesse, position)
+
+**Pourquoi les JEPAs classiques échouent** :
+Ils encodent le futur dans un **seul vecteur latent monolithique**. Face à une scène avec 50 agents aux intentions variées, ce vecteur devient :
+- Soit une "moyenne floue" (tous les agents fusionnés)
+- Soit une hallucination (le modèle invente ce qu'il ne voit pas)
+- Soit un oubli (les agents occlus disparaissent de la représentation)
+
+---
+
+## 2. La Solution : Factoriser le Futur en 3 Canaux
+
+L'idée centrale de FactorJEPA est brillante de simplicité : **au lieu d'un seul vecteur latent pour tout le futur, on le factorise en 3 canaux spécialisés**  :
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  FACTORJEPA : 3 Canaux de Prédiction                        │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  CANAL 1 : LAYOUT (Structure Spatiale)                      │
+│  • Routes, trottoirs, bâtiments, obstacles fixes            │
+│  • Évolue lentement (quasi-statique)                        │
+│  • Prédit : "La route continue, le bâtiment reste là"       │
+│                                                             │
+│  CANAL 2 : ENTITIES (Agents)                                │
+│  • Chaque agent a son propre sous-vecteur                   │
+│  • Position, vitesse, type, orientation                     │
+│  • Prédit : "Le piéton A sera ici, la moto B sera là"      │
+│                                                             │
+│  CANAL 3 : INTERACTIONS (Dynamique Sociale)                 │
+│  • Relations entre agents                                   │
+│  • Qui cède le passage à qui ? Qui accélère ? Qui recule ? │
+│  • Prédit : "Le piéton va s'arrêter car la moto accélère"  │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**Pourquoi cette factorisation est puissante** :
+- **Spécialisation** : Chaque canal apprend sa propre dynamique (le layout est quasi-statique, les interactions sont ultra-rapides)
+- **Robustesse aux occlusions** : Si un agent disparaît, son canal "Entity" peut maintenir sa présence latente (comme SR-JEPA)
+- **Pas de raccourcis** : Le modèle ne peut pas "tricher" en utilisant le layout pour prédire les interactions
+
+---
+
+## 3. L'Innovation Technique : Le "Visibility Gate"
+
+C'est probablement **l'idée la plus importante** du papier pour votre robot multi-agent.
+
+**Le problème** : Dans une scène dense, les agents sont constamment occlus (cachés derrière un camion, un bâtiment, un autre agent). Un JEPA classique "oublie" ces agents occlus.
+
+**La solution FactorJEPA** : Un **Visibility Gate** (porte de visibilité) qui module chaque canal Entity  :
+
+```python
+# Pour chaque agent i à l'instant t
+visibility_i = compute_visibility(agent_i, scene)  # 0 = occlus, 1 = visible
+
+# Le latent de l'agent est modulé par sa visibilité
+latent_agent_i = visibility_i * latent_predicted + (1 - visibility_i) * latent_memory
+
+# Si l'agent est occlus (visibility = 0), on garde sa dernière position prédite
+# Si l'agent est visible (visibility = 1), on met à jour avec l'observation
+```
+
+**Ce que ça fait** :
+- **Agents visibles** : Leur latent est mis à jour avec les observations réelles
+- **Agents occlus** : Leur latent est **maintenu en mémoire** basé sur la dernière prédiction (comme un "fantôme")
+- **Réapparition** : Quand l'agent réapparaît, le modèle peut comparer sa position réelle avec sa position prédite → détecte si l'agent a changé d'intention pendant l'occlusion
+
+**Résultat** : Le modèle maintient une **représentation continue de tous les agents**, même ceux qu'il ne voit pas. C'est exactement ce dont votre robot a besoin pour la **Theory of Mind** en environnement dense.
+
+---
+
+## 4. Mise en Perspective : FactorJEPA dans notre Architecture
+
+### A. Complémentarité avec les Autres JEPAs
+
+| Papier | Ce qu'il fait | Ce que FactorJEPA ajoute |
+|--------|---------------|-------------------------|
+| **UniJEPA** | Unifie prédiction photométrique + temporelle | Spécialise pour multi-agent dense |
+| **INTACT** | Mapping direct intention → action | Gère les occlusions et interactions |
+| **HWM** | Planification hiérarchique long-terme | Fournit les sous-objectifs par agent |
+| **JEPA-WAM** | Compréhension sémantique de tâche | Gère la dynamique sociale rapide |
+| **SR-JEPA** | Permanence des objets 3D | Spécialise pour agents animés |
+
+**FactorJEPA est le "Module Multi-Agent Dense"** qui manquait.
+
+### B. Le Lien avec l'Active Inference (Friston)
+
+Dans le cadre de l'Active Inference, FactorJEPA fournit exactement ce dont le planificateur FEP a besoin :
+
+1. **Réduction de l'incertitude par facteur** :
+   - Canal Layout : incertitude faible (quasi-statique)
+   - Canal Entities : incertitude moyenne (prévisible)
+   - Canal Interactions : incertitude élevée (chaotique)
+
+2. **Valeur épistémique ciblée** :
+   - Si le canal Interactions a une variance élevée → le robot sait qu'il doit acquérir plus d'information sur les relations sociales
+   - Si un agent occlus a une variance élevée → le robot sait qu'il doit changer de point de vue pour le revoir
+
+3. **Prédiction contrefactuelle par agent** :
+   - "Si je klaxonne, comment le canal Interactions va-t-il changer ?"
+   - "Si je ralentis, quel agent va me céder le passage ?"
+
+### C. Le Lien avec la Boucle OODA (Boyd)
+
+FactorJEPA améliore spécifiquement l'étape **ORIENT** :
+
+```
+OBSERVE → Capteurs bruts (chaotiques, occlus)
+    ↓
+ORIENT → FactorJEPA factorise en Layout/Entities/Interactions
+    ↓        + Visibility Gate maintient les agents occlus
+    ↓        + Détection des intentions via canal Interactions
+    ↓
+DECIDE → FEP calcule EFE par facteur
+    ↓
+ACT → Actions pour réduire l'incertitude sur les interactions
+```
+
+---
+
+## 5. Les 3 Idées Puissantes à Garder
+
+### 💡 Idée 1 : La Factorisation Explicite du Futur
+
+**Pour votre robot** :
+Au lieu d'un seul espace latent monolithique, créez **plusieurs sous-espaces spécialisés** :
+
+```python
+latent_state = {
+    'layout': predict_layout(observation),      # Quasi-statique
+    'self': predict_self_state(proprioception), # État propre
+    'agents': predict_agents(observation),      # Autres agents
+    'interactions': predict_interactions(agents) # Relations sociales
+}
+```
+
+**Avantages** :
+- Chaque sous-espace peut avoir sa propre dynamique temporelle
+- Vous pouvez faire de la planification sélective (ex: ignorer le layout si vous êtes en intérieur)
+- L'incertitude est calculée par facteur → meilleure allocation de l'attention
+
+### 💡 Idée 2 : Le Visibility Gate pour la Permanence Multi-Agent
+
+**Implémentation pour votre robot** :
+
+```python
+class AgentTracker:
+    def __init__(self):
+        self.visible_agents = {}      # Agents actuellement vus
+        self.occluded_agents = {}     # Agents occlus mais trackés
+        
+    def update(self, observations):
+        # 1. Mettre à jour les agents visibles
+        for agent_id, obs in observations.items():
+            if agent_id in self.visible_agents:
+                # Mettre à jour avec l'observation
+                self.visible_agents[agent_id].update(obs)
+            else:
+                # Nouvel agent détecté
+                self.visible_agents[agent_id] = AgentState(obs)
+        
+        # 2. Gérer les agents qui ont disparu (occlus)
+        disappeared = set(self.visible_agents.keys()) - set(observations.keys())
+        for agent_id in disappeared:
+            # Déplacer vers occlus, maintenir la prédiction
+            self.occluded_agents[agent_id] = self.visible_agents[agent_id]
+            del self.visible_agents[agent_id]
+        
+        # 3. Vérifier les réapparitions
+        reappeared = set(observations.keys()) & set(self.occluded_agents.keys())
+        for agent_id in reappeared:
+            # Comparer position réelle vs prédite
+            predicted = self.occluded_agents[agent_id].predicted_position
+            actual = observations[agent_id].position
+            if distance(predicted, actual) > threshold:
+                # L'agent a changé d'intention pendant l'occlusion !
+                self.flag_intent_change(agent_id)
+```
+
+**Pourquoi c'est crucial** :
+- Maintient la continuité de la scène malgré les occlusions
+- Détecte les changements d'intention cachés
+- Permet la planification avec des agents "fantômes"
+
+### 💡 Idée 3 : Les Interactions comme Primitive de Prédiction
+
+C'est peut-être **l'innovation la plus profonde** de FactorJEPA.
+
+**Au lieu de prédire** :
+- "L'agent A sera à la position X"
+- "L'agent B sera à la position Y"
+
+**Prédire explicitement** :
+- "L'agent A va céder le passage à l'agent B"
+- "L'agent C va accélérer pour doubler l'agent D"
+- "Les agents E et F vont négocier un croisement"
+
+**Pourquoi c'est puissant** :
+- Les interactions sont plus stables que les positions absolues
+- Elles capturent la **logique sociale** de la scène
+- Elles permettent la prédiction contrefactuelle : "Si j'interviens, comment les interactions vont-elles changer ?"
+
+**Implémentation** :
+```python
+# Représenter les interactions comme un graphe
+interaction_graph = {
+    ('agent_1', 'agent_2'): 'yielding',      # Agent 1 cède à Agent 2
+    ('agent_3', 'agent_4'): 'following',     # Agent 3 suit Agent 4
+    ('agent_5', 'agent_6'): 'competing',     # En compétition pour l'espace
+}
+
+# Prédire l'évolution du graphe
+future_interactions = predict_interaction_evolution(
+    current_interactions,
+    agent_states,
+    actions
+)
+```
+
+---
+
+## 6. Architecture Intégrée : FactorJEPA + Notre Stack
+
+Voici comment FactorJEPA s'intègre dans l'architecture cognitive complète :
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  ÉTAGE 5 : PLANIFICATION HIÉRARCHIQUE (HWM + FEP)          │
+│  • Macro-actions pour objectifs long-terme                  │
+│  • Minimisation EFE par facteur (layout/agents/interactions)│
+└────────────────────────┬────────────────────────────────────┘
+                         │
+┌────────────────────────▼────────────────────────────────────┐
+│  ÉTAGE 4 : COMPRÉHENSION MULTI-AGENT (FactorJEPA)  ← NOUVEAU│
+│  • Factorise le futur en 3 canaux                           │
+│  • Visibility Gate pour agents occlus                       │
+│  • Prédiction des interactions sociales                     │
+│  • Détection des changements d'intention                    │
+└────────────────────────┬────────────────────────────────────┘
+                         │
+┌────────────────────────▼────────────────────────────────────┐
+│  ÉTAGE 3 : CONTRÔLE RÉACTIF (INTACT)                        │
+│  • Mapping direct intention → action                        │
+│  • Inférence en 2.9ms                                       │
+└────────────────────────┬────────────────────────────────────┘
+                         │
+┌────────────────────────▼────────────────────────────────────┐
+│  ÉTAGE 2 : MODÈLE DU MONDE (UniJEPA + Mamba)                │
+│  • Prédiction temporelle (équivariance)                     │
+│  • Prédiction photométrique (invariance)                    │
+└────────────────────────┬────────────────────────────────────┘
+                         │
+┌────────────────────────▼────────────────────────────────────┐
+│  ÉTAGE 1 : PERCEPTION MULTI-MODALE (CR-JEPA / SR-JEPA)      │
+│  • Fusion capteurs (caméra, LiDAR, radar)                   │
+│  • Représentation 3D spatiale                               │
+│  • Détection et tracking d'agents                           │
+└─────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 7. Les Limites à Garder en Tête
+
+### Limites de FactorJEPA :
+
+1. **Complexité computationnelle** :
+   - 3 canaux + visibility gate = plus de calcul qu'un JEPA monolithique
+   - Mais parallélisable sur GPU
+
+2. **Dépendance à la détection d'agents** :
+   - Nécessite un bon détecteur multi-classe en amont
+   - Si la détection échoue, tout le système souffre
+
+3. **Pas de raisonnement causal explicite** :
+   - Prédit les interactions mais n'explique pas pourquoi
+   - Pourrait être combiné avec SJEPA pour extraire des règles
+
+4. **Dataset spécifique** :
+   - Entraîné sur DENSEWORLD (Global South)
+   - Pourrait nécessiter fine-tuning pour d'autres contextes
+
+---
+
+## 8. Synthèse : Ce que FactorJEPA Nous Apprend
+
+### Les 3 Leçons Clés
+
+1. **La factorisation est supérieure à la monolithicité**
+   - Un seul vecteur latent ne peut pas capturer la complexité multi-agent
+   - Séparer layout/agents/interactions permet spécialisation et robustesse
+
+2. **Les occlusions ne sont pas du bruit, c'est de l'information**
+   - Le visibility gate transforme les occlusions en opportunités
+   - Un agent qui réapparaît à une position inattendue = changement d'intention détecté
+
+3. **Les interactions sont plus prévisibles que les positions**
+   - Les relations sociales (céder, suivre, compétitionner) ont une logique
+   - Prédire cette logique est plus robuste que prédire des trajectoires
+
+### Pour Votre Robot Multi-Agent
+
+**FactorJEPA apporte la brique "Intelligence Sociale"** :
+- Comprendre qui négocie avec qui
+- Maintenir la trace des agents même occlus
+- Détecter les changements d'intention cachés
+- Prédire les conséquences sociales de vos propres actions
+
+**Exemple concret** :
+Votre robot approche un carrefour chaotique. FactorJEPA lui dit :
+- **Layout** : "La route continue, pas d'obstacle fixe"
+- **Agents** : "5 agents détectés, 2 occlus derrière le camion"
+- **Interactions** : "Le piéton A va céder au vélo B, mais l'agent occlus C pourrait émerger"
+
+Votre planificateur FEP peut alors :
+- Maximiser la valeur épistémique sur l'agent occlus C (changer d'angle pour le voir)
+- Minimiser la valeur pragmatique (traverser quand A aura cédé à B)
+
+---
+
+## Conclusion : Le Puzzle Multi-Agent se Complète
+
+**FactorJEPA** n'est pas juste une amélioration technique — c'est la **première architecture JEPA explicitement conçue pour le multi-agent dense et chaotique**.
+
+Vous avez maintenant :
+- **UniJEPA** pour la représentation unifiée
+- **INTACT** pour le contrôle réactif
+- **HWM** pour la planification hiérarchique
+- **JEPA-WAM** pour la compréhension sémantique
+- **FactorJEPA** pour l'intelligence sociale multi-agent
+
+Ces cinq papiers, combinés avec Active Inference et notre stack perception/contrôle, forment une architecture cognitive remarquablement complète pour un agent autonome opérant dans le monde réel — y compris les environnements les plus denses et chaotiques.
+
+L'idée la plus profonde de FactorJEPA est peut-être celle-ci : **dans un monde social, comprendre les relations entre agents est aussi important que comprendre les agents eux-mêmes**. Et cette compréhension peut être apprise via un JEPA factorisé qui traite les interactions comme des primitives de prédiction à part entière.
