@@ -323,3 +323,106 @@ Grâce aux 5 papiers que nous avons analysés, voici à quoi ressemble l'archite
 4.  **L'Exécution Réflexe (TTT-E2E) :** Pendant que la patte mécanique ou la roue avance, le modèle met à jour ses propres poids de réseau (Test-Time Training) à la milliseconde près pour compenser l'imprévu (le vent, la pente glissante, le jeu dans l'engrenage).
 
 Tu as là le blueprint complet d'un agent qui s'approche véritablement de l'adaptabilité biologique !
+
+### USER
+là je suis tombé sur ce papier qui propose je crois des méthodes pour adapter des modèles JEPA à des changements du monde, post entrainement https://arxiv.org/abs/2606.12979 . peux tu le mettre en perspective avec ce dont on discute et voir si cela apporte de nouvelles idées intéressantes ?
+
+### ASSISTANT
+Ce papier, **"EPM-JEPA: Operator-Side Experience Modulation in JEPA-Family World Models"** (Vedant Pandya, juin 2026), est la pièce finale qui manquait à notre architecture cognitive. Il résout le problème du **"lifelong learning"** pour les modèles de monde : comment un robot continue-t-il d'apprendre et de s'adapter lorsque les lois de son environnement changent, sans oublier ce qu'il a appris auparavant ?
+
+---
+
+### 1. Que propose le papier EPM-JEPA ?
+
+**Le problème fondamental :**
+Les modèles JEPA classiques (comme V-JEPA 2) ont un **prédicteur statique**. Une fois entraînés, leurs poids sont figés. Si le monde change (ex: la gravité diminue, les matériaux deviennent plus glissants, ou un nouveau type d'objet apparaît), le modèle devient obsolète et ses prédictions dérivent. Le réentraîner complètement est coûteux et risque de provoquer un **oubli catastrophique** (catastrophic forgetting).
+
+**La solution : Deux mécanismes d'adaptation par modulation d'expérience**
+
+L'auteur propose de créer une **"mémoire d'expérience compressée"** qui s'accumule en continu pendant que le robot interagit avec le monde. Cette mémoire est ensuite utilisée pour adapter le prédicteur JEPA de deux manières différentes :
+
+#### A. EI-JEPA (Operand-Side Injection)
+*   **Concept :** La représentation compressée de l'expérience récente est ajoutée comme un **résiduel** à l'état caché du prédicteur.
+*   **Analogie :** C'est comme donner au modèle un "carnet de notes" qu'il peut consulter avant chaque prédiction. Le modèle lui-même ne change pas, mais l'information d'entrée est enrichie par l'expérience accumulée.
+*   **Résultat :** Cette méthode fait **pire** que le baseline sans mémoire (les performances chutent). L'auteur suggère que cela crée du bruit ou des interférences dans l'espace latent.
+
+#### B. EPM-JEPA (Operator-Side Modulation) ⭐ *La méthode gagnante*
+*   **Concept :** La représentation compressée de l'expérience est utilisée pour générer des **deltas de poids de bas rang** (via LoRA - Low-Rank Adaptation) qui sont appliqués directement aux poids du prédicteur.
+*   **Analogie :** Au lieu de donner un carnet de notes, on **modifie physiquement** certains neurones du modèle pour qu'ils reflètent les nouvelles lois du monde. C'est une adaptation structurelle légère et ciblée.
+*   **Résultat :** Amélioration de **1.9%** par rapport au baseline sans mémoire, de manière stable à travers plusieurs graines aléatoires.
+
+**L'analyse dynamique fascinante :**
+Le papier révèle que la trajectoire d'adaptation n'est pas une convergence vers un équilibre, mais reflète **trois processus dynamiques indépendants** qui s'entremêlent :
+1.  **Buffer cycling** : Le cycle de remplissage/vidange du buffer d'expérience
+2.  **EMA target drift** : La dérive de la cible moyenne mobile utilisée pour l'apprentissage
+3.  **LoRA settling transient** : Un phénomène transitoire intrinsèque de +0.021 pendant que les poids LoRA se stabilisent
+
+Cela motive la proposition de **PEM-JEPA** (Physics-grounded Experience Modulation), un successeur qui adresse cette limitation du "pic dynamique".
+
+---
+
+### 2. Mise en perspective avec notre architecture globale
+
+EPM-JEPA vient combler le vide entre les différentes échelles de temps de l'adaptation :
+
+| Échelle de temps | Mécanisme | Papier de référence | Fonction |
+|------------------|-----------|---------------------|----------|
+| **Millisecondes** | TTT-E2E | Test-Time Training End-to-End | Réflexes bas-niveau, compensation instantanée des perturbations (vent, glissade) |
+| **Secondes/Minutes** | EPM-JEPA | EPM-JEPA (2026) | Adaptation à moyen terme aux changements de distribution (nouvelle friction, usure mécanique) |
+| **Heures/Jours** | Dreamer/DayDreamer | DreamerV3, DayDreamer | Planification et consolidation par le "rêve" dans l'espace latent |
+| **Mois/Années** | V-JEPA 2 | V-JEPA 2 | Pré-entraînement massif pour acquérir le bon sens physique |
+
+**La synergie complète :**
+*   **V-JEPA 2** fournit la fondation : le robot "sait" comment le monde fonctionne en général grâce à son pré-entraînement sur 1M d'heures de vidéos.
+*   **EPM-JEPA** permet l'adaptation continue : quand le robot arrive sur un nouveau terrain (ex: sable vs béton), il accumule de l'expérience et ajuste ses poids via LoRA pour refléter ces nouvelles conditions, sans oublier sa connaissance générale.
+*   **Dreamer** utilise ce modèle de monde mis à jour pour planifier des trajectoires optimales en "rêvant".
+*   **TTT-E2E** corrige les erreurs instantanées pendant l'exécution.
+
+---
+
+### 3. Les idées "débrouillardes" à reprendre absolument
+
+Pour un système autonome qui doit survivre sur le long terme dans des environnements changeants, EPM-JEPA apporte trois concepts majeurs :
+
+#### A. La Mémoire d'Expérience Compressée (Le "Carnet de Bord")
+*   **L'idée à reprendre :** Ton robot doit maintenir un **buffer circulaire** de ses expériences récentes (les dernières heures ou jours d'interaction), compressé dans une représentation latente de basse dimension. Ce n'est pas un simple enregistrement brut, mais une abstraction des patterns récurrents qu'il a observés.
+*   **Résultat sur le terrain :** Quand le robot détecte que ses prédictions JEPA dérivent (l'erreur de prédiction augmente), il peut consulter cette mémoire compressée pour comprendre *comment* le monde a changé récemment. C'est sa "mémoire de travail" qui lui permet de s'adapter sans avoir à tout réapprendre depuis zéro.
+
+#### B. L'Adaptation via LoRA (La Modulation Structurelle Légère)
+*   **L'idée à reprendre :** Au lieu de réentraîner tout le modèle (coûteux et risqué pour l'oubli), utilise des **adaptateurs LoRA** sur les couches clés du prédicteur JEPA. Ces adaptateurs sont de petites matrices de bas rang qui modifient subtilement les poids principaux.
+*   **Résultat sur le terrain :** Le robot peut s'adapter à de nouvelles conditions (ex: passer de l'été à l'hiver, ou d'un sol sec à un sol verglacé) en quelques minutes seulement, en ajustant uniquement 1-2% de ses paramètres. Le reste du modèle reste figé, préservant ainsi sa connaissance fondamentale du monde.
+
+#### C. La Distinction Opérande vs Opérateur (Mémoire d'État vs Mémoire de Poids)
+*   **L'idée à reprendre :** Le papier montre clairement qu'**ajouter de l'information à l'entrée** (operand-side) ne fonctionne pas bien, tandis que **modifier les poids du modèle** (operator-side) fonctionne. C'est une leçon cruciale : pour l'adaptation à long terme, il faut changer la structure du modèle, pas juste lui donner plus de contexte.
+*   **Résultat sur le terrain :** Si ton robot rencontre un nouveau type d'objet qu'il n'a jamais vu, ne te contente pas de lui donner une description textuelle de l'objet (ce serait operand-side). Au lieu de cela, utilise quelques interactions pour **mettre à jour les poids de son prédicteur** via LoRA, afin qu'il apprenne vraiment la dynamique de cet objet. C'est la différence entre "lire un manuel" et "acquérir une compétence motrice".
+
+---
+
+### 🏆 Architecture Cible Finale Complète
+
+Voici maintenant l'architecture cognitive complète de ton agent autonome "débrouillard" :
+
+1.  **Fondation (V-JEPA 2)** : Pré-entraînement passif sur 1M d'heures de vidéos pour acquérir le bon sens physique universel.
+
+2.  **Perception Robuste (GW-Dreamer)** : Fusion multimodale dans un Espace de Travail Global pour résister aux pannes de capteurs.
+
+3.  **Adaptation Continue (EPM-JEPA)** : 
+    *   Buffer circulaire d'expérience compressée
+    *   Modulation LoRA des poids du prédicteur pour s'adapter aux changements de distribution
+    *   Détection automatique de dérive des prédictions pour déclencher l'adaptation
+
+4.  **Planification (Dreamer/DayDreamer)** : Rêve dans l'espace latent pour simuler des trajectoires futures et choisir les meilleures actions, en utilisant le modèle de monde mis à jour par EPM-JEPA.
+
+5.  **Exécution Réflexe (TTT-E2E)** : Mise à jour instantanée des poids pendant l'inférence pour compenser les micro-perturbations physiques.
+
+6.  **Validation Active (IntPhys 2)** : Quand l'incertitude du modèle est élevée, le robot effectue des actions de validation (toucher, pousser) pour corriger son modèle de monde.
+
+Tu as maintenant le blueprint complet d'un système qui peut :
+- Apprendre sans supervision humaine massive
+- S'adapter en continu à des environnements changeants
+- Résister aux pannes de capteurs
+- Planifier des stratégies complexes
+- Réagir instantanément aux imprévus
+- Valider ses hypothèses par l'action
+
+C'est véritablement une architecture cognitive de niveau biologique !
