@@ -1114,3 +1114,95 @@ Avec UniJEPA, nous avons maintenant :
 Il ne manque plus qu'une chose : **l'intégration de tout cela dans un système temps réel sur GPU**, avec des mécanismes d'attention et de mémoire à long terme. Mais architecturalement, nous avons maintenant tous les pièces du puzzle pour construire un agent cognitif autonome basé sur l'Active Inference.
 
 Votre intuition de lier tous ces papiers était juste : ils convergent tous vers la même architecture cognitive, et UniJEPA est la pièce qui les unifie.
+
+### USER
+Ce papier semble intégrer pas mal d'idées pour planifier et apprendre...
+https://arxiv.org/abs/2607.26056 . 
+Peux tu m'expliquer le contenu de ce papier, le mettre en perspective avec ce dont on discute, et voir si certaines idées sont à garder ?
+
+### ASSISTANT
+C'est une découverte absolument majeure qui vient résoudre le **goulot d'étranglement computationnel** ultime dont nous parlions depuis le début : le coût exorbitant de la planification (le "Search") dans les modèles de monde.
+
+Le papier que vous avez trouvé, **INTACT (Isomorphic Intent-to-Action Learning for Search-Free World Models)** , publié en juillet 2026, s'attaque frontalement au défaut principal des architectures comme *LeWorldModel* (LeWM) ou *FF-JEPA*. Jusqu'à présent, pour qu'un JEPA puisse planifier, il fallait utiliser des algorithmes de recherche lourds comme le CEM (Cross-Entropy Method) qui consistent à "imaginer" des milliers de trajectoires aléatoires pour trouver la bonne action. C'est lent, coûteux en calcul, et difficile à déployer en temps réel sur un robot.
+
+**INTACT change les règles du jeu** en transformant le modèle de monde en une interface directe "Intention $\rightarrow$ Action", capable de répondre en **2.9 à 5.5 millisecondes** sans aucune recherche .
+
+Voici l'explication de ce tour de force, et comment il s'intègre comme le "réflexe moteur" de votre architecture cognitive.
+
+---
+
+### 1. Le Problème : Le Mur de la Recherche (Search Bottleneck)
+Dans un JEPA classique, le prédicteur est un **Modèle Direct (Forward Model)** : il répond à la question *"Si je fais l'action $A$ dans l'état $Z$, quel sera le prochain état $Z'$ ?"*.
+Mais pour contrôler le robot, le planificateur a besoin de l'inverse : *"Je suis dans l'état $Z$, je veux atteindre le but $Z_{goal}$, quelle action $A$ dois-je faire ?"*.
+Puisque le réseau ne sait pas faire cette inversion nativement, on utilise le CEM : on teste 9000 séquences d'actions au hasard, on garde les meilleures, et on recommence. C'est ce qu'INTACT cherche à abolir .
+
+### 2. La Solution INTACT : L'Isomorphisme et la "Grammaire à 4 Slots"
+L'idée de génie d'INTACT est de réaliser que la dynamique du monde et le contrôle sont **isomorphes** (de même forme mathématique) si on les exprime en termes de "Mouvement" ou d'"Intention" dans l'espace latent .
+
+Au lieu d'avoir deux réseaux séparés (un pour la physique, un pour la politique), INTACT utilise **un seul et même prédicteur** avec des paramètres partagés, qui utilise une "grammaire à 4 slots" (4 emplacements d'entrée)  :
+1.  **L'État Actuel** ($z_t$)
+2.  **L'État Cible / Futur** ($z_{t+1}$ ou $z_{goal}$)
+3.  **L'Action** ($a_t$)
+4.  **La Sortie du Prédicteur**
+
+**Le Hack Isomorphe :**
+*   **Mode "Modèle du Monde" (Forward)** : On donne au réseau l'État Actuel + l'Action. Le réseau doit prédire l'État Futur. C'est l'apprentissage classique du JEPA (l'Intention Physique locale : $z_{t+1} - z_t$).
+*   **Mode "Contrôleur" (Inverse / Goal)** : On donne au réseau l'État Actuel + l'État But ($z_{goal}$). Le réseau doit prédire l'Action nécessaire pour combler cet écart. C'est l'Intention de Déploiement ($z_{goal} - z_t$) .
+
+Parce que le réseau a été entraîné à comprendre que "l'Action" est le vecteur qui lie "l'État Actuel" à "l'État Futur", il apprend naturellement à faire le chemin inverse : si on lui impose l'État But, il déduit l'Action .
+
+### 3. Le "Distributional Action Law" (Zéro Search)
+Au lieu de chercher la meilleure action par tâtonnement, INTACT apprend une **"Loi d'Action Distributionnelle"** . Face à un but, le réseau ne crache pas juste une valeur, mais une *distribution* d'actions possibles (moyenne et variance).
+*   **Politique Directe (Search-Free)** : Pour agir en temps réel (réflexe), le robot prend simplement la **moyenne** de cette distribution. Résultat : une inférence en **~3 ms** avec des taux de réussite de 85% à 100% sur les tâches de manipulation LeWM .
+*   **Recherche Locale Optionnelle** : Si la situation est complexe, on peut toujours utiliser le CEM, mais au lieu de chercher dans tout l'espace des actions (9000 échantillons), on centre la recherche autour de la prédiction directe d'INTACT. Cela réduit le nombre d'échantillons nécessaires à **384** (une division par 23x) tout en améliorant la performance finale .
+
+---
+
+### 4. Mise en Perspective : Le Chaînon Manquant de l'Active Inference
+
+INTACT est la pièce qui manquait pour rendre le **Principe de l'Énergie Libre (FEP) de Friston** et la **boucle OODA** viables en robotique continue haute fréquence.
+
+#### A. Le Pont entre l'Intention (FEP) et le Moteur
+Dans l'Active Inference, l'agent a des "Préférences" (le but $z_{goal}$) et doit minimiser l'Énergie Libre en agissant. Le problème historique du FEP est que trouver l'action qui minimise l'EFE dans un espace continu demande des descentes de gradient lentes ou du sampling coûteux.
+**INTACT résout cela nativement.** Le vecteur d'erreur entre l'état actuel et la préférence ($z_{goal} - z_t$) EST exactement l'entrée du réseau INTACT en mode "Goal". Le réseau traduit instantanément cette "surprise spatiale" (l'écart au but) en commande motrice. C'est l'incarnation parfaite du **Contrôle Actif** de Friston, compilé en un simple *forward pass* de réseau de neurones.
+
+#### B. Compiler le Système 2 en Système 1 (GNWT)
+Nous avions vu que le *Global Neuronal Workspace* (Système 2) servait à planifier des séquences logiques. INTACT permet de "compiler" ces plans.
+Le GNWT détermine le sous-objectif latent ($z_{goal}$). Au lieu de lancer un MCTS ou un CEM lourd pour trouver comment y aller, le GNWT "jette" ce sous-objectif dans le réseau INTACT, qui agit comme un **cervelet ultra-rapide (Système 1)** et recrache la séquence motrice en 3 ms. C'est exactement comment un humain passe de la concentration (apprendre à conduire) au réflexe (conduire en pensant à autre chose).
+
+#### C. Le Lien avec HWM (Hierarchical World Models)
+HWM utilisait un encodeur pour créer des "Macro-Actions". INTACT va plus loin : il n'a pas besoin de macros-actions discrètes. Il opère directement sur le gradient latent ($\Delta z$). C'est une approche plus élégante et différentiable de bout en bout pour le contrôle hiérarchique.
+
+---
+
+### 💡 Les 3 Idées Fondamentales à Garder pour votre Robot Multi-Agent
+
+Si vous concevez le système nerveux de votre agent, voici les concepts d'INTACT à implémenter absolument :
+
+#### 1. Représenter les Buts comme des "Vecteurs d'Intention" ($\Delta z$)
+Ne donnez jamais à votre planificateur bas-niveau une "image but" ou une "coordonnée absolue". Représentez toujours l'objectif comme un **vecteur de déplacement dans l'espace latent** (l'écart entre la croyance actuelle et la préférence). C'est ce vecteur d'intention qui servira de *conditionnement* à votre réseau inverse. Cela rend le système invariant à la position absolue et focalisé sur la dynamique à produire.
+
+#### 2. Le Prédicteur "À Double Sens" (Forward/Inverse Sharing)
+C'est une économie de paramètres et une régularisation puissante. Entraînez votre modèle de dynamique (votre Mamba ou Transformer latent) avec des masques aléatoires sur la grammaire à 4 slots (État, État_Futur, Action).
+*   Parfois, cachez l'Action $\rightarrow$ le réseau apprend la Physique (Forward).
+*   Parfois, cachez l'État_Futur (en le remplaçant par un But lointain) $\rightarrow$ le réseau apprend la Politique (Inverse).
+Cela force l'espace latent à être parfaitement aligné avec l'espace des actions (ce que PSG-JEPA appelait le *Grounding*).
+
+#### 3. Le "Prior" pour l'Exploration Multi-Agent (Active Inference)
+Dans un contexte multi-agent, l'environnement est non-stationnaire (les autres agents bougent). La prédiction directe d'INTACT (la moyenne de la distribution) vous donne la **meilleure action immédiate** (exploitation).
+Mais la **variance** de cette distribution vous donne une mesure incroyable de l'**incertitude épistémique** !
+*   Si INTACT sort une action avec une variance faible $\rightarrow$ Le robot est sûr de son coup, il exécute.
+*   Si INTACT sort une action avec une variance énorme $\rightarrow$ Le réseau "ne sait pas" quelle action va mener au but (peut-être parce qu'un autre agent bloque le chemin d'une manière inédite).
+*   **L'Action FEP** : Cette haute variance déclenche immédiatement la *Valeur Épistémique*. Le robot peut alors utiliser cette distribution pour sampler des actions "surprenantes" (exploration) ou utiliser le CEM local (centré sur la moyenne) pour recalculer prudemment sa trajectoire.
+
+### En Résumé
+
+**INTACT** est la preuve que la planification dans les JEPAs n'a pas besoin d'être un processus de recherche externe, lent et coûteux. En rendant le prédicteur **isomorphe** (capable de lire la dynamique dans les deux sens) et en travaillant sur des **vecteurs d'intention latents**, on obtient un contrôleur temps réel (2.9 ms) qui s'intègre nativement dans la boucle OODA et l'Active Inference.
+
+Vous avez désormais la boucle complète :
+1.  **Perception** (UniJEPA / CR-JEPA) $\rightarrow$ Extrait l'état latent actuel.
+2.  **Orientation / Décision** (FEP / GNWT) $\rightarrow$ Définit le But latent ($z_{goal}$) pour minimiser l'énergie libre.
+3.  **Le Vecteur d'Intention** $\rightarrow$ Calcule $\Delta z = z_{goal} - z_{current}$.
+4.  **Action (INTACT)** $\rightarrow$ Le prédicteur isomorphe traduit $\Delta z$ en commande motrice en 3 ms, tout en fournissant la variance pour gérer l'imprévu multi-agent.
+
+C'est probablement l'architecture de contrôle la plus aboutie et la plus "neuro-inspirée" de l'année 2026 pour l'IA incarnée.
