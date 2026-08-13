@@ -1206,3 +1206,263 @@ Vous avez désormais la boucle complète :
 4.  **Action (INTACT)** $\rightarrow$ Le prédicteur isomorphe traduit $\Delta z$ en commande motrice en 3 ms, tout en fournissant la variance pour gérer l'imprévu multi-agent.
 
 C'est probablement l'architecture de contrôle la plus aboutie et la plus "neuro-inspirée" de l'année 2026 pour l'IA incarnée.
+
+### USER
+ce papier semble porter aussi l'idée que le but doit être donné dans un espace d'intention, mais selble bien différent coté approche. 
+https://arxiv.org/abs/2608.10780
+Peux tu m'expliquer le contenu de ce papier, le mettre en perspective avec ce dont on discute, et voir si certaines idées sont à garder ?
+
+### ASSISTANT
+Excellent ! Vous avez mis le doigt sur un papier fascinant qui apporte une **dimension sémantique explicite** à la notion d'espace d'intention. Laissez-moi décortiquer **JEPA-WAM** et le positionner par rapport à INTACT, HWM et notre architecture cognitive globale.
+
+---
+
+## 1. Le Concept Central : Deux Types de Futurs
+
+**JEPA-WAM**  introduit une distinction conceptuelle puissante que nous n'avions pas vue aussi clairement formulée :
+
+### Futur Physique Court-Terme (Physical Future)
+- **Ce que c'est** : L'évolution locale immédiate de la scène dans les prochaines frames
+- **Échelle** : ~10-50 pas de temps
+- **Exemple** : "Si je bouge mon bras de 5cm vers la droite, la tasse va glisser de 3cm"
+- **Ce que font** : La plupart des modèles de monde classiques (LeWM, V-JEPA, etc.)
+
+### Futur Sémantique de Stade (Stage-Level Semantic Future)
+- **Ce que c'est** : La progression logique de la tâche d'un **stade** au suivant
+- **Échelle** : Secondes à minutes (plusieurs dizaines/centaines de pas)
+- **Exemple** : "Je suis au stade 'saisir la tasse' → prochain stade 'transporter vers la cible' → stade final 'poser délicatement'"
+- **Ce que fait** : Stage-JEPA (la contribution du papier)
+
+**L'intuition clé** : Pour manipuler habilement, un robot doit comprendre non seulement **comment la physique évolue** (futur physique), mais aussi **où il en est dans la structure logique de la tâche** (futur sémantique).
+
+---
+
+## 2. L'Architecture JEPA-WAM
+
+Voici comment le système est organisé :
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  INSTRUCTION LINGUISTIQUE : "Prends la tasse rouge et       │
+│                             pose-la sur l'étagère"          │
+└────────────────────────┬────────────────────────────────────┘
+                         │
+┌────────────────────────▼────────────────────────────────────┐
+│  STAGE-JEPA (Prédicteur Sémantique)                         │
+│  • Encodeur gelé : V-JEPA2                                  │
+│  • Input : observation actuelle + instruction               │
+│  • Output : latent target du PROCHAIN STADE                 │
+│  • Exemple : z_stage_next = "tasse en main, près étagère"  │
+└────────────────────────┬────────────────────────────────────┘
+                         │ (z_stage_next = but intermédiaire)
+┌────────────────────────▼────────────────────────────────────┐
+│  WORLD ACTION MODEL (WAM) basé sur Motus                    │
+│  • Prédit le futur physique court-terme                     │
+│  • Génère les actions pour atteindre z_stage_next           │
+│  • Gère la physique fine et l'exécution motrice             │
+└────────────────────────┬────────────────────────────────────┘
+                         │
+┌────────────────────────▼────────────────────────────────────┐
+│  EXÉCUTION : Actions motrices réelles                       │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**Le flux** :
+1. Stage-JEPA "comprend" où on en est dans la tâche et prédit le latent du prochain stade logique
+2. Ce latent devient le **but conditionné** pour le WAM
+3. Le WAM planifie les actions physiques pour atteindre ce stade
+4. Une fois le stade atteint, Stage-JEPA prédit le stade suivant
+5. On répète jusqu'à complétion de la tâche
+
+---
+
+## 3. Mise en Perspective : JEPA-WAM vs INTACT vs HWM
+
+Comparons ces trois approches qui utilisent toutes l'espace latent pour représenter les buts :
+
+| Critère | **INTACT** | **HWM** | **JEPA-WAM** |
+|---------|-----------|---------|--------------|
+| **Type de hiérarchie** | Aucune (plat) | Temporelle (macro-actions → actions) | Sémantique (stades → physique) |
+| **Représentation du but** | Vecteur d'intention Δz = z_goal - z_current | Sous-objectif latent du modèle haut-niveau | Latent du prochain stade de tâche |
+| **Conditionnement** | État courant + but final | État courant + but final | État courant + **instruction linguistique** |
+| **Architecture** | Réseau isomorphe (Forward/Inverse partagé) | Deux modèles de monde à échelles différentes | JEPA séparé + WAM |
+| **Niveau d'abstraction** | Continu (dynamique latente) | Hiérarchique temporel | Hiérarchique sémantique |
+| **Planification** | Directe (pas de search) ou CEM local | CEM hiérarchique | WAM autoregressif |
+| **Force principale** | Vitesse d'inférence (2.9ms) | Efficacité sur long horizon | Compréhension de la structure de tâche |
+| **Faiblesse** | Pas de compréhension sémantique explicite | Pas de conditionnement linguistique | Dépend d'un JEPA pré-entraîné (V-JEPA2) |
+
+### Les Complémentarités
+
+**INTACT** est excellent pour le **contrôle réactif** : "Je suis ici, je veux aller là-bas, quelle action faire maintenant ?"
+
+**HWM** est excellent pour la **planification temporelle** : "Pour atteindre ce but lointain, je dois d'abord faire cette macro-action, puis celle-ci..."
+
+**JEPA-WAM** est excellent pour la **compréhension de tâche** : "Cette instruction demande 5 stades logiques, je suis au stade 2, voici à quoi ressemble le stade 3..."
+
+---
+
+## 4. Idées Nouvelles à Garder
+
+### 💡 Idée 1 : La Notion de "Stade Sémantique"
+
+C'est probablement **l'apport conceptuel le plus important** de ce papier. 
+
+**Pourquoi c'est puissant** :
+- Les tâches de manipulation ne sont pas des trajectoires continues lisses
+- Elles ont une **structure discrète sous-jacente** : saisir → transporter → aligner → poser
+- Chaque stade a ses propres contraintes et affordances
+- En prédissant le prochain stade (plutôt que le prochain état physique), on force le modèle à comprendre cette structure
+
+**Application pour votre robot** :
+```python
+# Au lieu de :
+goal = "position finale de l'objet"
+
+# Penser en stades :
+stages = [
+    "objet au sol, main vide",
+    "main au-dessus de l'objet", 
+    "objet saisi, main fermée",
+    "objet transporté près de la cible",
+    "objet posé, main ouverte"
+]
+current_stage = detect_current_stage(observation)
+next_stage = stages[current_stage + 1]
+goal_latent = stage_jepa.predict(next_stage, instruction)
+```
+
+### 💡 Idée 2 : Le Conditionnement Linguistique pour Définir les Buts
+
+Contrairement à INTACT et HWM qui travaillent avec des buts visuels ou latents, **JEPA-WAM utilise le langage** pour définir la progression de tâche .
+
+**Pourquoi c'est important** :
+- Le langage est un **espace d'intention naturellement structuré**
+- "Prends la tasse" implique une séquence logique de sous-tâches
+- Le modèle peut inférer les stades à partir de la description verbale
+- Cela ouvre la voie à des instructions complexes : "Range la cuisine" → inférer tous les stades nécessaires
+
+**Pour votre robot multi-agent** :
+- Les agents peuvent se communiquer des **intentions linguistiques**
+- "Je vais bloquer l'adversaire pendant que tu contournes"
+- Chaque agent décompose cette instruction en stades pour son propre planificateur
+
+### 💡 Idée 3 : L'Encodeur Gelé comme "Extracteur de Concepts"
+
+JEPA-WAM utilise **V-JEPA2 gelé** comme extracteur de features . C'est une approche pragmatique intéressante.
+
+**Avantages** :
+- On profite de la puissance d'un JEPA pré-entraîné sur des données massives
+- On ne risque pas de "casser" les représentations pendant l'entraînement du planificateur
+- Stage-JEPA apprend seulement à prédire dans cet espace déjà riche
+
+**Pour votre architecture** :
+- Vous pourriez utiliser **UniJEPA** ou **SR-JEPA** comme encodeur gelé
+- Votre Stage-JEPA (ou équivalent) apprendrait à naviguer dans cet espace
+- Votre contrôleur bas-niveau (type INTACT) exécuterait les actions
+
+### 💡 Idée 4 : La Séparation Explicite Physique/Sémantique
+
+Le papier montre qu'il faut **deux modèles spécialisés**  :
+- Un pour la physique fine (WAM/Motus)
+- Un pour la logique de tâche (Stage-JEPA)
+
+**Pourquoi c'est mieux qu'un modèle unique** :
+- La physique est continue, différentiable, locale
+- La sémantique est discrète, symbolique, globale
+- Les forcer dans le même réseau crée des conflits d'optimisation
+- La séparation permet d'entraîner chaque module avec son objectif propre
+
+---
+
+## 5. Intégration dans l'Architecture Cognitive Complète
+
+Voici comment JEPA-WAM s'insère dans notre architecture globale :
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  ÉTAGE 5 : COMPRÉHENSION DE TÂCHE (Style JEPA-WAM)         │
+│  • Stage-JEPA conditionné par instructions                  │
+│  • Décompose "Range la cuisine" en stades logiques          │
+│  • Prédit le latent du prochain stade                       │
+│  • Peut être conditionné par langage OU par buts symboliques│
+└────────────────────────┬────────────────────────────────────┘
+                         │ (z_stage_next)
+┌────────────────────────▼────────────────────────────────────┐
+│  ÉTAGE 4 : PLANIFICATION HIÉRARCHIQUE (Style HWM)          │
+│  • Modèle haut-niveau avec macro-actions                    │
+│  • Décompose z_stage_next en séquence de sous-objectifs     │
+│  • Gère l'allocation temporelle                             │
+└────────────────────────┬────────────────────────────────────┘
+                         │ (sous-objectifs latents)
+┌────────────────────────▼────────────────────────────────────┐
+│  ÉTAGE 3 : CONTRÔLE RÉACTIF (Style INTACT)                  │
+│  • Réseau isomorphe pour inférence directe                  │
+│  • Traduit sous-objectifs → actions en 2.9ms               │
+│  • Pas de search nécessaire pour réactions rapides          │
+└────────────────────────┬────────────────────────────────────┘
+                         │ (actions primitives)
+┌────────────────────────▼────────────────────────────────────┐
+│  ÉTAGE 2 : MODÈLE DU MONDE (UniJEPA / Mamba-Variational)   │
+│  • Prédiction temporelle (équivariance)                     │
+│  • Prédiction photométrique (invariance)                    │
+│  • Gestion de l'incertitude pour Active Inference           │
+└────────────────────────┬────────────────────────────────────┘
+                         │
+┌────────────────────────▼────────────────────────────────────┐
+│  ÉTAGE 1 : PERCEPTION MULTI-MODALE (CR-JEPA / SR-JEPA)     │
+│  • Fusion capteurs                                          │
+│  • Représentation 3D spatiale                               │
+│  • Ancrage proprioceptif (PSG-JEPA)                         │
+└─────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 6. Synthèse : Ce que JEPA-WAM Nous Apprend
+
+### Les 3 Leçons Clés
+
+1. **La hiérarchie n'est pas seulement temporelle, elle est aussi sémantique**
+   - HWM nous a appris à hiérarchiser le temps (macro-actions vs actions)
+   - JEPA-WAM nous apprend à hiérarchiser la **logique de tâche** (stades vs physique)
+   - Les deux sont complémentaires et nécessaires
+
+2. **Le langage est un espace d'intention naturel**
+   - Les instructions verbales contiennent implicitement la structure de stades
+   - Un JEPA conditionné par le langage peut inférer cette structure
+   - C'est plus riche que de simples coordonnées spatiales
+
+3. **La spécialisation modulaire est supérieure à l'unification forcée**
+   - INTACT unifie Forward/Inverse dans un seul réseau (élégant)
+   - JEPA-WAM sépare sémantique/physique dans deux modules (pragmatique)
+   - Pour des tâches complexes, la séparation gagne
+
+### Pour Votre Robot Multi-Agent
+
+**JEPA-WAM apporte la brique "compréhension de mission"** :
+- Quand vous donnez un ordre complexe à votre robot ("Sécurise la zone et récupère l'objet")
+- Stage-JEPA décompose cela en stades : "Scanner → Identifier menaces → Neutraliser → Localiser objet → Récupérer"
+- Chaque stade devient un but latent pour les étages inférieurs
+- Le robot peut même **communiquer ses stades** à d'autres agents pour coordination
+
+### Les Limites à Garder en Tête
+
+1. **Dépendance à V-JEPA2** : Si l'encodeur gelé ne capture pas les bons concepts, tout le système souffre
+2. **Pas de gestion explicite de l'incertitude** : Contrairement à UA-JEPA, pas de modélisation probabiliste des stades
+3. **Pas d'apprentissage par renforcement** : Le système est supervisé, pas de découverte autonome de nouveaux stades
+
+---
+
+## Conclusion : Le Puzzle se Complète Encore
+
+**JEPA-WAM** n'est pas en opposition avec INTACT ou HWM — il les **complète** en ajoutant une dimension sémantique explicite.
+
+Vous avez maintenant :
+- **INTACT** pour le contrôle réactif ultra-rapide
+- **HWM** pour la planification temporelle hiérarchique  
+- **JEPA-WAM** pour la compréhension sémantique de tâche
+- **Active Inference** pour la gestion de l'incertitude et la curiosité
+
+Ces quatre approches, combinées avec nos précédentes découvertes (UniJEPA, SR-JEPA, PSG-JEPA, PhyLatent), forment une architecture cognitive remarquablement complète pour un agent autonome.
+
+L'idée la plus profonde de JEPA-WAM est peut-être celle-ci : **un robot intelligent ne doit pas seulement comprendre la physique du monde, il doit comprendre la structure logique des tâches qu'il accomplit**. Et cette structure peut être apprise via un JEPA conditionné par le langage, opérant dans le même espace latent que le modèle du monde physique.
