@@ -234,3 +234,135 @@ Cependant, cela ne tue pas nécessairement la théorie du Predictive Processing 
 > "Le Predictive Coding est une métaphore puissante pour comprendre la perception, mais son implémentation algorithmique classique est biologiquement irréaliste. Comme le souligne Charles Simon, le cerveau ne fait pas de calculs différentiels continus sur des poids précis ; il gère du bruit, des impulsions discrètes et des timings complexes. La vraie question n'est pas 'le cerveau fait-il du PC ?', mais 'quel mécanisme neuronal robuste et discret permet d'approcher les fonctions décrites par le PC ?'."
 
 Si vous voulez creuser, je peux vous trouver des papiers spécifiques sur les **"Spiking Neural Networks for Predictive Coding"** qui tentent de répondre directement à la critique de Simon.
+
+### USER
+Je suis tombé sur ce papier: 
+https://arxiv.org/abs/2510.23258
+Il semble s'inspirer de l'active inference pour des applications robotique, et parle de World Model comme JEPA, mais je n'ai pas trop compris son approche exacte, son socle technologique.
+
+Peux tu m'expliquer ce qu'il dit, et le mettre en perspective avec ce dont on discute, puis me dire s'il y a de bonnes idées à reprendre ?
+
+### ASSISTANT
+Ce papier (arXiv:2510.23258, *Deep Active Inference with Diffusion Policy and Multiple Timescale World Model for Real-World Exploration and Navigation*) est un excellent exemple de la manière dont les neurosciences théoriques (comme l'Inférence Active) sont traduites en ingénierie robotique de pointe. 
+
+Voici une analyse détaillée de son contenu, sa mise en perspective avec nos discussions précédentes, et les idées clés que vous pouvez en retirer.
+
+---
+
+### 1. Que dit ce papier et quel est son socle technologique ?
+
+L'objectif des auteurs est de créer un agent robotique capable de naviguer dans le monde réel en unifiant deux comportements souvent traités séparément en robotique : **l'exploration** (aller voir des zones inconnues pour cartographier l'environnement) et **la navigation orientée vers un but** (atteindre une cible précise).
+
+Pour ce faire, ils construisent une architecture en trois blocs technologiques :
+
+1. **Le cadre théorique : L'Inférence Active (Active Inference) et l'Énergie Libre Attendue (EFE)**  
+   Au lieu d'utiliser un algorithme classique d'apprentissage par renforcement (avec une fonction de récompense externe), le robot choisit ses actions pour minimiser l'**Énergie Libre Attendue (Expected Free Energy, EFE)**. Mathématiquement, l'EFE se décompose en deux termes :
+   - *La valeur épistémique* : Le désir de réduire l'incertitude (c'est le moteur de l'exploration/curiosité).
+   - *La valeur extrinsèque* : Le désir d'atteindre un état préféré (c'est le moteur de la poursuite du but).
+
+2. **Le Modèle du Monde (World Model) à échelles de temps multiples (MTRSSM)**  
+   C'est le "moteur d'imagination" du robot. Basé sur des architectures de type *Dreamer* (Hafner et al.), ce modèle apprend une représentation latente compressée de l'environnement. Sa particularité ici est d'être "à échelles de temps multiples" : il modélise à la fois les dynamiques rapides (ex: un obstacle qui apparaît soudainement) et lentes (ex: la progression globale dans un labyrinthe). Il permet au robot de simuler ("imaginer") les conséquences futures d'une action sans avoir à la réaliser physiquement.
+
+3. **La Politique de Diffusion (Diffusion Policy)**  
+   Au lieu de calculer une seule action déterministe, le système utilise un modèle de diffusion (similaire à ceux utilisés pour générer des images comme DALL-E ou Midjourney, mais appliqué à des séquences de mouvements) pour générer un **éventail diversifié de trajectoires candidates**. Le Modèle du Monde simule ensuite le futur pour chaque candidate, calcule l'EFE de chacune, et le robot exécute la séquence qui minimise le mieux cette énergie libre.
+
+---
+
+### 2. Mise en perspective avec nos discussions précédentes
+
+Ce papier fait le pont parfait entre la théorie abstraite et la réalité computationnelle, mais il révèle aussi les limites de la "plausibilité biologique".
+
+* **L'accomplissement de la "Beast Machine" (Anil Seth)** : Ce papier montre concrètement ce que signifie "un système qui prédit pour réguler". Le robot n'attend pas passivement des récompenses ; il génère activement des hypothèses sur le futur et agit pour faire correspondre la réalité à ses préférences (allostase artificielle). L'exploration (valeur épistémique) est l'équivalent computationnel de la curiosité biologique nécessaire à l'Apprentissage Associatif Illimité (Ginsburg & Jablonka) : l'agent va vers l'inconnu pour améliorer son modèle du monde.
+* **Le choc avec la critique de Charles Simon** : C'est ici que le bât blesse si on cherche une *plausibilité biologique stricte*. Bien que le *principe* (minimiser l'incertitude) soit bio-inspiré, le *mécanisme* ne l'est pas du tout. 
+  - Le calcul de l'EFE et l'entraînement du MTRSSM reposent sur la **rétropropagation du gradient** (backpropagation) et des calculs matriciels massifs sur GPU.
+  - Générer des centaines de trajectoires via un modèle de diffusion et les évaluer une par une est d'une lourdeur computationnelle que le cerveau biologique, avec ses neurones discrets, bruités et à faible consommation, ne pourrait pas supporter en temps réel. 
+  - Comme le disait Simon : c'est une belle ingénierie logicielle qui *imite* la fonction, mais pas le mécanisme neuronal réel.
+
+---
+
+### 3. Les bonnes idées à reprendre (Takeaways)
+
+Même si l'implémentation n'est pas biologiquement plausible, l'**architecture fonctionnelle** de ce papier est extrêmement puissante et contient des idées transférables à d'autres domaines (y compris la modélisation cognitive ou l'IA plus efficace) :
+
+1. **L'unification élégante de l'exploration et de l'exploitation** :  
+   Plutôt que d'ajouter artificiellement un "bonus de curiosité" à une fonction de récompense classique (comme on le fait souvent en apprentissage par renforcement), l'EFE unifie les deux dans une seule et même équation. C'est un cadre mathématiquement plus propre pour penser la prise de décision.
+
+2. **L'"Imagination Latente" (Latent Imagination) comme filtre de sécurité** :  
+   Évaluer les actions en les "rêvant" dans un espace latent compressé avant d'agir est beaucoup plus efficace et sûr que l'essai-erreur dans le monde réel. C'est exactement ce que fait le cerveau humain (simulation mentale) et c'est une architecture à privilégier pour toute IA devant interagir avec un environnement physique.
+
+3. **La génération de candidats diversifiés (plutôt que déterministe)** :  
+   L'idée de générer *plusieurs* futurs possibles (via la Diffusion Policy) et de les évaluer *a posteriori* est plus robuste qu'une politique qui ne sort qu'une seule action. Cela permet de gérer l'ambiguïté et les imprévus, ce qui rejoint l'idée que le cerveau fonctionne par "inférence approximative" et consensus (comme la théorie des "mille cerveaux" de Hawkins).
+
+4. **La hiérarchie temporelle** :  
+   Le fait que le modèle du monde sépare les dynamiques lentes et rapides est crucial. Dans le cerveau comme en robotique, on ne planifie pas un objectif de vie avec la même fréquence de mise à jour que le réflexe d'évitement d'une chute. Modéliser cette hiérarchie est essentiel pour la stabilité du système.
+
+---
+
+### En résumé pour votre veille
+Ce papier est une **preuve de concept majeure** montrant que l'Inférence Active n'est pas qu'une métaphore philosophique pour expliquer la conscience, mais un cadre d'ingénierie viable pour l'autonomie robotique. 
+
+**L'idée à retenir et à partager** : *"Les systèmes intelligents de demain ne devraient pas seulement optimiser des récompenses, mais minimiser activement leur surprise future (Énergie Libre Attendue) en imaginant des scénarios dans un modèle du monde hiérarchique, équilibrant ainsi naturellement la curiosité et la poursuite d'objectifs."*
+
+Si vous souhaitez que j'approfondisse l'un des mécanismes (par exemple, comment exactement l'EFE sépare mathématiquement curiosité et but, ou comment les modèles de diffusion s'appliquent aux trajectoires), n'hésitez pas !
+
+### USER
+Un autre papier semble lié coté concepts :
+https://arxiv.org/abs/2512.01924
+
+Peux tu m'expliquer ce qu'il dit, et le mettre en perspective avec ce dont on discute, puis me dire s'il y a de bonnes idées à reprendre ?
+
+### ASSISTANT
+Ce papier de Fujii et Murata (*Real-World Robot Control by Deep Active Inference With a Temporally Hierarchical World Model*, Dec 2025) est fascinant car il appartient à la même vague de recherche (le laboratoire de Murata à l'Université Keio) que le précédent (Yokozawa), mais il propose une solution radicalement différente au même problème fondamental : **l'explosion combinatoire de l'Inférence Active**.
+
+Voici l'analyse détaillée de ce papier, sa mise en perspective avec notre fil de discussion (notamment la critique de Charles Simon et le concept de JEPA), et les idées clés à en extraire.
+
+---
+
+### 1. Que dit ce papier et quelle est son approche ?
+
+Le problème de l'Inférence Active (Active Inference) classique est qu'elle demande au système de "rêver" (simuler) toutes les conséquences futures de chaque micro-action possible pour choisir celle qui minimise l'Énergie Libre Attendue (EFE). Dans le monde réel, simuler pas-à-pas des milliers de trajectoires de moteurs coûte beaucoup trop cher en temps de calcul.
+
+Pour résoudre cela, les auteurs proposent une architecture en trois blocs qui introduit de l'abstraction :
+1. **Le World Model à hiérarchie temporelle (MTRNN)** : Il encode l'environnement en deux couches d'états cachés : une couche **"rapide"** (dynamique immédiate, ex: vitesse du bras robotique) et une couche **"lente"** (contexte global, ex: position de l'objet cible).
+2. **L'Action Model (Vector Quantization)** : Au lieu de traiter les actions comme des flux continus de valeurs, il compresse des séquences d'actions en "Actions Abstraites" discrètes. C'est un peu comme transformer une infinité de mouvements musculaires possibles en un vocabulaire fini de mots (ex: "saisir", "pousser", "lâcher").
+3. **L'Abstract World Model** : C'est le coup de génie du papier. Au lieu de simuler le futur pas-à-pas (ce qui est lent), ce modèle prend l'état actuel et l'action abstraite, et prédit *directement* le futur état "lent".
+
+**Résultat :** Le robot peut explorer son environnement et manipuler des objets en temps réel, car il n'a plus besoin de simuler chaque milliseconde de son futur. Il planifie par "blocs" sémantiques.
+
+---
+
+### 2. Mise en perspective : Plausibilité biologique et JEPA
+
+C'est ici que ce papier dialogue parfaitement avec nos discussions précédentes.
+
+#### Face à la critique de Charles Simon (Plausibilité Biologique)
+*   **Au niveau synaptique (Bas niveau) : La critique tient toujours.** Comme le précédent papier, celui-ci s'entraîne par rétropropagation du gradient (backpropagation) et utilise des mathématiques continues pour minimiser l'énergie libre. Du point de vue du neurone individuel et des spikes discrets chers à Simon, nous sommes toujours dans l'ingénierie IA et non dans une reproduction exacte de la biologie.
+*   **Au niveau cognitif et systémique (Haut niveau) : Un bond de géant !** Ce papier est conceptuellement **beaucoup plus proche du fonctionnement du cerveau** que l'approche par "diffusion" du papier précédent. Le cerveau humain ne planifie pas en imaginant la contraction exacte de chaque fibre musculaire (niveau rapide) pour attraper une tasse de café. Il utilise des **"primitives motrices"** (nos "actions abstraites" via quantification vectorielle) et fait des sauts cognitifs vers des états futurs lointains (niveau lent). L'architecture proposée mime cette capacité de "chunking" (regroupement) cognitif qui permet à la conscience de travailler sur des macro-états plutôt que sur du bruit de bas niveau.
+
+#### Le lien caché avec le JEPA de Yann LeCun
+Ce papier applique, sans forcément le nommer ainsi, la philosophie du **JEPA (Joint Embedding Predictive Architecture)** à l'Inférence Active. 
+LeCun critique violemment les modèles génératifs qui essaient de prédire le futur pixel par pixel (ou action par action), car l'avenir est fondamentalement stochastique et imprévisible. Le JEPA propose de ne prédire que des *représentations latentes abstraites*. 
+C'est exactement ce que fait l'**Abstract World Model** de Fujii et Murata : il ignore les détails rapides et bruyants pour prédire uniquement la structure sémantique lente du futur. C'est ce qui rend le modèle biologiquement et computationnellement "tractable".
+
+---
+
+### 3. Les bonnes idées à reprendre (Takeaways)
+
+Si vous cherchez à concevoir des systèmes intelligents (IA, robotique, ou modélisation cognitive), voici les concepts puissants de ce papier :
+
+1. **Le vocabulaire d'actions (Vector Quantization)** :
+   Plutôt que de laisser une IA explorer un espace d'actions continu et infini, il faut forcer le système à apprendre un dictionnaire fini de "comportements types" (les actions abstraites). C'est l'équivalent computationnel des affordances et de l'Apprentissage Associatif Illimité (UAL) : l'agent n'apprend pas des réactions à des stimuli bruts, il apprend à associer des *concepts d'action* à des résultats.
+
+2. **La simulation par sauts temporels (Macro-états)** :
+   L'imagination latente ne doit pas être un film au ralenti. Pour être efficace, un modèle du monde doit pouvoir "sauter" le temps. Si je suis dans la pièce A et que mon action abstraite est "aller dans la pièce B", mon modèle du monde doit prédire directement l'état "être dans la pièce B" sans avoir à halluciner les 40 pas intermédiaires. C'est ainsi que l'intuition et la planification humaine fonctionnent.
+
+3. **La dissociation Lent / Rapide** :
+   Séparer la hiérarchie du système en deux vitesses est crucial. 
+   * Le système **lent** gère l'exploration, la curiosité (valeur épistémique) et les buts à long terme.
+   * Le système **rapide** gère l'exécution motrice, l'évitement d'obstacles et la régulation immédiate (valeur extrinsèque).
+   Mélanger les deux crée des systèmes instables ou excessivement lents.
+
+### 💡 En résumé pour votre veille
+Ce papier démontre que pour que l'**Inférence Active** (et par extension le Predictive Coding) fonctionne dans le monde réel sans exploser en complexité, il faut abandonner la simulation continue pas-à-pas. Il faut adopter une **architecture hiérarchique qui discrétise les actions en "primitives" et prédit le futur par sauts sémantiques**. 
+
+C'est une synthèse brillante : elle garde le cadre mathématique unificateur de Friston/Seth (l'énergie libre et la curiosité), mais l'habille avec une ingénierie (JEPA/VQ) qui respecte enfin les limites cognitives et computationnelles des vrais systèmes intelligents, qu'ils soient de silicium ou de carbone.

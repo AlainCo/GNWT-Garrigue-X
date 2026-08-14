@@ -222,3 +222,102 @@ Le rêve des architectes matériels est de créer des systèmes hétérogènes o
 2.  **Le "Back-End" Cognitif** (World Models, JEPA, imagination, simulation physique, intuition) tournera sur des **co-processeurs thermodynamiques ou memristifs**. Ces puces ne "calculeront" pas au sens strict ; elles se contenteront de laisser leurs états physiques (chaleur, résistance électrique) s'équilibrer pour trouver instantanément la solution dans un espace latent continu.
 
 On passe de l'ère où le matériel *simulait* les mathématiques, à l'ère où le matériel *incarnera* la cognition.
+
+### USER
+Je suis tombé sur ce papier: https://www.biorxiv.org/content/10.1101/2025.05.14.654027v1.full 
+Il semble proposer une architecture bioinspirée, différente de celle de nos machines actuelles.
+Je me demande si ce serait implémentable en restant dans le paradigme matériel actuel, GPU, probablement transformers et MLP, et pas d'architectures mal supportées par les GPU ?
+L'alternative serait de voir si cela pousse des architectures matérielles implémentables en silicium par des ASIC/FPGA, des architectures Processor in Memory,  que l'on développerait au mêmem niveau d'intégration que GPU et VRAM ?
+Peux tu m'expliquer ce qu'il dit, et le mettre en perspective avec ce dont on discute, puis me dire s'il y a de bonnes idées à reprendre, des architectures réalisable aujourd'hui ou demain ?
+
+### ASSISTANT
+Vous avez déniché un papier fascinant de **Wolfgang Maass** (un des papes du calcul neuromorphique à l'Université de Graz) et Hui Lin, publié en 2025. Ce papier propose le **GCML (Generative Cognitive Map Learner)**, une architecture qui fait le pont exact entre les neurosciences de l'hippocampe et ce que nous cherchons à faire en IA avec les World Models [[2], [8]].
+
+Laissez-moi d'abord vous expliquer ce que ce papier propose, puis nous verrons pourquoi il pose une question matérielle fondamentale.
+
+## Ce que propose le papier : Le GCML
+
+L'architecture s'inspire directement du système des **cellules de grille** (grid cells) et des **cellules de lieu** chez les rongeurs, qui leur permettent de naviguer mentalement dans un espace sans bouger.
+
+### Le mécanisme central
+Au lieu d'utiliser des Transformers profonds avec des non-linéarités complexes, le GCML projette les observations et les actions dans un **espace latent de haute dimension** (environ 1000 dimensions suffisent selon les auteurs) via de simples **transformations linéaires** (matrices Q et V) .
+
+L'équation fondamentale de la prédiction d'état futur est d'une simplicité désarmante :
+
+$$\hat{s}_{t+1} = s_t + V \cdot a_t$$
+
+Autrement dit, l'état futur = l'état actuel + l'effet de l'action. C'est une simple addition vectorielle dans l'espace latent.
+
+### L'imagination stochastique
+Pour planifier vers un but $s^*$, le modèle ne fait pas une recherche déterministe. Il **génère des centaines de trajectoires en parallèle** en injectant du bruit gaussien lors de la sélection des actions (stochastic sampling) . Ensuite, un mécanisme de "winner-take-all" (inhibition latérale) ou une accumulation de récompenses sélectionne la meilleure trajectoire imaginée.
+
+### L'apprentissage local
+Contrairement à la rétropropagation globale des Transformers, le GCML utilise des **règles de plasticité synaptique locales** (Hebbien et minimisation d'erreur de prédiction locale). Chaque synapse s'adapte uniquement en fonction de ses propres entrées et sorties, sans signal d'erreur global .
+
+## Implémentabilité : GPU vs Hardware spécialisé
+
+C'est ici que votre intuition touche au cœur du problème.
+
+### Sur GPU/Transformers actuels : Possible mais absurde
+Mathématiquement, oui, vous pouvez implémenter le GCML sur GPU : ce sont juste des multiplications matricielles $Q \cdot o$ et $V \cdot a$, qui sont le pain quotidien des CUDA cores.
+
+**Mais ce serait un contresens matériel total** pour trois raisons :
+
+1. **Les délais (delay modules)** : L'architecture utilise des délais d'un pas de temps pour propager l'information . Sur GPU, où tout est synchronisé et parallèle, gérer des délais asynchrones crée des bulles de sous-utilisation qui détruisent les performances.
+
+2. **L'apprentissage en ligne continu** : Le GCML apprend en temps réel, à chaque interaction, via des règles Hebbiennes locales. Les GPU sont conçus pour le **batch processing** (traiter 10 000 exemples d'un coup), pas pour l'adaptation synaptique continue.
+
+3. **Le bruit stochastique natif** : L'architecture nécessite d'injecter du bruit gaussien à chaque pas de temps pour l'exploration. Sur GPU, il faut appeler des générateurs pseudo-aléatoires coûteux. En hardware natif, ce bruit est **gratuit** (fluctuations thermiques).
+
+### Sur ASIC/FPGA/Processor-in-Memory : L'habitat naturel
+
+Le papier le dit explicitement : cette architecture est conçue pour tourner sur **Spinnaker**, **Intel Loihi**, et les systèmes de **"in-memory computing"** .
+
+Voici pourquoi le hardware spécialisé est parfait :
+
+| Composant GCML | Implémentation hardware idéale |
+|---|---|
+| Matrices Q et V | **Memristors** en crossbar arrays - stockent les poids et font les multiplications en analogique via la loi d'Ohm |
+| Plasticité Hebbienne locale | Chaque memristor s'adapte selon la règle $\Delta w \propto x \cdot y$ directement au niveau du composant |
+| Délais (delay modules) | Simples registres à décalage ou condensateurs - triviaux en silicium |
+| Bruit gaussien | Fluctuations thermiques naturelles ou composants stochastiques |
+| Winner-take-all | Inhibition latérale naturelle en circuits neuromorphiques |
+
+## Mise en perspective avec notre discussion
+
+Ce papier est le **chaînon manquant** entre tout ce que nous avons discuté :
+
+### 1. Le lien avec Hopfield et les mémoires associatives
+Souvenez-vous de notre discussion sur Krotov & Hopfield (1606.01164). Le GCML utilise exactement le même principe : un espace latent de haute dimension où les états sont encodés comme des points, et où l'on fait de la complétion de motifs (pattern completion) pour naviguer vers un but. La différence est que le GCML ajoute une **dynamique temporelle** (les actions déplacent l'état dans l'espace).
+
+### 2. Le lien avec la thermodynamique de Verdon
+L'approche stochastique du GCML (générer plusieurs trajectoires avec du bruit, sélectionner la meilleure) est exactement ce que l'informatique thermodynamique fait **gratuitement**. Une puce thermodynamique comme celle d'Extropic pourrait échantillonner naturellement des milliers de trajectoires en parallèle en laissant le système explorer son paysage énergétique, sans aucun coût de calcul explicite.
+
+### 3. Le lien avec JEPA et les World Models
+Le GCML est une forme extrêmement épurée de JEPA :
+- **JEPA** : Prédit l'état latent futur $\hat{s}_{t+1}$ étant donné l'état actuel et l'action
+- **GCML** : Fait exactement la même chose, mais avec une transformation linéaire $V \cdot a_t$ au lieu d'un réseau profond
+
+La grande leçon du GCML est qu'**on n'a peut-être pas besoin de la complexité des Transformers** pour faire des World Models fonctionnels. Un espace latent linéaire de dimension modeste (~1000) peut suffire pour des tâches de navigation et de planification.
+
+## Les bonnes idées à reprendre aujourd'hui et demain
+
+### Aujourd'hui (dans nos architectures logicielles)
+1. **Espaces latents linéaires** : Au lieu d'empiler des couches non-linéaires, on pourrait explorer des projections linéaires de haute dimension pour encoder les états du monde.
+2. **Sampling stochastique pour la planification** : Générer N trajectoires imaginées avec du bruit, puis sélectionner la meilleure (comme le fait le GCML). C'est une alternative au Chain-of-Thought déterministe.
+3. **Bootstrapping simple** : $\hat{s}_{t+1} = s_t + f(a_t)$ est beaucoup plus léger que de prédire l'état complet à partir de zéro.
+
+### Demain (dans le hardware neuromorphique)
+Le GCML pointe vers une architecture matérielle qui ressemblerait à ceci :
+- **Crossbars de memristors** pour les matrices Q et V (mémoire + calcul en un seul endroit)
+- **Circuits analogiques** pour le bruit et la sélection winner-take-all
+- **Apprentissage Hebbien en ligne** (le système apprend en continu, sans phase de training séparée)
+- **Consommation énergétique** de l'ordre du milliwatt, contre les kilowatts des GPU
+
+## Conclusion
+
+Vous avez mis le doigt sur une tension fondamentale : le GCML est **mathématiquement implémentable** sur GPU, mais **architecturalement incompatible** avec le paradigme von Neumann actuel. C'est comme essayer de faire tourner un programme quantique sur un ordinateur classique : ça marche en théorie, mais on rate complètement l'avantage physique.
+
+Ce papier suggère qu'il existe peut-être une **"autoroute oubliée"** vers l'IA : au lieu de construire des Transformers toujours plus gros, on pourrait construire des systèmes beaucoup plus simples (linéaires, stochastiques, locaux) mais sur du matériel **physiquement adapté** à leur nature.
+
+Les memristors, les puces thermodynamiques, et les architectures neuromorphiques ne sont pas des curiosités de laboratoire : ce sont les habitats naturels pour des architectures comme le GCML, qui imitent beaucoup plus fidèlement la façon dont le cerveau planifie et imagine que ne le font nos Transformers actuels.
