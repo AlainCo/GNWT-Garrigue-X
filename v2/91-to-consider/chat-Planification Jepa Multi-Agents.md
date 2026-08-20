@@ -1826,3 +1826,353 @@ Vous avez maintenant :
 Ces cinq papiers, combinés avec Active Inference et notre stack perception/contrôle, forment une architecture cognitive remarquablement complète pour un agent autonome opérant dans le monde réel — y compris les environnements les plus denses et chaotiques.
 
 L'idée la plus profonde de FactorJEPA est peut-être celle-ci : **dans un monde social, comprendre les relations entre agents est aussi important que comprendre les agents eux-mêmes**. Et cette compréhension peut être apprise via un JEPA factorisé qui traite les interactions comme des primitives de prédiction à part entière.
+
+### USER
+Je suis tombé sur ce papier qui propose un système Jepa qui plannifie dans l'espace latent, peut être dans la ligénes de ce dont on a discuté.
+https://arxiv.org/abs/2608.14125
+
+Peux tu m'expliquer le contenu de ce papier, le mettre en perspective avec ce dont on discute, et me dire s'il y a des idées intéressantes à prendre ?
+
+### ASSISTANT
+Excellente trouvaille ! Vous avez mis le doigt sur un papier qui apporte une solution **élégante et pragmatique** à l'un des problèmes fondamentaux que nous avons identifiés avec HWM et INTACT : comment évaluer la qualité d'une trajectoire planifiée au-delà du simple point d'arrivée ?
+
+**Traj-LeWM**  (août 2026) s'attaque directement aux limites de LeWM (LeWorldModel) en introduisant un **coût de trajectoire latent (LTC)** qui capture la qualité du chemin complet, pas juste sa destination.
+
+---
+
+## 1. Le Problème : La Myopie du Point Final
+
+LeWM (et la plupart des planificateurs basés sur modèles de monde) commet une erreur fondamentale  :
+- **Pendant l'entraînement** : Il apprend des transitions locales pas-à-pas ($z_{t+1} = f(z_t, a_t)$) sans jamais évaluer si la trajectoire complète est bonne
+- **Pendant la planification** : Il classe les séquences d'actions candidates uniquement sur la distance entre le point final prédit et le but ($C_0 = \|z_T - z_{goal}\|$)
+
+**Le problème** : Deux trajectoires peuvent avoir le même point final mais des chemins radicalement différents  :
+- Trajectoire A : Chemin fluide, évite les obstacles, énergie minimale
+- Trajectoire B : Chemin erratique, frôle les collisions, gaspille de l'énergie
+
+LeWM les classe à égalité car seul le point final compte. Mais à l'exécution, la trajectoire A réussit et B échoue.
+
+---
+
+## 2. La Solution : Latent Trajectory Cost (LTC)
+
+### Architecture du LTC
+
+Le LTC est un **fonctionnel de chemin conditionné par le but** qui agrège l'information sur toute la trajectoire  :
+
+```
+Pour une trajectoire τ = (z₀, z₁, ..., z_T) avec but z_g :
+
+À chaque pas t, le LTC calcule 4 composantes :
+1. État latent courant : z_t
+2. Évolution locale : Δz_t = z_{t+1} - z_t
+3. Distance au but : d_t^g = z_g - z_t
+4. Position temporelle : η_t = t / (T-1)  # phase normalisée
+
+Puis il agrège :
+LTC(τ|g) = (1/T) Σ ℓ_ψ(z_t, Δz_t, d_t^g, η_t)
+```
+
+**Pourquoi c'est puissant** :
+- **Conditionnement par le but** : La même trajectoire physique peut être évaluée différemment selon le but (ex: passer par le milieu est bon pour aller tout droit, mauvais pour contourner)
+- **Information temporelle** : La phase η_t permet de distinguer "j'ai évité l'obstacle au début" vs "j'ai évité l'obstacle à la fin"
+- **Évolution locale** : Δz_t capture la fluidité du mouvement (petits Δz = mouvement lisse, grands Δz = mouvements brusques)
+
+### Apprentissage par Préférences de Trajectoires
+
+Le LTC est entraîné avec une **perte de préférence par paires** (style Bradley-Terry)  :
+
+```
+Loss = log(1 + exp[-(LTC(négatif) - LTC(positif)) / β])
+```
+
+**Trois types de paires d'apprentissage** :
+
+1. **Préférences synthétiques** (Goal Mismatch) :
+   - Positif : Trajectoire experte avec son vrai but
+   - Négatif : Même trajectoire avec un but aléatoire
+   - *Enseigne* : "Cette trajectoire est bonne pour CE but, pas pour un autre"
+
+2. **Préférences synthétiques** (Jittering) :
+   - Positif : Trajectoire experte propre
+   - Négatif : Même trajectoire avec bruit ajouté aux états intermédiaires
+   - *Enseigne* : "Entre deux chemins avec mêmes extrémités, préfère le plus lisse"
+
+3. **Préférences minées** (Failure Mining) :
+   - Après chaque époque, le planificateur (sans LTC) exécute des plans
+   - Les échecs sont collectés comme exemples négatifs
+   - *Enseigne* : "Voici ce que le planificateur endpoint-only fait de mal"
+
+### Scoring Combiné pendant la Planification
+
+Pendant l'inférence, le CEM classe les candidats avec un score combiné  :
+
+```
+Score_total = C₀ + λ * LTC_calibré
+
+où :
+- C₀ = distance au but (endpoint-only)
+- LTC_calibré = LTC normalisé par IQR pour matcher l'échelle de C₀
+- λ = poids du LTC (hyperparamètre)
+```
+
+**Résultats** : Traj-LeWM améliore LeWM de +3 à +14 points selon les tâches .
+
+---
+
+## 3. Mise en Perspective : Comment Traj-LeWM S'Intègre
+
+### A. Complément à HWM (Planification Hiérarchique)
+
+**HWM** décompose la planification en macro-actions → sous-objectifs → actions primitives. Mais comment évaluer la qualité d'une macro-action ?
+
+**Traj-LeWM apporte la réponse** :
+- Le planificateur haut-niveau peut utiliser le LTC pour évaluer non seulement "est-ce que cette macro-action mène au bon sous-objectif" mais aussi "est-ce que le chemin emprunté est de qualité"
+- Exemple : Deux macro-actions mènent au même sous-objectif, mais l'une passe par une zone dangereuse (LTC élevé), l'autre par une zone sûre (LTC faible)
+
+### B. Complément à INTACT (Planification Directe)
+
+**INTACT** fait de la planification sans recherche (inférence directe). Mais comment améliorer la qualité des actions prédites ?
+
+**Traj-LeWM apporte la réponse** :
+- Au lieu de juste prédire l'action qui mène au but (INTACT), on peut entraîner le réseau à prédire l'action qui mène au but **via le meilleur chemin** (INTACT + LTC)
+- Le LTC devient une contrainte d'entraînement supplémentaire qui force le réseau à internaliser la notion de "chemin optimal"
+
+### C. Lien avec PhyLatent (Séparation Contrefactuelle)
+
+Vous vous souvenez que **PhyLatent** forçait les branches contrefactuelles à se séparer dans l'espace latent ?
+
+**Traj-LeWM va plus loin** :
+- PhyLatent dit : "Deux actions différentes doivent mener à deux états finaux différents"
+- Traj-LeWM dit : "Deux trajectoires différentes (même avec même point final) doivent avoir des coûts différents"
+
+C'est une généralisation : non seulement les états finaux doivent être distinguables, mais **les chemins eux-mêmes** doivent être évaluables.
+
+### D. Lien avec l'Active Inference (FEP)
+
+C'est ici que Traj-LeWM devient fascinant pour votre robot Fristonien :
+
+**Le LTC comme "Énergie Libre Cumulée"** :
+- Dans le FEP, l'agent minimise l'Énergie Libre Attendue (EFE) sur toute la trajectoire
+- Le LTC peut être vu comme une approximation de l'EFE : il agrège la "surprise" (distance au but + irrégularité du mouvement) sur tout le chemin
+- Un LTC faible = trajectoire qui minimise la surprise cumulée
+- Un LTC élevé = trajectoire avec beaucoup de corrections, d'écarts au but intermédiaires
+
+**Application concrète** :
+```python
+# Au lieu de juste minimiser la distance finale
+planificateur.minimize(distance(z_T, z_goal))
+
+# On minimise la surprise cumulée (style FEP)
+planificateur.minimize(
+    distance(z_T, z_goal) +  # Valeur pragmatique finale
+    λ * LTC(trajectoire)      # Valeur épistémique/pragmatique cumulée
+)
+```
+
+### E. Lien avec FactorJEPA (Factorisation Multi-Agent)
+
+**FactorJEPA** factorise le futur en 3 canaux (Layout, Entities, Interactions).
+
+**Traj-LeWM pourrait être appliqué à chaque canal** :
+- LTC_Layout : Évalue la qualité du chemin spatial (évite les obstacles fixes)
+- LTC_Entities : Évalue la qualité du chemin par rapport aux autres agents (évite les collisions)
+- LTC_Interactions : Évalue la qualité des interactions sociales le long du chemin (maintient les distances de courtoisie, etc.)
+
+---
+
+## 4. Les 3 Idées Puissantes à Garder
+
+### 💡 Idée 1 : L'Apprentissage par Préférences de Trajectoires
+
+C'est probablement **l'innovation la plus importante** du papier.
+
+**Pour votre robot** :
+Au lieu d'entraîner votre modèle de monde uniquement sur des transitions pas-à-pas, collectez des **paires de trajectoires** (bonnes vs mauvaises) et entraînez un module LTC :
+
+```python
+# Collecte de préférences
+preferences = []
+
+# 1. Préférences synthétiques (facile à générer)
+for expert_trajectory in dataset:
+    # Goal mismatch
+    negative = same_trajectory_but_wrong_goal
+    preferences.append((expert_trajectory, negative))
+    
+    # Jittering
+    negative = add_noise_to_intermediate_states(expert_trajectory)
+    preferences.append((expert_trajectory, negative))
+
+# 2. Préférences minées (plus puissant)
+for epoch in training:
+    # Exécuter le planificateur actuel
+    executed_trajectories = execute_current_planner()
+    
+    # Collecter les échecs
+    for failed_traj in executed_trajectories:
+        expert_traj = find_matching_expert(failed_traj)
+        preferences.append((expert_traj, failed_traj))
+
+# Entraîner le LTC
+for (positive, negative) in preferences:
+    loss = log(1 + exp(-(LTC(negative) - LTC(positive)) / β))
+    loss.backward()
+```
+
+**Pourquoi c'est puissant** :
+- Vous n'avez pas besoin de définir manuellement une fonction de coût complexe
+- Le LTC apprend automatiquement ce qui fait une "bonne" trajectoire
+- Il capture des aspects difficiles à formaliser (fluidité, sécurité, efficacité énergétique)
+
+### 💡 Idée 2 : Le Conditionnement par le But à Chaque Pas
+
+C'est une idée subtile mais cruciale .
+
+**Au lieu de** :
+```python
+# Approche naïve : évaluer la trajectoire, puis comparer au but
+cost = evaluate_trajectory(trajectory)
+if distance(trajectory[-1], goal) > threshold:
+    cost += penalty
+```
+
+**Faire** :
+```python
+# Approche Traj-LeWM : conditionner par le but à chaque pas
+for t, z_t in enumerate(trajectory):
+    d_t = goal - z_t  # Distance au but à l'instant t
+    phase = t / len(trajectory)
+    cost += evaluate_step(z_t, Δz_t, d_t, phase)
+```
+
+**Pourquoi c'est mieux** :
+- Le modèle apprend que "être loin du but au début est OK, mais être loin du but à la fin est mauvais"
+- Il peut apprendre des stratégies comme "s'approcher progressivement" vs "rester loin puis foncer"
+- C'est exactement ce que fait un humain : il ajuste son comportement en fonction de la distance restante au but
+
+### 💡 Idée 3 : Le Failure Mining (Apprentissage sur les Échecs)
+
+C'est une technique d'entraînement très efficace .
+
+**L'idée** :
+1. Entraînez votre planificateur normalement
+2. À intervalles réguliers, exécutez-le en boucle fermée
+3. Collectez les trajectoires qui échouent
+4. Utilisez-les comme exemples négatifs pour ré-entraîner le modèle
+
+**Pour votre robot** :
+```python
+# Pendant l'entraînement
+for epoch in range(num_epochs):
+    # Entraînement normal
+    train_world_model()
+    
+    # Failure mining
+    if epoch % 10 == 0:
+        failures = []
+        for trial in range(100):
+            trajectory = execute_planner_in_real_environment()
+            if not is_success(trajectory):
+                failures.append(trajectory)
+        
+        # Ajouter les échecs au buffer de préférences
+        for failed_traj in failures:
+            expert_traj = find_matching_expert(failed_traj)
+            preference_buffer.add((expert_traj, failed_traj))
+        
+        # Ré-entraîner avec les nouvelles préférences
+        train_ltc_on_preferences(preference_buffer)
+```
+
+**Pourquoi c'est puissant** :
+- Le modèle apprend de ses propres erreurs
+- Il découvre des modes d'échec que vous n'auriez pas anticipés
+- C'est une forme d'apprentissage par renforcement, mais beaucoup plus sample-efficient
+
+---
+
+## 5. Architecture Intégrée : Traj-LeWM + Notre Stack
+
+Voici comment Traj-LeWM s'intègre dans l'architecture cognitive complète :
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  ÉTAGE 5 : PLANIFICATION HIÉRARCHIQUE (HWM)                 │
+│  • Macro-actions avec sous-objectifs latents                │
+│  • Évaluation avec LTC pour qualité du chemin               │
+└────────────────────────┬────────────────────────────────────┘
+                         │
+┌────────────────────────▼────────────────────────────────────┐
+│  ÉTAGE 4 : PLANIFICATION TACTIQUE (Traj-LeWM)  ← NOUVEAU    │
+│  • CEM avec scoring combiné (endpoint + LTC)                │
+│  • LTC conditionné par le but à chaque pas                  │
+│  • Apprentissage par préférences + failure mining           │
+└────────────────────────┬────────────────────────────────────┘
+                         │
+┌────────────────────────▼────────────────────────────────────┐
+│  ÉTAGE 3 : CONTRÔLE RÉACTIF (INTACT)                        │
+│  • Mapping direct intention → action                        │
+│  • Peut être amélioré avec LTC comme contrainte             │
+└────────────────────────┬────────────────────────────────────┘
+                         │
+┌────────────────────────▼────────────────────────────────────┐
+│  ÉTAGE 2 : MODÈLE DU MONDE (UniJEPA + Mamba)                │
+│  • Prédiction temporelle et photométrique                   │
+│  • Représentations riches pour le LTC                       │
+└────────────────────────┬────────────────────────────────────┘
+                         │
+┌────────────────────────▼────────────────────────────────────┐
+│  ÉTAGE 1 : PERCEPTION (CR-JEPA / SR-JEPA / FactorJEPA)      │
+│  • Fusion multi-capteurs                                    │
+│  • Tracking multi-agent                                     │
+└─────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 6. Synthèse : Ce que Traj-LeWM Nous Apprend
+
+### Les 3 Leçons Clés
+
+1. **Le chemin compte autant que la destination**
+   - Deux trajectoires avec même point final peuvent avoir des qualités radicalement différentes
+   - Un bon planificateur doit évaluer le chemin complet, pas juste l'arrivée
+
+2. **L'apprentissage par préférences est plus puissant que l'apprentissage par régression**
+   - Au lieu de prédire un coût absolu (difficile à définir), apprenez à classer des trajectoires (plus naturel)
+   - Les préférences peuvent être synthétiques (faciles) ou minées (puissantes)
+
+3. **Le conditionnement par le but à chaque pas est crucial**
+   - La même action peut être bonne ou mauvaise selon la distance restante au but
+   - Un bon modèle doit intégrer cette information contextuelle en permanence
+
+### Pour Votre Robot Multi-Agent
+
+**Traj-LeWM apporte la brique "Qualité de Trajectoire"** :
+- Non seulement "est-ce que j'atteins le but" mais "est-ce que j'y arrive bien"
+- Évite les chemins dangereux, inefficaces, ou socialement inappropriés
+- Peut être appliqué séparément pour chaque type de contrainte (obstacles, autres agents, énergie)
+
+**Exemple concret** :
+Votre robot doit traverser une pièce avec 3 autres agents.
+- **Sans LTC** : Il trouve le chemin le plus court (ligne droite) mais passe trop près des autres agents
+- **Avec LTC** : Il trouve un chemin légèrement plus long mais qui maintient les distances sociales, évite les zones de collision potentielle, et arrive de manière fluide
+
+---
+
+## Conclusion : Le Puzzle se Complète Encore
+
+**Traj-LeWM** n'est pas juste une amélioration incrémentale — c'est la **formalisation mathématique de l'intuition humaine** qu'un bon planificateur doit considérer le chemin complet, pas juste la destination.
+
+Vous avez maintenant :
+- **UniJEPA** pour la représentation unifiée
+- **INTACT** pour le contrôle réactif
+- **HWM** pour la planification hiérarchique
+- **Traj-LeWM** pour la qualité de trajectoire
+- **JEPA-WAM** pour la compréhension sémantique
+- **FactorJEPA** pour l'intelligence sociale multi-agent
+
+Ces six papiers, combinés avec Active Inference et notre stack perception/contrôle, forment une architecture cognitive remarquablement complète pour un agent autonome.
+
+L'idée la plus profonde de Traj-LeWM est peut-être celle-ci : **un agent intelligent ne doit pas seulement savoir où aller, il doit savoir comment y aller**. Et cette connaissance peut être apprise via un module LTC entraîné sur des préférences de trajectoires, opérant dans le même espace latent que le modèle du monde.
