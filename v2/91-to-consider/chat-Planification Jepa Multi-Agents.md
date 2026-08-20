@@ -2176,3 +2176,407 @@ Vous avez maintenant :
 Ces six papiers, combinés avec Active Inference et notre stack perception/contrôle, forment une architecture cognitive remarquablement complète pour un agent autonome.
 
 L'idée la plus profonde de Traj-LeWM est peut-être celle-ci : **un agent intelligent ne doit pas seulement savoir où aller, il doit savoir comment y aller**. Et cette connaissance peut être apprise via un module LTC entraîné sur des préférences de trajectoires, opérant dans le même espace latent que le modèle du monde.
+
+### USER
+Je suis tombé sur ce papier qui propose d'utilise l'active inference pour une mission martienne, gérer le conflit entre exploration et exploitation, et diverses idées.
+Peux tu m'expliquer ce qu'il propose coté architecture et méthodes, puis mettre en perspective avec ce dont on discute, pour finalement voir s'il y a des idées à reprendre ?
+
+https://arxiv.org/abs/2608.14466
+
+### ASSISTANT
+Excellente trouvaille ! Ce papier, **"Expected Free Energy-based Informative Path Planning for Robotic Mars Exploration"** (Meera, Lanillos & Kouw, août 2026) , est une **application industrielle pure et élégante** de l'Active Inference de Friston à un problème robotique concret. C'est exactement le type de système dont nous parlions dans nos discussions sur le lien OODA/FEP.
+
+Voici l'analyse complète et les idées à reprendre pour votre projet.
+
+---
+
+## 1. Le Problème : Le Dilemme Exploration-Exploitation avec Budget
+
+Un rover martien doit trouver des sources d'eau (ou tout autre phénomène) dans un environnement inconnu, mais il a **trois contraintes simultanées**  :
+1. **Construire une carte précise** de l'information (exploration)
+2. **Localiser les zones de plus haute valeur** (exploitation)
+3. **Respecter un budget de déplacement strict** (énergie limitée, distance maximale)
+
+**Le conflit fondamental** :
+- Les méthodes informationnelles classiques (Information Mutuelle, réduction de variance) font de l'exploration pure → cartes précises mais ne trouvent pas l'optimum
+- Les méthodes d'optimisation bayésienne (Expected Improvement, UCB) font de l'exploitation pure → trouvent l'optimum mais ignorent le reste de la carte
+- Les praticiens bricolent des sommes pondérées sans principe unificateur
+
+**La solution du papier** : Utiliser l'**Énergie Libre Attendue (EFE)** de Friston comme critère unifié qui résout naturellement ce conflit.
+
+---
+
+## 2. L'Architecture : Gaussian Process + EFE + Fantasy Path
+
+### A. Le Modèle du Monde : Gaussian Process (GP)
+
+Contrairement à nos discussions sur les JEPAs (qui utilisent des réseaux de neurones), ce papier utilise un **Processus Gaussien** comme modèle de croyance  :
+
+```
+Croyance sur le champ f : GP(μ(x), σ²(x))
+- μ(x) = prédiction de la valeur au point x
+- σ²(x) = incertitude au point x
+```
+
+**Pourquoi un GP ?**
+- Postérieur en forme fermée après quelques mesures
+- Fournit l'incertitude native (crucial pour l'EFE)
+- Sample-efficient pour petits budgets de données
+
+**Limite par rapport aux JEPAs** : Un GP ne capture pas la sémantique riche ni les relations spatiales complexes. C'est un modèle "plat" qui ne comprend pas que "cette texture ressemble à une zone humide". C'est là que vos JEPAs (SR-JEPA, UniJEPA) seraient supérieurs.
+
+### B. L'Énergie Libre Attendue (EFE) : La Fonction Objective
+
+L'EFE se décompose en deux termes  :
+
+```
+EFE(X) = Valeur Pragmatique + Valeur Épistémique
+
+Valeur Pragmatique = -(μ(X) - y*)² / (2τ²) - σ²(X) / (2τ²)
+  → Récompense les positions proches de l'aspiration y*
+  → Récompense les positions où on est déjà confiant
+
+Valeur Épistémique = ½ log(1 + σ²(X) / σ_n²)
+  → Récompense les positions qui réduisent l'incertitude
+```
+
+**Le paramètre clé : τ² (température)**
+- τ² élevé → exploration dominante (on valorise l'information)
+- τ² faible → exploitation dominante (on valorise la récompense)
+
+### C. Le Fantasy Path : Planification Non-Myopique
+
+C'est l'idée la plus brillante du papier . Pour évaluer une trajectoire complète (pas juste le prochain point), le système fait un **rollout imaginaire** :
+
+```python
+Pour chaque trajectoire candidate (V₁, V₂, ..., Vₙ) :
+    GP_fantasy = GP_actuel
+    
+    Pour chaque waypoint Vᵢ :
+        # Prédire ce qu'on observerait
+        μᵢ, σᵢ = GP_fantasy.predict(Vᵢ)
+        
+        # Calculer l'EFE à ce point
+        efe_i = compute_EFE(μᵢ, σᵢ, y*, τ²)
+        
+        # Mettre à jour le GP avec la prédiction (fantasy update)
+        GP_fantasy.update(Vᵢ, μᵢ)  # On imagine avoir observé μᵢ
+    
+    # Score total = somme des EFE / distance parcourue
+    score = Σ(efe_i) / Σ(distances)
+```
+
+**Pourquoi c'est puissant** :
+- Le planificateur "voit" que l'incertitude va diminuer le long du chemin
+- Il peut planifier des séquences comme "aller ici pour réduire l'incertitude, puis exploiter là-bas"
+- C'est exactement le **rollout latental** qu'on fait avec les JEPAs/Mamba !
+
+### D. Budget-Aware Annealing : L'Innovation Majeure
+
+C'est la **contribution originale** du papier . Au lieu d'avoir un τ² fixe, ils le font varier en fonction de la fraction de budget consommée :
+
+```
+p = distance_parcourue / budget_total  ∈ [0, 1]
+
+τ²(p) = τ²_min + (τ²_max - τ²_min) / (1 + exp(k(p - p₀)))
+```
+
+**Comportement** :
+- Début de mission (p ≈ 0) : τ² ≈ τ²_max → exploration pure
+- Milieu de mission (p ≈ p₀) : transition douce
+- Fin de mission (p ≈ 1) : τ² ≈ τ²_min → exploitation pure
+
+**Pourquoi c'est génial** :
+- Pas besoin de tuner manuellement le trade-off exploration/exploitation
+- Le système s'adapte automatiquement : "J'ai encore beaucoup de budget, je peux explorer" vs "Il me reste peu de budget, je dois exploiter ce que j'ai trouvé"
+- C'est une forme de **métacognition embarquée** dans l'hyperparamètre
+
+### E. Optimisation : Differential Evolution
+
+Pour trouver la meilleure trajectoire, ils utilisent un **algorithme évolutionnaire** (Differential Evolution)  car :
+- La fonction objective est non-convexe
+- Pas de gradient analytique disponible
+- L'espace de recherche est continu (coordonnées 2D)
+
+**Alternative pour votre projet** : Vous pourriez utiliser CEM (comme dans HWM) ou même du gradient descent si vous rendez le GP différentiable.
+
+---
+
+## 3. Mise en Perspective : Comment ça S'Intègre à Nos Discussions
+
+### A. Validation de l'Active Inference (Friston)
+
+Ce papier est une **preuve de concept industrielle** que l'EFE fonctionne en robotique réelle :
+- Il unifie exploration et exploitation sans tuning manuel
+- Il respecte des contraintes physiques (budget de déplacement)
+- Il surpasse les baselines informationnelles et bayésiennes 
+
+**Mais avec une limite majeure** : Le GP est un modèle du monde "pauvre" comparé aux JEPAs. Il ne comprend pas la sémantique, les relations spatiales complexes, ou la dynamique temporelle.
+
+### B. Le Fantasy Path = Rollout Latent des JEPAs
+
+Le **fantasy path** du papier est exactement ce qu'on fait avec les JEPAs :
+- **GP Fantasy** : "J'imagine observer μᵢ au point Vᵢ, je mets à jour ma croyance"
+- **JEPA Rollout** : "J'imagine appliquer l'action aₜ, je prédits l'état latent z_{t+1}"
+
+**La différence** :
+- Le GP travaille dans l'espace des observations brutes (valeurs scalaires)
+- Le JEPA travaille dans l'espace latent sémantique (concepts abstraits)
+
+**Pour votre projet** : Vous pouvez remplacer le GP par un JEPA et garder exactement la même logique de fantasy path, mais avec des prédictions beaucoup plus riches.
+
+### C. Le Budget-Aware Annealing : Idée Transférable
+
+C'est probablement **l'idée la plus valuable** à reprendre. Dans notre architecture FEP avec JEPAs, vous pourriez avoir :
+
+```python
+# Au lieu d'un τ² fixe dans l'EFE
+def compute_EFE(latent_state, goal, budget_fraction):
+    τ² = adaptive_temperature(budget_fraction)
+    
+    pragmatic = -distance(latent_state, goal) / τ²
+    epistemic = uncertainty_reduction(latent_state)
+    
+    return pragmatic + epistemic
+
+def adaptive_temperature(p):
+    # p = fraction de budget/tempo/énergie consommée
+    return τ_min + (τ_max - τ_min) / (1 + exp(k*(p - p₀)))
+```
+
+**Applications concrètes** :
+- **Robot terrestre** : p = énergie_battery / énergie_max
+- **Drone** : p = temps_vol / autonomie_max
+- **Agent logiciel** : p = tokens_utilisés / budget_API
+
+### D. Le Lien avec OODA (Boyd)
+
+Ce papier implémente exactement la boucle OODA dont nous parlions :
+
+| OODA | Implementation dans le papier |
+|------|-------------------------------|
+| **Observe** | Prendre une mesure y au point actuel |
+| **Orient** | Mettre à jour le GP avec la nouvelle mesure |
+| **Decide** | Optimiser la trajectoire via EFE + fantasy path |
+| **Act** | Exécuter le premier segment de la trajectoire |
+
+Et le **budget-aware annealing** correspond à la notion de "tempo" de Boyd : au début, on a le temps d'explorer (orienter profondément), à la fin on doit agir vite (décider rapidement).
+
+---
+
+## 4. Les Idées à Reprendre pour Votre Projet
+
+### 💡 Idée 1 : Le Budget-Aware Annealing (À implémenter absolument)
+
+C'est l'innovation la plus élégante du papier. Pour votre agent multi-agent avec JEPAs :
+
+```python
+class ActiveInferencePlanner:
+    def __init__(self, τ_max=20.0, τ_min=0.6, p₀=0.4, k=10.0):
+        self.τ_max = τ_max
+        self.τ_min = τ_min
+        self.p₀ = p₀
+        self.k = k
+    
+    def adaptive_temperature(self, budget_fraction):
+        """τ² adaptatif basé sur la fraction de budget consommée"""
+        return self.τ_min + (self.τ_max - self.τ_min) / (1 + np.exp(self.k * (budget_fraction - self.p₀)))
+    
+    def compute_EFE(self, latent_trajectory, goal_latent, budget_fraction):
+        τ² = self.adaptive_temperature(budget_fraction)
+        
+        # Valeur pragmatique : proximité au but
+        pragmatic = -distance(latent_trajectory[-1], goal_latent) / τ²
+        
+        # Valeur épistémique : réduction d'incertitude
+        epistemic = sum([uncertainty_reduction(step) for step in latent_trajectory])
+        
+        return pragmatic + epistemic
+```
+
+**Pourquoi c'est puissant** :
+- Votre agent devient "conscient" de ses ressources limitées
+- Il passe naturellement de l'exploration (début de mission) à l'exploitation (fin de mission)
+- Pas besoin de logique conditionnelle complexe, juste un hyperparamètre qui varie
+
+### 💡 Idée 2 : Le Fantasy Path avec JEPAs
+
+Remplacez le GP par votre JEPA pour des rollouts beaucoup plus riches :
+
+```python
+def fantasy_path_with_jepa(start_latent, action_sequence, jepa_model):
+    """Rollout imaginaire avec un JEPA au lieu d'un GP"""
+    current_latent = start_latent
+    total_EFE = 0
+    
+    for action in action_sequence:
+        # Prédire le prochain état latent
+        next_latent = jepa_model.predict(current_latent, action)
+        
+        # Calculer l'EFE (pragmatique + épistémique)
+        pragmatic = -distance(next_latent, goal_latent) / τ²
+        epistemic = uncertainty_reduction(next_latent)
+        efe = pragmatic + epistemic
+        
+        total_EFE += efe
+        current_latent = next_latent
+    
+    return total_EFE
+```
+
+**Avantages par rapport au GP** :
+- Le JEPA comprend la sémantique ("cette zone ressemble à de l'eau")
+- Il capture les relations spatiales complexes
+- Il peut prédire des états futurs réalistes (pas juste des valeurs scalaires)
+
+### 💡 Idée 3 : L'Aspiration Optimiste (y* = y_best + κ)
+
+Le papier utilise une astuce élégante  : au lieu de définir un but fixe, ils définissent l'aspiration comme :
+
+```
+y* = y_best + κ
+```
+
+où `y_best` est la meilleure observation faite jusqu'à présent et `κ > 0` est un offset d'optimisme.
+
+**Pour votre projet** :
+```python
+# Au lieu d'un but latent fixe
+goal_latent = best_latent_seen_so_far + optimism_offset
+
+# Où optimism_offset est un vecteur dans l'espace latent
+# qui pousse vers des états "encore meilleurs" que ce qu'on a vu
+```
+
+**Pourquoi c'est malin** :
+- L'agent ne se contente jamais de ce qu'il a trouvé
+- Il cherche toujours à améliorer, mais de manière réaliste (basé sur ce qu'il a déjà vu)
+- C'est une forme de **curiosité dirigée** : "Je sais que j'ai trouvé quelque chose de bien, mais je parie qu'il y a encore mieux"
+
+### 💡 Idée 4 : Receding-Horizon MPC
+
+Le papier utilise une boucle MPC classique  :
+1. Planifier n pas en avant
+2. Exécuter seulement le premier pas
+3. Observer le résultat
+4. Re-planifier avec la nouvelle information
+
+**Pour votre projet** :
+```python
+while not mission_complete:
+    # Planifier une trajectoire de n pas
+    best_trajectory = optimize_trajectory(
+        current_state, 
+        horizon=n,
+        jepa_model,
+        budget_remaining
+    )
+    
+    # Exécuter seulement la première action
+    action = best_trajectory[0]
+    execute(action)
+    
+    # Observer et mettre à jour
+    new_observation = sensors.read()
+    update_belief(new_observation)
+    
+    # Reculer l'horizon
+    budget_remaining -= cost(action)
+```
+
+**Avantages** :
+- L'agent s'adapte aux surprises (obstacles, autres agents)
+- Il ne s'engage jamais dans un plan rigide
+- C'est exactement la boucle OODA en action
+
+---
+
+## 5. Architecture Hybride Recommandée
+
+Voici comment combiner le meilleur des deux mondes (ce papier + nos JEPAs) :
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  PERCEPTION (CR-JEPA / UniJEPA)                             │
+│  • Encode la scène en latent riche                          │
+│  • Comprend la sémantique et les relations spatiales        │
+└────────────────────┬────────────────────────────────────────┘
+                     │
+┌────────────────────▼────────────────────────────────────────┐
+│  MODÈLE DU MONDE (JEPA + Mamba)                             │
+│  • Prédit les états latents futurs                          │
+│  • Remplace le GP par un modèle beaucoup plus riche         │
+│  • Peut prédire des concepts abstraits, pas juste des scalaires│
+└────────────────────┬────────────────────────────────────────┘
+                     │
+┌────────────────────▼────────────────────────────────────────┐
+│  PLANIFICATEUR EFE (Ce papier)  ← IDÉES À REPRENDRE         │
+│  • Fantasy path avec rollout JEPA                           │
+│  • Budget-aware annealing (τ² adaptatif)                    │
+│  • Aspiration optimiste (y* = y_best + κ)                   │
+│  • Receding-horizon MPC                                     │
+│  • Optimisation via CEM ou Differential Evolution           │
+└────────────────────┬────────────────────────────────────────┘
+                     │
+┌────────────────────▼────────────────────────────────────────┐
+│  EXÉCUTION                                                  │
+│  • Traduit les actions latentes en commandes moteurs        │
+│  • Gère les contraintes physiques réelles                   │
+└─────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 6. Synthèse : Ce qu'Il Faut Retenir
+
+### Les 3 Leçons Clés
+
+1. **L'EFE unifie naturellement exploration et exploitation**
+   - Pas besoin de tuner manuellement le trade-off
+   - Un seul paramètre (τ²) contrôle tout
+   - C'est mathématiquement élégant et biologiquement plausible
+
+2. **Le budget-aware annealing est une forme de métacognition**
+   - L'agent "sait" combien de ressources il lui reste
+   - Il adapte son comportement en conséquence
+   - C'est une idée simple mais puissante à implémenter
+
+3. **Le fantasy path est le rollout des world models**
+   - Que vous utilisiez un GP ou un JEPA, la logique est la même
+   - "J'imagine le futur, j'évalue, je choisis"
+   - C'est le cœur de la planification non-myopique
+
+### Pour Votre Projet Multi-Agent
+
+**Ce papier vous donne** :
+- Une implémentation concrète et testée de l'Active Inference
+- L'idée du budget-aware annealing (à implémenter absolument)
+- La validation que l'EFE fonctionne en robotique réelle
+
+**Ce qu'il ne vous donne pas** (et que vos JEPAs apportent) :
+- La compréhension sémantique riche
+- La modélisation des autres agents (Theory of Mind)
+- La prédiction de concepts abstraits (pas juste des valeurs scalaires)
+
+**L'architecture ultime** combine :
+- **JEPAs** pour la perception et le modèle du monde riche
+- **EFE + budget-aware annealing** pour la planification
+- **Fantasy path avec rollouts JEPAs** pour l'imagination non-myopique
+
+---
+
+## Conclusion
+
+Ce papier est une **validation industrielle** de l'Active Inference de Friston. Il prouve que l'EFE fonctionne en robotique réelle, avec des contraintes de budget, et qu'elle surpasse les méthodes classiques.
+
+**L'idée la plus précieuse à reprendre** est le **budget-aware annealing** : faire varier τ² en fonction de la fraction de budget consommée. C'est une forme élégante de métacognition qui rend votre agent "conscient" de ses ressources limitées.
+
+**La limitation majeure** est l'utilisation d'un GP comme modèle du monde. Pour votre projet, vous pouvez remplacer le GP par vos JEPAs (UniJEPA, SR-JEPA, etc.) et garder exactement la même logique de planification, mais avec des prédictions beaucoup plus riches et sémantiques.
+
+Vous avez maintenant tous les ingrédients pour construire un agent autonome qui :
+1. **Perçoit** richement (JEPAs)
+2. **Imagine** le futur (fantasy path avec rollouts JEPAs)
+3. **Planifie** intelligemment (EFE avec budget-aware annealing)
+4. **S'adapte** en temps réel (receding-horizon MPC)
+
+C'est exactement le système nerveux d'un agent autonome robuste et efficace.
