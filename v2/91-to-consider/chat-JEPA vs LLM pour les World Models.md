@@ -801,3 +801,321 @@ Tu as mis le doigt sur la "recette secrète" de l'IA incarnée de demain. Si tu 
 2.  **Une régularisation de type VISReg / SIGReg** pour sculpter l'espace latent et le forcer à se diagonaliser selon les invariants fondamentaux de la physique (Koopman).
 
 On est passé de l'artisanat (VICReg avec ses 3 hyperparamètres à régler à la main) à la chirurgie mathématique (SIGReg/VISReg qui imposent une géométrie sphérique parfaite). Mais l'exigence fondamentale, elle, reste immuable : **pas de désintrication géométrique de l'espace latent = pas de fonctions propres de Koopman = pas de World Model physique fiable.**
+
+### USER
+dans ce contexte je suis tombé sur cet article qui encore une fois propose une vision des systèmes à World Model, en les mettant dans une nouvelles perpective théorique...
+Peux tu m'expliquer ce qu'il propose ? ensuite met ces idées en perspective avec ce dont on discute, puis dit mois s'il y a des idées à reprendre ? 
+
+https://arxiv.org/abs/2608.13456
+
+### ASSISTANT
+Excellente trouvaille ! Ce papier de Kori et Russo (Imperial College London, août 2026) propose un **cadre théorique unificateur** pour les World Models en les ancrant dans la théorie causale. C'est une pièce maîtresse qui vient combler un vide conceptuel dans tout ce que nous avons discuté.
+
+## 1. Ce que propose le papier : Les Causal World Models (CWMs)
+
+### Le problème identifié
+Les auteurs partent d'un constat critique : **le terme "World Model" est devenu un fourre-tout**. On appelle "World Model" aussi bien :
+- Un prédicteur de prochaine observation (Dreamer)
+- Un JEPA (LeJEPA)
+- Un LLM avec ses connaissances implicites
+- Un simulateur physique
+- Un modèle de dynamique latent
+
+Le papier argue que cette confusion masque des **engagements de modélisation radicalement différents**. Un prédicteur dit *ce qui va probablement arriver* ; un modèle causal dit *pourquoi cela arrive et ce qui se passerait si on intervenait*.
+
+### La solution : Une définition formelle des CWMs
+
+Un **Causal World Model** est défini comme un tuple :
+$$W = (\mathcal{X}, \mathcal{A}, \{\mathcal{R}_O\}_O, \mathbb{P}, \mathcal{U})$$
+
+où :
+- $\mathcal{X}$ : espace d'observations (pixels, capteurs)
+- $\mathcal{A}$ : espace d'actions
+- $\mathcal{R}_O$ : **état relationnel structuré** pour un ensemble d'entités $O$
+- $\mathbb{P}$ : distributions de transition (dynamique causale)
+- $\mathcal{U}$ : fonction d'utilité (objectifs)
+
+### L'innovation clé : L'État Relationnel Structuré (𝐫)
+
+C'est le cœur conceptuel du papier. Au lieu d'un vecteur latent monolithique comme dans Dreamer ou les JEPA classiques, l'état latent est **décomposé en entités et relations** :
+
+```
+𝐫_t = matrice de blocs
+┌─────────────────────────────────────┐
+│  Bloc diagonal : propriétés entités │
+│  ├─ 𝐯¹ (bloc rouge) : position,    │
+│  │   couleur, vitesse, état contact │
+│  ├─ 𝐯² (bloc bleu) : position, ... │
+│  └─ 𝐯³ (gripper) : position, ...   │
+├─────────────────────────────────────┤
+│  Blocs hors-diagonaux : relations   │
+│  ├─ 𝐫^{1,2} : "bloc rouge SUR bleu"│
+│  ├─ 𝐫^{2,3} : "bleu PROCHE gripper"│
+│  └─ 𝐫^{1,3} : "rouge LOIN gripper" │
+└─────────────────────────────────────┘
+```
+
+Cette structure permet de **composer** et **généraliser** : si tu apprends à pousser le bloc rouge, tu peux réutiliser ce savoir pour pousser le bloc bleu, car les mécanismes causaux sont factorisés par entité.
+
+### L'Échelle Causale (Pearl's Ladder)
+
+Le papier organise les capacités des WMs selon les 3 niveaux de Pearl :
+
+**Niveau 1 - Association (Observation)** :
+$$\mathbb{P}(𝐱_{t+1} | 𝐱_t)$$
+"Que vais-je voir ensuite ?" → C'est ce que font les JEPA, Dreamer, LLMs.
+
+**Niveau 2 - Intervention (Action)** :
+$$\mathbb{P}(𝐫_{t+1} | 𝐫_t; do(𝐚_t = a))$$
+"Que se passe-t-il **si** je pousse le bloc rouge ?" → Nécessite un modèle causal avec mécanismes explicites.
+
+**Niveau 3 - Contrefactuel (Imagination)** :
+"Que **se serait-il passé** si j'avais poussé le bloc bleu au lieu du rouge ?" → Requiert la structure causale complète + mécanismes invariants.
+
+### Les 5 Composants d'un CWM
+
+1. **Modèle d'inférence** : $\mathbb{P}(𝐫_t | 𝐱_t)$ - Des pixels vers les entités/relations
+2. **Modèle de transition** : $\mathbb{P}(𝐫_{t+1} | 𝐫_t, 𝐚_t)$ - Dynamique causale action-conditionnée
+3. **Modèle de prédiction** : $\mathbb{P}(𝐱_{t+1} | 𝐫_{t+1})$ - Retour aux observations (décodeur)
+4. **Modèle d'action** : $\mathbb{P}(𝐚_t | 𝐫_t)$ - Politique
+5. **Fonction d'utilité** : $\mathcal{U}(𝐚, 𝐬)$ - Évaluation des objectifs
+
+### Identifiabilité par Composant
+
+Le papier clarifie **ce qui peut être appris** vs **ce qui doit être spécifié** :
+
+| Composant | Peut être appris ? | Jusqu'à quelle équivalence ? |
+|---|---|---|
+| Variables latentes $\mathbf{v}$ | Oui | Permutation, mise à l'échelle, translation |
+| Entités $\{\mathbf{v}^i\}$ | Oui | Permutation des slots |
+| Relations $\mathbf{r}^{i,j}$ | Oui | Sous conditions d'alignement |
+| Graphe causal $\mathcal{G}_r$ | Partiellement | Classe d'équivalence de Markov |
+| Mécanismes causaux | Nécessite interventions | - |
+| Utilité $\mathcal{U}$ | Doit être spécifiée | Préservation sous transformation |
+
+**Point crucial** : Les prédictions conditionnelles $\mathbb{P}(𝐫_{t+1} | 𝐫_t, 𝐚_t)$ ne sont interprétables comme effets d'intervention $\mathbb{P}(𝐫_{t+1} | 𝐫_t; do(𝐚_t))$ **que si** il n'y a pas de confondants non mesurés. Sinon, ce sont juste des corrélations prédictives.
+
+## 2. Mise en perspective avec notre discussion
+
+### A. CWM vs JEPA : Le chaînon manquant
+
+Le papier cite explicitement **LeJEPA** et note qu'il fournit des garanties d'identifiabilité pour l'apprentissage de représentations, **mais ne spécifie pas** :
+- Les variables causales explicites
+- Les mécanismes d'intervention
+- La structure relationnelle entre entités
+
+**En d'autres termes** : Le JEPA apprend d'excellentes représentations latentes (Niveau 1 - Association), mais reste une "boîte noire prédictive". Il manque la **structure causale explicite** pour passer au Niveau 2 (Intervention).
+
+**Le pont théorique** : Un JEPA avec VICReg/SIGReg découvre les **invariants de Koopman** (les $\lambda = 1$). Ces invariants sont des **variables causales particulièrement stables**, mais le JEPA ne les organise pas explicitement en entités/relations avec mécanismes causaux.
+
+### B. CWM vs Koopman : Les invariants comme briques causales
+
+Rappelle-toi notre discussion sur les fonctions propres de Koopman :
+- Les **invariants** ($\lambda = 1$) : régimes dynamiques stables
+- Les **oscillations** ($|\lambda| = 1, \lambda \in \mathbb{C}$) : phases cycliques
+- Les **translations** (valeurs propres généralisées) : positions, vitesses
+
+Le cadre CWM permet de dire :
+> "Les invariants de Koopman sont des **variables causales** qui restent constantes tant que le régime ne change pas. Les relations entre ces invariants (ex: 'si le robot est sur verglas, alors la friction diminue') forment le **graphe causal** $\mathcal{G}_r$."
+
+**Synthèse** : 
+- Koopman fournit **les bonnes variables** (fonctions propres)
+- CWM fournit **la bonne structure** (graphe causal, mécanismes, interventions)
+- JEPA + VICReg fournit **le bon algorithme d'apprentissage** (auto-supervisé, démêlage)
+
+### C. CWM vs IM-LEPP (Hub-and-Spoke)
+
+L'architecture IM-LEPP que nous avons discutée (avec son Hub amodal et ses Spokes spécialisés) est une **implémentation implicite** d'un CWM :
+- Les **Spokes** = modèles d'inférence spécialisés par modalité ($\mathbb{P}(𝐯^i | 𝐱^i)$)
+- Le **Hub** = assemblage de l'état relationnel $\mathbf{r}$
+- Les **connexions Hub↔Spokes** = mécanismes causaux entre modalités
+
+Mais IM-LEPP ne formalise pas explicitement :
+- La décomposition entités/relations
+- Le graphe causal $\mathcal{G}_r$
+- Les conditions d'intervention vs prédiction
+
+### D. CWM vs MCJEPA (Markov-Chain JEPA)
+
+MCJEPA utilise une matrice de transition stochastique $A$ sur des états discrets. Dans le cadre CWM :
+- Les **états discrets** de MCJEPA = différents **régimes causaux** (différents graphes $\mathcal{G}_r$)
+- La **matrice de transition** = dynamique entre régimes causaux
+- Les **invariants** = sous-espaces où $\mathcal{G}_r$ reste stable
+
+### E. CWM vs Active Inference
+
+L'**énergie libre** de Friston (Active Inference) correspond à l'**utilité négative** $-\mathcal{U}$ du CWM. Mais Active Inference manque souvent de :
+- Structure causale explicite (graphes $\mathcal{G}_r$)
+- Décomposition entités/relations
+- Distinction claire prédiction vs intervention
+
+**Le CWM formalise ce qu'Active Inference fait implicitement** : minimiser la surprise en mettant à jour les croyances sur les états cachés, mais avec une structure causale rigoureuse.
+
+### F. CWM vs GCML (Generative Cognitive Map Learner)
+
+Le GCML de Wolfgang Maass (avec son espace latent linéaire $z_{t+1} = z_t + V \cdot a_t$) est une **instance simplifiée** de CWM où :
+- Les "entités" = positions dans l'espace cognitif
+- Les "relations" = distances et directions
+- Le modèle de transition = dynamique linéaire (approximation de Koopman)
+
+Mais le GCML n'a pas la **compositionnalité** des CWMs (pas de blocs entités/relations séparés).
+
+## 3. Idées à reprendre pour la robotique multi-agents
+
+### Idée 1 : État Relationnel Structuré pour Multi-Agents
+
+**Application concrète** : Au lieu qu'un robot ait un vecteur latent monolithique de dimension 512, structurer son espace latent comme :
+
+```
+𝐫_robot = 
+┌─────────────────────────────────────┐
+│  Diagonale :                        │
+│  ├─ 𝐯_robot : position, vitesse,   │
+│  │   batterie, état capteurs        │
+│  ├─ 𝐖_objet1 : position, type,     │
+│  │   affordances                    │
+│  ├─ 𝐖_objet2 : ...                 │
+│  └─ 𝐖_robot2 : position, état,     │
+│      intention estimée              │
+├─────────────────────────────────────┤
+│  Hors-diagonale :                   │
+│  ├─ 𝐫^{robot,objet1} : "objet1     │
+│  │   ATTRAPABLE par robot"          │
+│  ├─ 𝐫^{robot,robot2} : "robot2     │
+│  │   COOPÈRE avec robot"            │
+│  └─ 𝐫^{objet1,objet2} : "objet1    │
+│      BLOQUE objet2"                 │
+└─────────────────────────────────────┘
+```
+
+**Avantages** :
+- **Compositionnalité** : Si un nouveau robot rejoint l'équipe, on ajoute juste un bloc $\mathbf{v}^{robot3}$ et ses relations, sans réentraîner tout le modèle
+- **Généralisation** : Les mécanismes causaux appris pour "pousser un objet" se transfèrent à n'importe quel objet
+- **Communication inter-robots** : Les robots peuvent partager leurs blocs relationnels ("Je vois que objet1 bloque objet2") plutôt que des vecteurs latents opaques
+
+### Idée 2 : Graphes Causaux Explicites pour la Planification
+
+**Problème actuel** : Les World Models actuels apprennent des corrélations prédictives. Si un robot apprend "quand je pousse le bloc rouge, il tombe", il ne sait pas **pourquoi** (friction insuffisante ? centre de gravité ?).
+
+**Solution CWM** : Apprendre un graphe causal explicite $\mathcal{G}_r$ :
+```
+Position_robot → Force_poussée → Friction → Mouvement_bloc
+                                      ↓
+                                  Chute_bloc
+```
+
+**Avantages** :
+- **Planification contrefactuelle** : "Si la friction avait été plus élevée, le bloc serait-il tombé ?"
+- **Diagnostic de défaillance** : Si le bloc ne tombe pas comme prévu, le robot peut identifier **quel mécanisme causal** a échoué (friction ? force ?)
+- **Transfert de connaissances** : Le graphe causal appris sur une table peut se transférer à un sol différent (seuls les paramètres changent, pas la structure)
+
+### Idée 3 : Distinction Prédiction vs Intervention
+
+**Problème actuel** : Les modèles de dynamique apprennent $\mathbb{P}(𝐫_{t+1} | 𝐫_t, 𝐚_t)$ et traitent cela comme $\mathbb{P}(𝐫_{t+1} | 𝐫_t; do(𝐚_t))$. Mais s'il y a des **confondants non mesurés** (ex: le sol est glissant, mais le robot ne le voit pas), cette équivalence est fausse.
+
+**Solution CWM** :
+1. Apprendre d'abord le modèle prédictif (corrélations)
+2. Identifier les confondants potentiels via **tests d'intervention** (le robot essaie différentes actions et vérifie si les effets correspondent aux prédictions)
+3. Construire le modèle interventionnel **seulement quand** les conditions sont satisfaites (positivité, consistance, pas de confondants non mesurés)
+
+**Application robotique** : Avant d'exécuter une action critique (ex: traverser une zone), le robot fait des **micro-interventions exploratoires** (pousser légèrement un objet) pour vérifier que son modèle causal est valide dans ce contexte.
+
+### Idée 4 : Identifiabilité par Composant pour le Debugging
+
+**Problème actuel** : Quand un World Model échoue, on ne sait pas **quel composant** a échoué (l'encodeur ? la dynamique ? le décodeur ?).
+
+**Solution CWM** : Tester chaque composant séparément :
+1. **Modèle d'inférence** : Peut-on reconstruire $\mathbf{r}$ à partir de $\mathbf{x}$ ? (test d'identifiabilité des entités)
+2. **Modèle de transition** : Les prédictions $\mathbb{P}(𝐫_{t+1} | 𝐫_t)$ correspondent-elles aux observations ? (test de la dynamique)
+3. **Graphe causal** : Les indépendances conditionnelles prédites par $\mathcal{G}_r$ sont-elles vérifiées dans les données ? (test de la structure)
+4. **Modèle d'intervention** : Les effets d'interventions réelles correspondent-ils aux prédictions $do(𝐚)$ ? (test causal)
+
+**Avantage** : Debugging systématique et ciblé plutôt que "tout réentraîner".
+
+### Idée 5 : Compositionnalité pour l'Apprentissage Multi-Tâches
+
+**Problème actuel** : Un robot entraîné sur "empiler des blocs" ne sait pas "pousser des blocs dans une boîte" sans réentraînement massif.
+
+**Solution CWM** : Les mécanismes causaux sont **factorisés par entité et relation** :
+- Mécanisme "pousser objet" : appris une fois, réutilisable pour tous les objets
+- Mécanisme "empiler objet A sur B" : composition de "soulever A" + "placer A sur B"
+- Mécanisme "attraper objet" : appris une fois, réutilisable
+
+**Application** : Un robot peut apprendre 10 tâches différentes en apprenant seulement 3-4 mécanismes causaux de base et leurs compositions.
+
+### Idée 6 : Échelle Causale pour la Planification Hiérarchique
+
+**Application concrète** : Organiser la planification selon les 3 niveaux de Pearl :
+
+**Niveau 1 (Association) - Planification réactive** :
+"Si je vois un obstacle à gauche, je tourne à droite"
+→ Rapide, basé sur des corrélations apprises
+
+**Niveau 2 (Intervention) - Planification stratégique** :
+"Si je pousse cet objet, il bloquera le passage pour les autres robots"
+→ Plus lent, nécessite le modèle causal
+
+**Niveau 3 (Contrefactuel) - Planification créative** :
+"Si j'avais un bras plus long, pourrais-je attraper cet objet sans me déplacer ?"
+→ Imagination de scénarios alternatifs, innovation
+
+**Architecture multi-niveaux** :
+```
+Niveau 3 (Contrefactuel) : Imagination de nouveaux mécanismes
+        ↓
+Niveau 2 (Intervention) : Planification avec modèle causal
+        ↓
+Niveau 1 (Association) : Exécution réactive
+```
+
+## 4. Synthèse : Le CWM comme cadre unificateur
+
+Le papier de Kori et Russo fournit le **cadre théorique manquant** qui unifie toutes les approches que nous avons discutées :
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  Cadre Unifié : Causal World Models (CWMs)                  │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  Niveau Représentation (Quoi encoder ?)                     │
+│  ├─ JEPA + VICReg/SIGReg → Variables latentes démêlées      │
+│  ├─ Koopman → Fonctions propres (invariants, oscillations)  │
+│  └─ CWM → Entités + Relations (blocs diagonaux/hors-diag)   │
+│                                                             │
+│  Niveau Structure (Comment organiser ?)                     │
+│  ├─ IM-LEPP → Hub-and-Spoke (amodal + spokes spécialisés)   │
+│  ├─ GCML → Carte cognitive (espace latent linéaire)         │
+│  └─ CWM → Graphe causal 𝒢_r + mécanismes explicites         │
+│                                                             │
+│  Niveau Dynamique (Comment évoluer ?)                       │
+│  ├─ MCJEPA → Matrice de transition stochastique             │
+│  ├─ Koopman → Multiplication matricielle linéaire           │
+│  └─ CWM → Transition causale action-conditionnée            │
+│                                                             │
+│  Niveau Décision (Comment agir ?)                           │
+│  ├─ Active Inference → Minimisation énergie libre           │
+│  ├─ MPC → Optimisation de trajectoire                       │
+│  └─ CWM → Utilité 𝒰 + interventions causales                │
+│                                                             │
+│  Niveau Évaluation (Comment vérifier ?)                     │
+│  └─ CWM → Identifiabilité par composant + tests causaux     │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+```
+
+## Conclusion
+
+Ce papier est **fondamental** car il transforme "World Model" d'une ambition vague en un **objet mathématique bien spécifié** avec :
+- Une définition formelle (tuple à 5 composantes)
+- Une structure explicite (état relationnel entités/relations)
+- Des garanties théoriques (identifiabilité par composant)
+- Une hiérarchie de capacités (échelle causale de Pearl)
+
+**Pour la robotique multi-agents**, les idées clés à reprendre sont :
+1. **État relationnel structuré** pour la compositionnalité et la généralisation
+2. **Graphes causaux explicites** pour la planification et le diagnostic
+3. **Distinction prédiction vs intervention** pour la robustesse
+4. **Échelle causale** pour la planification hiérarchique
+5. **Identifiabilité par composant** pour le debugging systématique
+
+Le CWM n'est pas une nouvelle architecture, mais le **cadre théorique** qui permet de comprendre, comparer et améliorer toutes les approches existantes (JEPA, Koopman, Active Inference, etc.) dans un langage commun rigoureux.
