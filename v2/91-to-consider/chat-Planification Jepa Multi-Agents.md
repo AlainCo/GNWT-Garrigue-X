@@ -2580,3 +2580,499 @@ Vous avez maintenant tous les ingrédients pour construire un agent autonome qui
 4. **S'adapte** en temps réel (receding-horizon MPC)
 
 C'est exactement le système nerveux d'un agent autonome robuste et efficace.
+
+### USER
+Je suis tombé sur ce papier qui semble tenter de renforcer les contraintes de sécurité dans les systèmes JEPA: https://arxiv.org/abs/2608.17496
+peux tu m'expliquer ce que propose ce papier, le mettre en perspective avec ce dont on discute, et dire s'il y a des idées à reprendre ?
+
+### ASSISTANT
+Excellent ! Ce papier **"Calibrated Predictive Safety for Heterogeneous Robots"** (Zhong, Liu & Wang, août 2026) attaque exactement le problème critique qui manque dans la plupart de nos discussions sur les JEPAs : **comment garantir qu'un agent autonome ne se mette pas en danger ou ne détruise pas son environnement ?**
+
+C'est le chaînon manquant entre la puissance prédictive des JEPAs et les exigences de sécurité du monde réel. Voici l'analyse complète.
+
+---
+
+## 1. Le Problème : Le Dilemme Généralisation vs Sécurité
+
+Les auteurs identifient un conflit fondamental dans la robotique moderne  :
+
+**Les politiques Vision-Language-Action (VLA)** :
+- ✅ Généralisent bien à de nouvelles tâches
+- ❌ Aucune garantie à l'exécution (peuvent commander des actions physiquement impossibles ou dangereuses)
+
+**Les planificateurs model-based classiques** :
+- ✅ Respectent les contraintes cinématiques et géométriques
+- ❌ Généralisent mal (codés à la main pour chaque robot)
+
+**Le défi** : Comment combiner la flexibilité des JEPAs avec les garanties de sécurité des systèmes classiques ?
+
+---
+
+## 2. L'Architecture : Pipeline de Décision à Horizon Glissant
+
+Le papier propose une architecture en **5 étapes** qui sépare clairement la prédiction (flexible) de l'exécution (sûre)  :
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  ÉTAPE 1 : PROPOSER                                         │
+│  • Génère K candidats d'actions (chunks)                    │
+│  • Peut venir d'une politique VLA, d'un planificateur, etc. │
+└────────────────────┬────────────────────────────────────────┘
+                     │
+┌────────────────────▼────────────────────────────────────────┐
+│  ÉTAPE 2 : ROLOUT JEPA                                      │
+│  • JEPA action-conditionné avec encoder gelé                │
+│  • Conditionné par un "embodiment embedding" (type de robot)│
+│  • Déroule chaque candidat dans l'espace latent             │
+└────────────────────┬────────────────────────────────────────┘
+                     │
+┌────────────────────▼────────────────────────────────────────┐
+│  ÉTAPE 3 : SCORER (Têtes Calibrées)                         │
+│  • Tête "Progress" : prédit l'avancement vers le but        │
+│  • Tête "Risk" : prédit le risque physique                  │
+│  • Les deux rapportent une incertitude calibrée             │
+└────────────────────┬────────────────────────────────────────┘
+                     │
+┌────────────────────▼────────────────────────────────────────┐
+│  ÉTAPE 4 : SAFETY SHIELD (Filtre Déterministe)  ← CRUCIAL   │
+│  • Spécifique à chaque robot (embodiment-specific)          │
+│  • Vérifie les contraintes cinématiques/géométriques        │
+│  • FILTRE les candidats inadmissibles (dur, pas probabiliste)│
+└────────────────────┬────────────────────────────────────────┘
+                     │
+┌────────────────────▼────────────────────────────────────────┐
+│  ÉTAPE 5 : SÉLECTIONNER + FALLBACK                          │
+│  • Classe les candidats admissibles par score JEPA          │
+│  • Si ensemble vide → "fallback ladder" (dégradation gracieuse)│
+└─────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 3. Les Innovations Clés
+
+### A. Le Safety Shield Déterministe (L'Idée la Plus Importante)
+
+C'est le **cœur de la contribution** du papier . Au lieu de laisser le JEPA décider si une action est sûre (ce qui serait probabiliste et faillible), ils ajoutent un **filtre déterministe** qui garantit mathématiquement les contraintes :
+
+```python
+class SafetyShield:
+    def __init__(self, robot_kinematics, environment_geometry):
+        self.kinematics = robot_kinematics  # Limites articulaires
+        self.geometry = environment_geometry  # Obstacles connus
+    
+    def is_admissible(self, action_chunk, current_state):
+        """Retourne True/False, pas une probabilité"""
+        
+        # Contrainte 1 : Limites articulaires
+        if not self.kinematics.within_limits(action_chunk):
+            return False
+        
+        # Contrainte 2 : Pas de collision avec obstacles connus
+        if self.geometry.predicts_collision(action_chunk, current_state):
+            return False
+        
+        # Contrainte 3 : Stabilité (pour robots mobiles)
+        if not self.check_stability(action_chunk):
+            return False
+        
+        return True
+```
+
+**Pourquoi c'est génial** :
+- Le JEPA peut "halluciner" des actions dangereuses → pas grave, le shield les rejette
+- Les garanties sont **mathématiques**, pas statistiques
+- C'est exactement ce qu'on fait en aviation : le pilote automatique propose, mais le système de protection d'enveloppe (flight envelope protection) interdit certaines manœuvres
+
+### B. Les Têtes Calibrées (Progress + Risk)
+
+Le JEPA est augmenté de deux têtes de prédiction  :
+
+**Tête Progress** :
+- Prédit l'avancement vers le but après l'exécution du chunk
+- Sort une distribution (moyenne + variance)
+- Permet de classer les actions par efficacité
+
+**Tête Risk** :
+- Prédit le risque physique (collision, instabilité, dommage)
+- Sort une distribution (moyenne + variance)
+- Permet de pénaliser les actions risquées même si elles sont admissibles
+
+**Calibration** : Les auteurs insistent sur le fait que ces prédictions doivent être **calibrées** , c'est-à-dire que quand le modèle dit "j'ai 80% de confiance", il a effectivement raison 80% du temps. C'est crucial pour que le planificateur puisse faire confiance aux scores.
+
+### C. L'Embodiment Embedding (Multi-Robot)
+
+Le JEPA est conditionné par un vecteur qui encode le **type de robot** . Cela permet au même modèle de :
+- Comprendre qu'un bras articulé a des contraintes différentes d'un drone
+- Adapter ses prédictions de risque au robot spécifique
+- Généraliser à plusieurs plateformes avec un seul modèle
+
+### D. Le Fallback Ladder (Dégradation Gracieuse)
+
+Que se passe-t-il si **aucune** action n'est admissible ? (ex: le robot est coincé) 
+
+Le système utilise une "échelle de fallback" :
+1. D'abord essayer les actions normales
+2. Si échec → essayer des actions plus conservatrices
+3. Si encore échec → demander de l'aide humaine
+4. Si impossible → arrêt d'urgence sécurisé
+
+C'est exactement ce qu'on fait en ingénierie des systèmes critiques : toujours avoir un mode dégradé.
+
+---
+
+## 4. Mise en Perspective : Comment ça S'Intègre à Nos Discussions
+
+### A. Le Lien avec UA-JEPA (Gestion de l'Incertitude)
+
+Vous vous souvenez que **UA-JEPA** modélisait l'incertitude avec des distributions Gaussiennes ?
+
+**Ce papier va plus loin** :
+- UA-JEPA : "Je ne suis pas sûr de ce qu'il y a sous ce nuage" (incertitude perceptive)
+- Ce papier : "Je ne suis pas sûr du risque de cette action" (incertitude décisionnelle)
+
+**La combinaison idéale** :
+```python
+# UA-JEPA fournit l'incertitude perceptive
+perceptual_uncertainty = ua_jepa.predict_variance(observation)
+
+# Le JEPA de sécurité fournit l'incertitude décisionnelle
+action_risk, risk_uncertainty = safety_jepa.predict_risk(action)
+
+# Le planificateur FEP utilise les deux
+efe = pragmatic_value + epistemic_value(perceptual_uncertainty) - risk_penalty(action_risk, risk_uncertainty)
+```
+
+### B. Le Lien avec PhyLatent et PSG-JEPA (Contraintes Physiques)
+
+Vous vous souvenez que **PhyLatent** forçait l'espace latent à respecter la physique, et **PSG-JEPA** ançait le latent dans la proprioception ?
+
+**Ce papier complète l'approche** :
+- PhyLatent/PSG-JEPA : Contraignent l'**apprentissage** du modèle
+- Safety Shield : Contraignent l'**exécution** des actions
+
+**Pourquoi les deux sont nécessaires** :
+- Même avec un JEPA parfaitement entraîné (PhyLatent), le modèle peut proposer des actions limites
+- Le safety shield est la **dernière ligne de défense** qui garantit mathématiquement les contraintes
+
+### C. Le Lien avec INTACT et Traj-LeWM (Planification)
+
+**INTACT** faisait de la planification directe (sans search). **Traj-LeWM** évaluait la qualité des trajectoires.
+
+**Ce papier ajoute la dimension sécurité** :
+```python
+# Pipeline complet inspiré de ces trois papiers
+def plan_with_safety(current_state, goal, jepa_model, safety_shield):
+    # 1. Générer des candidats (style INTACT ou CEM)
+    candidates = generate_action_candidates(current_state, goal)
+    
+    # 2. Filtrer avec le safety shield (ce papier)
+    admissible = [c for c in candidates if safety_shield.is_admissible(c, current_state)]
+    
+    # 3. Si vide, fallback
+    if not admissible:
+        return fallback_strategy(current_state)
+    
+    # 4. Scorer avec Traj-LeWM (qualité de trajectoire)
+    scores = [traj_lewm.score(c) for c in admissible]
+    
+    # 5. Sélectionner le meilleur
+    best_action = admissible[argmax(scores)]
+    return best_action
+```
+
+### D. Le Lien avec l'Active Inference (Friston)
+
+C'est ici que ça devient fascinant pour votre robot Fristonien.
+
+**Dans le FEP classique**, l'agent minimise l'Énergie Libre Attendue (EFE) :
+```
+EFE = Valeur Pragmatique + Valeur Épistémique
+```
+
+**Ce papier ajoute une troisième composante** :
+```
+EFE = Valeur Pragmatique + Valeur Épistémique - Pénalité de Risque
+```
+
+Mais avec une subtilité cruciale : la pénalité de risque n'est pas "douce" (probabiliste), elle est **dure** (le safety shield rejette catégoriquement les actions dangereuses).
+
+**Pourquoi c'est important** :
+- En Active Inference pure, l'agent pourrait théoriquement choisir une action très risquée si la valeur épistémique est énorme ("Je vais sauter de cette falaise pour voir ce qui se passe")
+- Le safety shield empêche cela mathématiquement : certaines actions sont **interdites**, peu importe leur valeur épistémique
+
+C'est exactement ce que fait le cerveau humain : le cortex préfrontal peut imaginer des actions dangereuses, mais le tronc cérébral et les réflexes spinaux interdisent certaines actions (ex: mettre la main dans le feu).
+
+---
+
+## 5. Les Idées à Reprendre pour Votre Projet
+
+### 💡 Idée 1 : Le Safety Shield Déterministe (À implémenter absolument)
+
+C'est probablement **l'idée la plus importante** de tout notre échange sur la sécurité.
+
+**Pour votre robot** :
+```python
+class RobotSafetyShield:
+    def __init__(self, robot_config):
+        self.joint_limits = robot_config.joint_limits
+        self.max_velocity = robot_config.max_velocity
+        self.obstacle_map = None  # Mis à jour en temps réel
+    
+    def is_admissible(self, action_chunk, current_state):
+        """Filtre déterministe, pas probabiliste"""
+        
+        # 1. Limites articulaires
+        for joint, (min_val, max_val) in self.joint_limits.items():
+            if not (min_val <= action_chunk[joint] <= max_val):
+                return False
+        
+        # 2. Limites de vitesse
+        velocity = compute_velocity(action_chunk, current_state)
+        if np.any(np.abs(velocity) > self.max_velocity):
+            return False
+        
+        # 3. Collisions avec obstacles connus
+        if self.obstacle_map:
+            if self.obstacle_map.predicts_collision(action_chunk, current_state):
+                return False
+        
+        # 4. Stabilité (pour robots mobiles/bipèdes)
+        if not self.check_stability(action_chunk, current_state):
+            return False
+        
+        return True
+    
+    def check_stability(self, action_chunk, current_state):
+        """Vérifie que le robot ne va pas tomber"""
+        # Calcul du centre de masse, du polygone de support, etc.
+        # Retourne False si le robot sera instable
+        pass
+```
+
+**Pourquoi c'est crucial** :
+- Même si votre JEPA/FEP "hallucine" une action dangereuse, le shield la rejette
+- Les garanties sont mathématiques, pas statistiques
+- C'est la différence entre un jouet de recherche et un système déployable
+
+### 💡 Idée 2 : Les Têtes Calibrées (Progress + Risk)
+
+Ajoutez à votre JEPA deux têtes de prédiction supplémentaires :
+
+```python
+class SafetyAwareJEPA(nn.Module):
+    def __init__(self, base_jepa):
+        super().__init__()
+        self.encoder = base_jepa.encoder  # Gelé
+        self.predictor = base_jepa.predictor
+        
+        # Nouvelles têtes
+        self.progress_head = nn.Sequential(
+            nn.Linear(latent_dim, 256),
+            nn.ReLU(),
+            nn.Linear(256, 2)  # [moyenne, variance]
+        )
+        
+        self.risk_head = nn.Sequential(
+            nn.Linear(latent_dim, 256),
+            nn.ReLU(),
+            nn.Linear(256, 2)  # [moyenne, variance]
+        )
+    
+    def predict_outcomes(self, current_latent, action_chunk):
+        # Prédire l'état futur
+        future_latent = self.predictor(current_latent, action_chunk)
+        
+        # Prédire le progrès vers le but
+        progress_mean, progress_var = self.progress_head(future_latent).chunk(2, dim=-1)
+        
+        # Prédire le risque
+        risk_mean, risk_var = self.risk_head(future_latent).chunk(2, dim=-1)
+        
+        return {
+            'future_latent': future_latent,
+            'progress': (progress_mean, progress_var),
+            'risk': (risk_mean, risk_var)
+        }
+```
+
+**Entraînement** :
+- Utilisez des trajectoires étiquetées (progrès réel, incidents réels)
+- Utilisez une perte de calibration (ex: negative log-likelihood + calibration loss)
+- Le modèle apprend à dire "je suis sûr que c'est dangereux" vs "je ne suis pas sûr"
+
+### 💡 Idée 3 : Le Fallback Ladder (Dégradation Gracieuse)
+
+Implémentez une hiérarchie de stratégies de secours :
+
+```python
+class FallbackLadder:
+    def __init__(self):
+        self.strategies = [
+            self.normal_planning,
+            self.conservative_planning,
+            self.retreat_to_safe_zone,
+            self.freeze_and_ask_human,
+            self.emergency_stop
+        ]
+    
+    def execute(self, current_state, level=0):
+        if level >= len(self.strategies):
+            return self.emergency_stop()
+        
+        try:
+            action = self.strategies[level](current_state)
+            if self.safety_shield.is_admissible(action, current_state):
+                return action
+            else:
+                return self.execute(current_state, level + 1)
+        except:
+            return self.execute(current_state, level + 1)
+    
+    def conservative_planning(self, current_state):
+        """Planification plus prudente"""
+        # Réduire l'horizon, augmenter les marges de sécurité
+        pass
+    
+    def retreat_to_safe_zone(self, current_state):
+        """Retourner à une zone connue comme sûre"""
+        pass
+    
+    def freeze_and_ask_human(self, current_state):
+        """S'arrêter et demander de l'aide"""
+        pass
+```
+
+**Pourquoi c'est important** :
+- Un robot autonome doit toujours avoir un plan B, C, D...
+- C'est ce qui fait la différence entre un prototype et un système déployable
+
+### 💡 Idée 4 : L'Embodiment Embedding (Multi-Robot)
+
+Si vous voulez que votre architecture fonctionne sur plusieurs types de robots :
+
+```python
+class EmbodimentConditionedJEPA(nn.Module):
+    def __init__(self, latent_dim, num_robot_types):
+        super().__init__()
+        self.encoder = SharedEncoder()
+        self.embodding_embedder = nn.Embedding(num_robot_types, 64)
+        self.predictor = ConditionedPredictor(latent_dim + 64, latent_dim)
+    
+    def forward(self, observation, action, robot_type_id):
+        # Encoder l'observation
+        latent = self.encoder(observation)
+        
+        # Encoder le type de robot
+        robot_emb = self.embodding_embedder(robot_type_id)
+        
+        # Conditionner le prédicteur
+        conditioned_latent = torch.cat([latent, robot_emb], dim=-1)
+        prediction = self.predictor(conditioned_latent, action)
+        
+        return prediction
+```
+
+**Avantages** :
+- Un seul modèle pour plusieurs robots
+- Le modèle apprend les spécificités de chaque plateforme
+- Facilite le transfert learning
+
+---
+
+## 6. Architecture Complète Intégrée
+
+Voici comment combiner toutes nos découvertes dans une architecture de robot autonome sûre :
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  PERCEPTION (CR-JEPA / UniJEPA)                             │
+│  • Encode la scène multi-capteurs                           │
+│  • UA-JEPA : estime l'incertitude perceptive                │
+└────────────────────┬────────────────────────────────────────┘
+                     │
+┌────────────────────▼────────────────────────────────────────┐
+│  MODÈLE DU MONDE (JEPA + Mamba)                             │
+│  • Prédit les états latents futurs                          │
+│  • Têtes calibrées : Progress + Risk (ce papier)            │
+│  • Conditionné par embodiment embedding                     │
+└────────────────────┬────────────────────────────────────────┘
+                     │
+┌────────────────────▼────────────────────────────────────────┐
+│  GÉNÉRATEUR DE CANDIDATS                                    │
+│  • INTACT (planification directe) ou CEM                    │
+│  • Génère K candidats d'actions                             │
+└────────────────────┬────────────────────────────────────────┘
+                     │
+┌────────────────────▼────────────────────────────────────────┐
+│  SAFETY SHIELD (Ce papier)  ← GARANTIES MATHÉMATIQUES       │
+│  • Filtre déterministe                                      │
+│  • Vérifie contraintes cinématiques/géométriques            │
+│  • Rejette catégoriquement les actions dangereuses          │
+└────────────────────┬────────────────────────────────────────┘
+                     │
+┌────────────────────▼────────────────────────────────────────┐
+│  PLANIFICATEUR FEP (Active Inference)                       │
+│  • Classe les candidats admissibles par EFE                 │
+│  • EFE = Pragmatique + Épistémique - Risque                 │
+│  • Traj-LeWM : évalue la qualité des trajectoires           │
+└────────────────────┬────────────────────────────────────────┘
+                     │
+┌────────────────────▼────────────────────────────────────────┐
+│  FALLBACK LADDER (Ce papier)                                │
+│  • Si aucune action admissible → dégradation gracieuse      │
+│  • Stratégies de secours hiérarchiques                      │
+└────────────────────┬────────────────────────────────────────┘
+                     │
+┌────────────────────▼────────────────────────────────────────┐
+│  EXÉCUTION                                                  │
+│  • Envoie l'action aux moteurs                              │
+│  • Boucle de contrôle temps réel                            │
+└─────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 7. Synthèse : Ce qu'Il Faut Retenir
+
+### Les 3 Leçons Clés
+
+1. **La sécurité ne peut pas être probabiliste**
+   - Un JEPA peut se tromper sur le risque d'une action
+   - Le safety shield doit être déterministe et mathématiquement garanti
+   - C'est la différence entre "probablement sûr" et "garanti sûr"
+
+2. **Séparer prédiction et exécution**
+   - Le JEPA prédit (flexible, peut halluciner)
+   - Le safety shield exécute (rigide, garanties mathématiques)
+   - Cette séparation est cruciale pour les systèmes critiques
+
+3. **Toujours avoir un plan B (fallback ladder)**
+   - Un robot autonome doit savoir quoi faire quand tout échoue
+   - La dégradation gracieuse est aussi importante que la planification optimale
+
+### Pour Votre Projet Multi-Agent
+
+**Ce papier vous donne** :
+- Une architecture concrète pour rendre votre robot sûr
+- L'idée du safety shield déterministe (à implémenter absolument)
+- Le concept de fallback ladder pour la robustesse
+
+**La combinaison ultime** :
+- **JEPAs** pour la perception et la prédiction riches
+- **Active Inference** pour la planification intelligente
+- **Safety Shield** pour les garanties mathématiques
+- **Fallback Ladder** pour la robustesse
+
+---
+
+## Conclusion
+
+Ce papier est **indispensable** pour passer d'un robot de recherche à un robot déployable. Il résout le problème critique de la sécurité en combinant :
+- La flexibilité des JEPAs (prédiction)
+- Les garanties des systèmes classiques (safety shield)
+- La robustesse de l'ingénierie des systèmes critiques (fallback ladder)
+
+**L'idée la plus précieuse** est le **safety shield déterministe** : même si votre JEPA/FEP "hallucine" une action dangereuse, le shield la rejette catégoriquement. C'est exactement ce que fait le cerveau humain (le cortex imagine, le tronc cérébral interdit).
+
+Vous avez maintenant tous les ingrédients pour construire un agent autonome qui est non seulement intelligent (JEPAs + FEP) mais aussi **sûr** (safety shield + fallback). C'est la différence entre un jouet de laboratoire et un système qui peut opérer dans le monde réel avec des humains.
