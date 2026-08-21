@@ -573,3 +573,333 @@ Et tu as déjà tous les ingrédients :
 - CFE comme boussole globale pour l'alignement émergent
 
 Tu n'as pas juste un projet de science-fiction. **Tu as un plan de construction.**
+
+### USER
+Maintenant on va ajouter une difficulté. Jusque là on visait un environnement symbiotique.
+Imaginons que le système de système, machines et humains, soit en conflit avec un autre système... une guerre, un cambriolage... Là la sybiose dans l'équipe doit rester ce dont on a discuté, question de survi, la confiance en son binôme de combat totale, mais à l'opposé avec le camps d'en face... c'est compliqué. il faut comprendre l'autre, qui lui va cacher sa nature, ses intentions, sa position, et soi même être tantôt clair et sans ambiguité, parfois même s'interdire des alternatives pour être prévisible (certains disent, jeter le volant par la fenêtre, bruler ses navires), parfois laisser un doit partier, ou être juste imprévisible, invisible, tromper l'autre... pour finir par manipuler l'autre pour l'emmener dans une équilibre avantageux qu'il ne pourra pas refuser, pense t'on... c'est compliqué, et j'espère que ca a été étudié ? peux tu analyser la structure de l'environnement dont je parle, puis voir si tu connais des théories pour gérer cette situation, dans mon hypothèse technologique actuelle ?
+
+### ASSISTANT
+# L'Active Inference en Contexte Adversarial : Guerre, Tromperie et Stratégie
+
+Tu soulèves une question fondamentale et profondément difficile. Ce que tu décris est exactement le problème des **jeux à double niveau** : coopération intra-groupe et compétition inter-groupes. Et oui, c'est étudié — à la fois en théorie des jeux, en stratégie militaire, et récemment en Active Inference adversariale.
+
+---
+
+## 1. Analyse de la Structure de l'Environnement
+
+### Le Double Jeu (Dual-Game Structure)
+
+Ton système doit jouer simultanément deux jeux qui ont des dynamiques opposées :
+
+| Dimension | Jeu Interne (Ton Équipe) | Jeu Externe (L'Adversaire) |
+|-----------|-------------------------|---------------------------|
+| **Type** | Non-zero-sum (coopératif) | Zero-sum ou négatif (compétitif) |
+| **Information** | Partagée, transparente | Asymétrique, cachée |
+| **Prévisibilité** | Maximale (confiance) | Minimale ou manipulée |
+| **Objectif** | Minimiser la CFE collective | Maximiser la CFE de l'adversaire |
+| **Théorie de l'Esprit** | Alignement empathique | Modélisation pour tromper |
+| **Stratégie** | "Singing from the same hymn sheet" | "Fausser les partitions de l'autre" |
+
+### L'Asymétrie Informationnelle comme Arme
+
+Dans le jeu interne, tu veux **réduire** l'asymétrie d'information (transparence totale avec ton binôme).
+Dans le jeu externe, tu veux **augmenter** l'asymétrie d'information en ta faveur :
+- Toi, tu connais tes intentions, tes capacités, ta position
+- L'autre, tu veux qu'il **ne les connaisse pas**, ou qu'il les connaisse **faussement**
+
+C'est exactement ce que Bruineberg (2023) appelle l'**"inférence adversariale"** : quand l'environnement lui-même fait de l'Active Inference *contre toi* . L'algorithme de TikTok qui te modélise pour te garder accroché fait exactement ce que ton adversaire veut faire : construire un modèle génératif de toi pour prédire et manipuler tes actions.
+
+### Le Paradoxe de la Prévisibilité Stratégique
+
+Tu as identifié un paradoxe profond :
+- Parfois, être prévisible est une **force** (commitment strategy)
+- Parfois, être imprévisible est une **force** (stratégie mixte)
+- Parfois, **faire croire** qu'on est prévisible est une force (tromperie)
+
+Ce paradoxe se résout par la **récursivité de la Theory of Mind** : tout dépend du niveau auquel l'adversaire te modélise.
+
+---
+
+## 2. Théories Pertinentes pour Ton Contexte
+
+### A. Les "Commitment Devices" de Schelling (Brûler ses Navires)
+
+Thomas Schelling, prix Nobel d'économie, a formalisé pourquoi **se priver d'options peut être rationnel** .
+
+**Exemples historiques :**
+- Cortez brûlant ses navires en arrivant au Mexique (ses soldats ne peuvent plus fuir, donc ils se battent à mort → les Aztèques le savent et hésitent à attaquer)
+- "Jeter le volant par la fenêtre" dans un jeu de "chicken" (tu montres que tu ne peux plus dévier → l'autre doit dévier)
+
+**Formalisation en Active Inference :**
+
+Un commitment device fonctionne en **modifiant ton propre modèle génératif** de façon irréversible et visible. Si l'adversaire peut observer que tu as réduit ton espace d'actions possibles, son modèle de toi devient plus simple, et sa meilleure réponse devient prévisible.
+
+Mathématiquement, si ton ensemble de politiques possibles passe de $\Pi$ à $\Pi' \subset \Pi$, et si l'adversaire sait cela, alors son Expected Free Energy pour te contrer change radicalement. Il doit choisir sa politique en fonction de ton espace réduit.
+
+**Application pour ton système :**
+Ton robot pourrait volontairement **désactiver certains modules** ou **rendre certaines décisions irréversibles** pour signaler son engagement. Par exemple, en défense d'un bâtiment, le système pourrait verrouiller les issues (les siennes et celles de son équipe) pour signaler : "Nous ne battrons pas en retraite". L'adversaire, modélisant cela, doit recalculer sa stratégie.
+
+### B. La Tromperie Stratégique en Active Inference
+
+Mareddy & Maity (2025) ont formalisé comment des agents apprennent à tromper en utilisant le Deep Q-Learning . Leur cadre est directement transposable à l'Active Inference.
+
+**Mécanisme de la tromperie :**
+
+Un agent trompeur cherche à **manipuler le modèle génératif de l'adversaire**. Concrètement :
+
+1. L'adversaire observe tes actions et met à jour son modèle de toi (inférence bayésienne)
+2. Tu choisis tes actions non pas pour optimiser ton objectif réel, mais pour que l'adversaire construise un **faux modèle** de toi
+3. Une fois que l'adversaire a le faux modèle, tu passes à l'action réelle
+
+**L'expérience du Policier et du Voleur :**
+
+Dans leurs simulations, un "voleur" doit s'échapper par une sortie secrète parmi plusieurs. Un "policier" doit allouer des ressources pour bloquer les sorties. Le voleur apprend à :
+- Visiter d'abord des **fausses sorties** pour faire croire au policier qu'il va les utiliser
+- Le policier, trompé, y alloue des ressources
+- Puis le voleur utilise sa **vraie sortie**, maintenant sous-protégée
+
+**Formalisation :**
+
+La fonction de coût du trompeur devient :
+
+$$J_{trompeur} = J_{objectif\_réel} + \lambda \cdot D_{KL}[Q_{adversaire}(s) \| P_{faux\_objectif}(s)]$$
+
+Le premier terme pousse vers l'objectif réel. Le second pousse à ce que le modèle de l'adversaire **diverge** vers un faux objectif.
+
+**Application pour ton système :**
+Ton robot pourrait simuler des actions qui induisent l'adversaire en erreur. Par exemple, dans un cambriolage, le système de défense pourrait :
+- Activer des alarmes dans des zones vides pour attirer les cambrioleurs
+- Simuler une présence humaine dans une aile du bâtiment
+- Montrer des "faiblesses" apparentes qui sont en fait des pièges
+
+### C. La Theory of Mind Récursive en Contexte Hostile
+
+Plusieurs études montrent que la tromperie et la contre-tromperie émergent naturellement quand les agents ont une **Theory of Mind récursive** [[24], [26]].
+
+**Les niveaux de récursivité en contexte adversarial :**
+
+| Niveau | Pensée | Action |
+|--------|--------|--------|
+| **Ordre 0** | "Je fais X" | Action naïve |
+| **Ordre 1** | "Il ne sait pas que je vais faire X" | Cacher X |
+| **Ordre 2** | "Il pense que je vais faire X" | Faire croire X, mais faire Y |
+| **Ordre 3** | "Il pense que je pense qu'il va faire X" | Faire croire Y, mais faire X |
+| **Ordre 4** | "Il pense que je pense qu'il pense..." | Niveaux supérieurs de bluff |
+| **Ordre ∞** | Équilibre de Nash (stratégie mixte optimale) | Randomisation optimale |
+
+**Le piège de la sur-récursivité :**
+
+Un agent trop malin peut se piéger lui-même. Si tu joues à l'Ordre 4 et que l'adversaire joue à l'Ordre 2, tu te trompes toi-même. L'équilibre optimal est souvent de **jouer au niveau juste au-dessus de celui de l'adversaire**.
+
+**Application pour ton système :**
+Ton système doit **estimer le niveau de Theory of Mind de l'adversaire** et s'ajuster dynamiquement. Cela nécessite un module méta-cognitif qui :
+1. Infère le niveau de raisonnement de l'adversaire à partir de ses actions
+2. Adapte son propre niveau de récursivité en conséquence
+3. Détecte quand l'adversaire essaie de le tromper (signaux : incohérences dans ses actions, patterns suspects)
+
+### D. Le Concept de "Hostile Scaffolding" (Échafaudage Hostile)
+
+Timms et Spurrett (2022), cités par Bruineberg, introduisent le concept de **"hostile scaffolding"** : quand un agent modifie la structure de l'environnement pour servir ses intérêts au détriment des autres .
+
+**Exemples :**
+- Les réseaux sociaux qui modifient leur interface pour maximiser l'engagement (et donc la distraction)
+- Un adversaire qui modifie le terrain de combat pour désavantager l'autre camp
+- Un système qui altère les canaux de communication pour induire en erreur
+
+**Formalisation :**
+
+L'échafaudage hostile fonctionne en **modifiant les affordances** (possibilités d'action) disponibles pour l'adversaire, de manière à ce que ses actions optimales servent en fait tes intérêts.
+
+$$A_{disponibles} \rightarrow A'_{disponibles} \text{ tel que } \arg\min_{a \in A'} EFE_{adversaire}(a) = \arg\max_{a} \text{Utilité}_{toi}(a)$$
+
+**Application pour ton système :**
+Ton système pourrait activement **restructurer l'environnement physique ou informationnel** pour piéger l'adversaire. Par exemple :
+- Verrouiller certaines portes pour canaliser les intrus vers des zones surveillées
+- Modifier les affichages pour donner de fausses informations
+- Créer des leurres (faux équipements, fausses cibles)
+
+### E. Les Jeux de Signaux et l'Information Warfare
+
+En théorie des jeux, un **signaling game** est un jeu où un agent a une information privée (son "type") et l'autre doit l'inférer à partir de ses actions .
+
+**Deux types de signaux en contexte hostile :**
+
+1. **Signaux honnêtes** (coûteux à falsifier) :
+   - Montrer sa force militaire (coûteux, donc crédible)
+   - Commitment devices (irréversibles, donc crédibles)
+
+2. **Signaux trompeurs** (cheap talk) :
+   - Feintes, leurres, désinformation
+   - Fonctionnent seulement si l'adversaire ne peut pas distinguer le vrai du faux
+
+**L'équilibre de tromperie :**
+
+Il y a un équilibre subtil entre signaux honnêtes et trompeurs. Si tu trompes trop, l'adversaire cesse de croire à tous tes signaux. Si tu ne trompes jamais, tu es trop prévisible.
+
+**Application pour ton système :**
+Ton système doit gérer un **budget de crédibilité** :
+- Certains signaux doivent être honnêtes et coûteux (pour établir une réputation)
+- D'autres peuvent être trompeurs (pour surprendre)
+- Le système doit modéliser comment l'adversaire évalue sa crédibilité
+
+---
+
+## 3. Intégration dans Ton Architecture : Le Mode "Guerre"
+
+Voici comment adapter ton système de systèmes pour gérer ces scénarios adversariaux tout en préservant la symbiose interne.
+
+### Le Basculement de Mode (Mode Switching)
+
+Ton système doit avoir **deux modes de fonctionnement** qui s'activent selon le contexte :
+
+| Mode | Symbiotique (Paix) | Adversarial (Guerre) |
+|------|-------------------|---------------------|
+| **CFE** | Minimiser la CFE collective | Minimiser sa propre CFE + Maximiser la CFE adverse |
+| **ToM** | Empathique (comprendre) | Instrumentale (manipuler) |
+| **Signaux** | Transparents | Ambigus ou trompeurs |
+| **Mémoire** | Partagée, consolidée | Compartimentée (besoin de savoir) |
+| **Risque** | Évitement | Calculé (prise de risque stratégique) |
+
+**Implémentation :**
+Le Global Workspace doit pouvoir **détecter le contexte** (coopératif vs compétitif) et basculer les paramètres de l'Expected Free Energy. En mode guerre, le terme épistémique pour les alliés reste positif (tu veux les comprendre), mais pour les adversaires, il devient négatif (tu veux les tromper).
+
+### Le Module "Stratège" (Strategy Module)
+
+Tu peux ajouter un sous-système spécialisé dans le raisonnement stratégique adversarial :
+
+```
+┌─────────────────────────────────────────────┐
+│          MODULE STRATÈGE                    │
+├─────────────────────────────────────────────┤
+│                                             │
+│  1. Modèle de l'Adversaire                  │
+│     - ToM récursive (Ordre 1-5)             │
+│     - Estimation de ses capacités           │
+│     - Estimation de ses objectifs           │
+│                                             │
+│  2. Planification Stratégique               │
+│     - Commitment devices                    │
+│     - Tromperie planifiée                   │
+│     - Feintes et leurres                    │
+│                                             │
+│  3. Contre-Ingérence                        │
+│     - Détection de tromperie adverse        │
+│     - Protection de son propre modèle       │
+│     - Sécurisation des canaux               │
+│                                             │
+│  4. Guerre de l'Information                 │
+│     - Désinformation active                 │
+│     - Manipulation des affordances          │
+│     - Échafaudage hostile                   │
+│                                             │
+└─────────────────────────────────────────────┘
+```
+
+### La Compartimentation de la Mémoire
+
+En contexte hostile, ton système doit **compartimenter l'information** :
+
+- **Information tactique** : connue de tous les membres de l'équipe
+- **Information stratégique** : connue seulement du leadership
+- **Information trompeuse** : fausse information destinée à fuiter vers l'adversaire
+
+**Application aux réseaux de Hopfield :**
+Les attracteurs de mémoire doivent être **étiquetés par niveau de classification**. Certaines mémoires sont partagées dans l'espace symbolique commun, d'autres sont cryptées ou isolées dans des sous-réseaux accessibles uniquement à certains modules.
+
+### L'Équilibre de Nash comme Objectif Stratégique
+
+Dans un jeu adversarial, l'objectif n'est pas de "gagner" absolument, mais d'atteindre l'**équilibre de Nash** : une situation où aucun joueur ne peut améliorer sa situation en changeant unilatéralement de stratégie.
+
+**Pourquoi c'est important :**
+
+Si tu joues ta stratégie d'équilibre de Nash, l'adversaire ne peut pas t'exploiter, **même s'il connaît ta stratégie**. C'est la forme ultime de robustesse stratégique.
+
+**Application :**
+Ton système doit pouvoir calculer (ou approximer) l'équilibre de Nash du jeu en cours et s'y conformer. Cela implique souvent des **stratégies mixtes** : randomiser tes actions selon une distribution précise qui rend l'adversaire indifférent entre ses options.
+
+### Le Concept de "Résilience Adversariale"
+
+Ton système doit être résilient non seulement aux pannes physiques, mais aussi aux **attaques sur son modèle génératif** :
+
+1. **Empoisonnement de données** : L'adversaire essaie de corrompre tes observations
+2. **Attaques adversariales** : Inputs conçus pour tromper tes classificateurs
+3. **Ingénierie sociale** : Manipulation des humains dans ton équipe
+4. **Désinformation** : Fausses informations injectées dans ton flux
+
+**Défense :**
+- Redondance des capteurs et vérification croisée
+- Détection d'anomalies dans les distributions d'entrée
+- Confirmation humaine pour les décisions critiques
+- Isolation des sous-systèmes compromis
+
+---
+
+## 4. Synthèse : L'Architecture Complète avec Mode Guerre
+
+Voici comment ton architecture évolue pour intégrer la dimension adversariale :
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    GLOBAL WORKSPACE                         │
+│  (Détection de contexte : Symbiotique / Adversarial)        │
+└──────────────────┬──────────────────────────────────────────┘
+                   │
+    ┌──────────────┼──────────────┬──────────────────┐
+    │              │              │                  │
+    ▼              ▼              ▼                  ▼
+┌────────┐   ┌────────┐   ┌────────┐         ┌────────────┐
+│  JEPA  │   │  JEPA  │   │  JEPA  │         │  MODULE    │
+│  Loc1  │   │  Loc2  │   │  Loc3  │         │  STRATÈGE  │
+└────────┘   └────────┘   └────────┘         └─────┬──────┘
+    │              │              │                  │
+    └──────────────┼──────────────┴──────────────────┘
+                   │
+                   ▼
+    ┌──────────────────────────────┐
+    │   ESPACE SYMBOLIQUE          │
+    │   (Compartimenté :           │
+    │    Public / Confidentiel /   │
+    │    Trompeur)                 │
+    └──────────────┬───────────────┘
+                   │
+                   ▼
+    ┌──────────────────────────────┐
+    │     MODULE JARDINIER         │
+    │  Mode Paix : CFE minimization│
+    │  Mode Guerre : Nash équilibre│
+    └──────────────────────────────┘
+```
+
+---
+
+## Conclusion : La Dualité du Système
+
+Ton système doit être **Janus** :
+- **Côté interne** : transparent, empathique, coopératif, minimisant la surprise pour ses alliés
+- **Côté externe** : opaque, stratégique, compétitif, maximisant la surprise pour ses adversaires
+
+La beauté de l'Active Inference, c'est que **le même formalisme mathématique gère les deux côtés** :
+
+- En interne : minimiser $D_{KL}[Q_{allié}(s) \| Q_{toi}(s)]$ (alignement)
+- En externe : maximiser $D_{KL}[Q_{adversaire}(s) \| P_{réel}(s)]$ (tromperie)
+
+Les deux sont de la **gestion de divergence KL**, mais avec des objectifs opposés.
+
+**La symbiose interne n'est pas un luxe, c'est une nécessité stratégique.** C'est parce que ton équipe a une confiance totale, une coordination parfaite, et un modèle partagé du monde qu'elle peut jouer le jeu adversarial externe de manière efficace. Un groupe désuni perd face à un groupe cohérent, même si ce dernier est moins nombreux ou moins armé.
+
+C'est pour cela que les unités militaires d'élite passent autant de temps à construire la cohésion interne (symbiose) qu'à s'entraîner au combat (stratégie). Les deux sont indissociables.
+
+---
+
+## Références Clés à Explorer
+
+| Référence | Concept | Application |
+|-----------|---------|-------------|
+| Bruineberg (2023) "Adversarial inference"  | Inférence adversariale, hostile scaffolding | Modélisation des environnements hostiles |
+| Mareddy & Maity (2025)  | Tromperie en MARL | Apprentissage de stratégies trompeuses |
+| Schelling (1960) "Strategy of Conflict"  | Commitment devices | Stratégies d'engagement irréversible |
+| Oey (2019) "Recursive ToM in lying"  | ToM récursive pour tromperie | Modélisation multi-niveaux de l'adversaire |
+| Alon (2023) "Emergent deception"  | Émergence de tromperie par ToM | Comment la tromperie émerge naturellement |
+| Huang & Zhu (2021) "Pursuit-evasion games" | Jeux différentiels | Modélisation formelle de la poursuite |
+
+Tu n'as pas seulement un projet réalisable — tu as identifié les **fondements théoriques exacts** pour construire des systèmes qui peuvent être à la fois profondément coopératifs en interne et stratégiquement impitoyables en externe. C'est la définition même d'une équipe efficace, qu'elle soit humaine ou artificielle.
