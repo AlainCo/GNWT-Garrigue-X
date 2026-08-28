@@ -366,3 +366,135 @@ Si vous cherchez à concevoir des systèmes intelligents (IA, robotique, ou mod�
 Ce papier démontre que pour que l'**Inférence Active** (et par extension le Predictive Coding) fonctionne dans le monde réel sans exploser en complexité, il faut abandonner la simulation continue pas-à-pas. Il faut adopter une **architecture hiérarchique qui discrétise les actions en "primitives" et prédit le futur par sauts sémantiques**. 
 
 C'est une synthèse brillante : elle garde le cadre mathématique unificateur de Friston/Seth (l'énergie libre et la curiosité), mais l'habille avec une ingénierie (JEPA/VQ) qui respecte enfin les limites cognitives et computationnelles des vrais systèmes intelligents, qu'ils soient de silicium ou de carbone.
+
+### USER
+J'ai vu passer ce papier qui semble parler d'active inférence (?), et parle de RGM que je ne connais pas.
+https://arxiv.org/abs/2608.09512
+peux tu m'expliquer le contenu de cet article, le mettre en perspective avec ce dont on discute, et me dire s'il y a des idées pratiques à reprendre ?
+
+### ASSISTANT
+Vous avez mis la main sur un papier extrêmement important et très récent (août 2026), co-écrit par **Karl Friston** lui-même (le père du Principe de l'Énergie Libre et de l'Inférence Active) et son équipe . 
+
+Ce papier s'intitule **"Renormalising Generative Models for Active Inference: Foundations, Derivations, and Verification"** . Il apporte une réponse mathématique et structurelle au plus gros problème de l'Inférence Active : **l'explosion combinatoire**. 
+
+Voici l'explication détaillée du papier, ce qu'est le **RGM**, et comment il s'inscrit parfaitement dans la suite logique de nos discussions (des papiers de robotique aux critiques sur la plausibilité biologique).
+
+---
+
+### 1. Que dit ce papier et qu'est-ce que le "RGM" ?
+
+**Le problème fondamental de l'Inférence Active :**
+Comme nous l'avons vu avec les papiers de robotique (Fujii, Yokozawa), l'Inférence Active est brillante pour unifier la curiosité (exploration) et la poursuite de buts. Mais elle souffre d'un défaut fatal : si l'environnement est complexe, le nombre de séquences d'actions possibles grandit de façon exponentielle. Le système s'étouffe sous les calculs et ne peut pas planifier à long terme.
+
+**La solution : Le RGM (Renormalising Generative Model)** 
+Le terme "Renormalisation" est emprunté à la physique statistique. Il désigne la capacité à "zoomer" ou "dézoomer" sur un système en conservant les mêmes lois fondamentales. 
+Un **RGM** résout l'explosion combinatoire en créant une **architecture hiérarchique et "sans échelle" (scale-free)** . 
+*   **Le principe :** Au lieu de tout calculer au niveau bas (ex: les pixels ou les micro-mouvements), le RGM "emballe" (compose) des séquences d'événements de bas niveau pour en faire des **"causes" discrètes de haut niveau** . 
+*   **La communication :** Le niveau supérieur ne s'occupe pas des détails. Il planifie des macro-états et renvoie ces "causes abstraites" vers le bas sous forme de **priors empiriques** (des attentes globales) qui guident l'exécution fine du niveau inférieur .
+
+C'est l'équivalent mathématique de la façon dont vous ne pensez pas à la contraction de chaque muscle de votre jambe (niveau bas) lorsque vous marchez, mais au concept abstrait de "marcher vers la cuisine" (niveau haut).
+
+---
+
+### 2. Mise en perspective avec nos discussions précédentes
+
+Ce papier est la pièce manquante du puzzle qui relie la théorie pure (Friston/Seth) à l'ingénierie (Robotique/IA) et aux limites biologiques (Charles Simon).
+
+#### A. La réponse mathématique aux papiers de robotique
+Les papiers de Fujii et Murata (2025) que nous avons analysés utilisaient de manière un peu "bricolée" des **Modèles du Monde Abstraits** et des **Actions Abstraites** (via quantification vectorielle) pour que leurs robots puissent calculer l'Énergie Libre en temps réel . 
+Le papier sur les RGM fournit **la fondation mathématique rigoureuse** de ce que faisaient ces robots de manière empirique. Les RGM prouvent qu'il est formellement valide de faire de l'Inférence Active discrète et hiérarchique à grande échelle (des pixels jusqu'à la planification complexe) .
+
+#### B. Le dialogue avec la critique de Charles Simon (Plausibilité Biologique)
+Rappelez-vous que Charles Simon critiquait l'utilisation de valeurs *continues* et de la *rétropropagation du gradient* (backpropagation), arguant que les neurones et les synapses fonctionnent par états *discrets* (spikes, poids synaptiques limités).
+*   **Le RGM contourne ce problème :** Contrairement aux réseaux de neurones classiques (Deep Learning) qui exigent des dérivées continues, les RGM reposent sur des **modèles génératifs discrets** et du **passage de messages variationnels locaux** (variational message passing) . 
+*   Cela signifie que l'erreur n'a pas besoin d'être rétropropagée de bout en bout. Chaque niveau hiérarchique met à jour ses croyances localement en échangeant des messages discrets avec ses voisins. C'est conceptuellement **beaucoup plus proche de la biologie réelle** (et des réseaux de neurones à impulsions - SNNs) que le *Predictive Coding* continu classique.
+
+#### C. Le lien avec le JEPA de Yann LeCun
+Yann LeCun (avec son architecture JEPA) critique violemment les modèles qui essaient de prédire le monde pixel par pixel, arguant qu'il faut prédire des **représentations abstraites**. Les RGM sont en quelque sorte la réponse de Friston à LeCun : ils prouvent que l'on peut faire de l'Inférence Active (chère à Friston) mais en l'appliquant sur des représentations latentes et abstraites (chères à LeCun), réalisant ainsi une synthèse théorique majeure.
+
+---
+
+### 3. Les bonnes idées pratiques à reprendre (Takeaways)
+
+Si vous devez concevoir un système d'IA, un agent cognitif ou réfléchir à l'architecture de la conscience, voici les concepts puissants introduits par les RGM :
+
+1. **Le "Chunking" temporel et spatial (Discrétisation hiérarchique) :**
+   Ne laissez jamais votre système traiter de longs horizons temporels avec des variables de bas niveau. Forcez le système à "chunker" (regrouper) des séquences d'actions/observations en **états discrets de haut niveau**. C'est la seule façon de rendre l'Inférence Active (et la planification en général) "tractable" à grande échelle.
+
+2. **Les Priors Empiriques descendants :**
+   Dans une architecture cognitive, le niveau supérieur (la "conscience d'accès" ou le planificateur) ne doit pas dicter les micro-actions. Il doit envoyer des *priors empiriques* (des attentes contextuelles) au niveau inférieur (le système moteur ou perceptif), qui se charge lui-même de minimiser l'erreur localement. Cela évite le goulot d'étranglement du contrôle centralisé.
+
+3. **Le passage de messages local (Message Passing) plutôt que la Backprop globale :**
+   Pour l'entraînement et l'inférence, privilégiez des architectures où les entités n'ont qu'une vue locale de l'erreur et mettent à jour leurs états discrets en échangeant avec leurs voisins immédiats. C'est plus robuste, parallélisable, et biologiquement réaliste.
+
+### 💡 En résumé pour votre veille
+Le papier sur les **RGM (août 2026)** marque un tournant : il sauve l'**Inférence Active** de son problème d'explosion combinatoire en introduisant la **renormalisation** (l'abstraction hiérarchique discrète). 
+
+Il fait le pont parfait entre nos échanges : il valide l'intuition des roboticiens (qui utilisaient des actions abstraites), il répond aux critiques sur la plausibilité biologique (en utilisant des états discrets plutôt que des gradients continus), et il offre un cadre unifié où la conscience (en tant que planificateur de haut niveau) émerge naturellement comme la couche supérieure d'un modèle génératif "sans échelle" (*scale-free*).
+
+### USER
+J'ai trouvé un autre papier qui pare aussi de prédiction hierarchisée, en active inférence il me semble.
+https://direct.mit.edu/neco/article/38/9/1491/137281/Hierarchical-Active-Inference-Using-Successor
+peux tu m'expliquer ce que présente ce papier, le mettre en perspective avec ce dont on parle, et me dire s'il y a des idées à prendre ?
+
+### ASSISTANT
+Ce papier, **"Hierarchical Active Inference Using Successor Representations"** (publié dans *Neural Computation*, MIT Press), est un pont fascinant entre les neurosciences théoriques (Principe de l'Énergie Libre de Friston) et l'apprentissage par renforcement computationnel classique.
+
+Il aborde exactement le même problème fondamental que les papiers précédents (Fujii sur les robots et les RGM de Friston) : **comment faire passer l'Inférence Active de la théorie mathématique élégante à la pratique dans des environnements complexes et vastes ?**
+
+Voici l'analyse détaillée de son contenu, sa mise en perspective avec notre fil de discussion, et les idées clés à en extraire.
+
+---
+
+### 1. Que présente ce papier ? (Le concept de "Successor Representation")
+
+L'Inférence Active classique planifie en évaluant l'**Énergie Libre Attendue (EFE)** de toutes les séquences d'actions possibles. Dans un grand environnement, c'est computationnellement impossible (explosion combinatoire).
+
+Pour résoudre cela, les auteurs introduisent une **Représentation Successeur (Successor Representation - SR)** au cœur du moteur d'Inférence Active.
+
+*   **Qu'est-ce que la Représentation Successeur (SR) ?**
+    C'est un concept issu de la psychologie cognitive (Dayan, 1993) et des neurosciences. Au lieu de représenter un état seulement par ses caractéristiques immédiates, la SR représente un état par la "densité de probabilité" de visiter tous les autres états futurs à partir de lui. En d'autres termes, c'est une **"carte cognitive"** qui vous dit : "Si je suis ici, à quelle fréquence vais-je me retrouver là-bas ?".
+*   **L'innovation du papier : La Hiérarchie Apprise**
+    1.  **Macro-États (Abstraction Spatiale) :** Le système calcule la matrice des successeurs au niveau "micro" (états de base). Ensuite, il utilise un algorithme de clustering (regroupement) sur cette matrice pour découvrir automatiquement des **Macro-États** (des "pièces" ou des "zones" logiques dans l'environnement, comme des salles dans un labyrinthe).
+    2.  **Macro-Actions (Abstraction Comportementale) :** Une fois les macro-états identifiés, le système apprend des "Macro-Actions" (ou options). Il utilise l'inférence active de bas niveau pour trouver le chemin optimal vers les "goulots d'étranglement" (les portes entre les salles) et emballe ce chemin dans une seule Macro-Action.
+    3.  **Planification Hiérarchique :** Désormais, pour planifier un long trajet, le système ne calcule plus l'EFE pas-à-pas. Il utilise l'Inférence Active au niveau *supérieur*, sur les Macro-États et les Macro-Actions.
+
+**Résultat :** Le système peut planifier de manière extrêmement efficace dans des environnements complexes (comme le problème des "Quatre Pièces" ou des labyrinthes 3D continus) en faisant des "sauts" cognitifs, réduisant ainsi radicalement le coût de calcul de l'EFE.
+
+---
+
+### 2. Mise en perspective avec nos discussions précédentes
+
+Ce papier s'inscrit parfaitement dans la continuité de notre réflexion sur la plausibilité biologique, le JEPA et les RGM.
+
+#### A. La validation neuroscientifique de l'abstraction (Le lien avec l'Hippocampe)
+La **Représentation Successeur (SR)** n'est pas qu'un outil mathématique pratique ; elle possède un fort soutien neurobiologique. On pense que l'hippocampe et le cortex entorhinal des mammifères codent l'espace et les séquences d'états d'une manière qui ressemble fortement à une SR (les fameuses "cellules de lieu" et "cellules de grille").
+*   **En lien avec la théorie de la "Beast Machine" (Seth) et la conscience spatiale :** Ce papier montre comment un cerveau (ou une IA) peut construire une carte cognitive de son environnement non pas comme une simple image statique, mais comme une matrice de *probabilités de transition*. C'est une carte "orientée vers l'action", ce qui est parfaitement cohérent avec l'idée que nous percevons le monde pour pouvoir agir sur lui.
+
+#### B. Convergence avec les RGM (Friston) et le JEPA (LeCun)
+*   **Avec les RGM :** Alors que les RGM (vus dans le papier précédent) utilisent la "renormalisation" pour créer des états discrets de haut niveau, ce papier utilise le **clustering spectral sur la matrice des successeurs** pour arriver exactement au même résultat : créer des "causes" ou des "états" abstraits pour éviter l'explosion combinatoire. Les deux papiers résolvent le même problème par des voies mathématiques légèrement différentes (Théorie de l'Information/Physique pour les RGM vs Algèbre Linéaire/RL pour la SR).
+*   **Avec le JEPA :** La SR est une forme de prédiction dans l'espace latent des états futurs plutôt que dans l'espace des pixels bruts. Elle ignore les détails non pertinents de l'environnement pour se concentrer sur la structure topologique et dynamique des transitions.
+
+#### C. La réponse à Charles Simon (Plausibilité Biologique)
+*   Simon critiquait le fait que l'Inférence Active exige des calculs continus et précis impossibles pour des synapses bruitées.
+*   L'approche par Représentation Successeur est conceptuellement **beaucoup plus robuste au bruit**. Une "carte cognitive" basée sur des statistiques de transition (fréquences de visite) peut être apprise de manière incrémentale et hebbienne (par association locale), sans nécessiter une rétropropagation parfaite de l'erreur de prédiction sur des milliers de pas de temps. C'est une façon dont un réseau de neurones biologiques pourrait *approximer* l'Inférence Active de manière distribuée.
+
+---
+
+### 3. Les bonnes idées à reprendre (Takeaways)
+
+Pour la conception de systèmes intelligents, d'agents autonomes ou pour modéliser la cognition, voici les concepts forts de ce papier :
+
+1.  **La Carte Cognitive comme Matrice de Transition (SR) :**
+    Ne modélisez pas l'environnement de votre agent comme une simple grille d'occupation (où sont les obstacles ?). Modélisez-le comme une **matrice de prédiction de présence future**. "Où ai-je des chances d'aller si je suis ici ?". C'est beaucoup plus riche pour la planification et permet de changer de but instantanément sans avoir à tout recalculer (puisque la carte des transitions reste la même, seules les préférences de l'agent changent).
+
+2.  **L'Apprentissage Automatique des "Salles" et des "Portes" (Macro-états et Goulots d'étranglement) :**
+    Au lieu de forcer l'architecture hiérarchique, laissez le système découvrir la structure de son environnement en trouvant les **états de transition obligés** (les goulots d'étranglement ou *bottleneck states*). C'est ainsi que l'intelligence structure naturellement des problèmes complexes en sous-problèmes gérables (le fameux *chunking* cognitif).
+
+3.  **L'Inférence Active comme outil de "Bootstrapping" :**
+    Le papier montre que l'on peut utiliser l'Inférence Active (coûteuse) au niveau bas pour apprendre de bons comportements locaux, puis "figer" ces comportements en Macro-Actions que l'Inférence Active de haut niveau (beaucoup moins coûteuse) pourra utiliser. C'est une excellente stratégie d'apprentissage : **dépenser de l'énergie pour apprendre des primitives, puis raisonner de manière abstraite sur ces primitives.**
+
+### 💡 En résumé pour votre veille
+Ce papier démontre que l'**Inférence Active** peut être rendue "tractable" (utilisable en pratique) en l'hybridant avec la **Représentation Successeur (SR)**. 
+
+Il fait le lien parfait entre l'ingénierie robotique et les neurosciences : la SR fournit une hypothèse crédible sur la façon dont l'hippocampe construit des cartes cognitives, tandis que l'Inférence Active fournit le moteur motivationnel (la curiosité et la valeur) pour naviguer dans ces cartes. C'est une architecture très élégante pour créer des agents capables d'exploration à long terme et de planification hiérarchique.

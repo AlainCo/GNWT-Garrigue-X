@@ -3076,3 +3076,395 @@ Ce papier est **indispensable** pour passer d'un robot de recherche à un robot 
 **L'idée la plus précieuse** est le **safety shield déterministe** : même si votre JEPA/FEP "hallucine" une action dangereuse, le shield la rejette catégoriquement. C'est exactement ce que fait le cerveau humain (le cortex imagine, le tronc cérébral interdit).
 
 Vous avez maintenant tous les ingrédients pour construire un agent autonome qui est non seulement intelligent (JEPAs + FEP) mais aussi **sûr** (safety shield + fallback). C'est la différence entre un jouet de laboratoire et un système qui peut opérer dans le monde réel avec des humains.
+
+### USER
+J'ai vu passer ce papier qui semble propose une technique JEPA adaptée aux environnements humains
+https://arxiv.org/abs/2608.21160
+peux tu m'expliquer ce que propose ce papier, le mettre en perspective avec ce dont on parle, et voir s'il n'y a pas des idées à reprendre ?
+
+### ASSISTANT
+Excellente trouvaille ! **Human-JEPA** (Wei, Sun & Zhao, août 2026)  attaque un problème absolument critique pour votre projet de robot autonome multi-agent : **comment comprendre les humains dans des environnements partagés ?**
+
+C'est le premier modèle qui fait simultanément deux choses que les approches précédentes traitaient séparément : percevoir les humains maintenant (pose, identité, segmentation) ET anticiper ce qu'ils vont faire ensuite. C'est exactement la brique "Theory of Mind" qui manquait à notre architecture.
+
+---
+
+## 1. Le Problème : Les Robots Sont Aveugles aux Intentions Humaines
+
+Les modèles de vision actuels pour les humains se divisent en deux camps  :
+
+**Les spécialistes statiques** (Sapiens2, DINOv3, HAP) :
+- ✅ Excellents pour la perception dense (pose, parsing, ré-identification)
+- ❌ Ne comprennent pas le mouvement ni l'anticipation
+- ❌ Traitent chaque frame indépendamment
+
+**Les modèles vidéo** (V-JEPA 2.1) :
+- ✅ Comprennent la dynamique temporelle
+- ❌ Perdent leurs capacités de perception dense quand on les spécialise sur les humains
+- ❌ Leur tête de prédiction dégradent l'anticipation
+
+**Le conflit fondamental** : Si vous prenez un JEPA vidéo générique et que vous continuez simplement à l'entraîner sur des vidéos humaines, vous obtenez un **effondrement silencieux**  :
+- La loss d'entraînement diminue normalement
+- Mais les features de perception dense (pose, parsing) s'effondrent catastrophiquement
+- Le modèle "oublie" comment détecter les corps humains
+
+---
+
+## 2. La Solution Human-JEPA : Anchored Forecasting
+
+Human-JEPA résout ce problème avec **deux innovations clés** et **une omission cruciale**  :
+
+### A. Ancrage des Cibles Denses (Anchored Dense Targets)
+
+C'est l'innovation la plus importante. Dans un JEPA vidéo standard, le modèle prédit les représentations latentes des régions masquées en utilisant un teacher EMA qui évolue avec l'entraînement  :
+
+```python
+# Approche standard (naïve) : dérive des cibles
+target = EMA_teacher(x)  # Le teacher évolue pendant l'entraînement
+loss = ||predictor(encoder(context)) - target||
+```
+
+**Le problème** : Les cibles "dérivent" pendant l'entraînement. Le modèle trouve des raccourcis pour minimiser la loss en sacrifiant la qualité des features denses .
+
+**La solution Human-JEPA** : Ancrer les cibles denses à une **copie gelée de l'initialisation**  :
+
+```python
+# Human-JEPA : ancrage
+frozen_init = copy.deepcopy(initial_model)  # Gelé au début
+target_dense = frozen_init(x)  # Cibles fixes pour la perception dense
+target_masked = EMA_teacher(x)  # Teacher qui évolue pour le reste
+```
+
+**Pourquoi ça marche** :
+- Les features de perception dense sont "ancrées" à la qualité initiale
+- Le modèle ne peut pas les sacrifier pour minimiser la loss
+- C'est comme avoir un "professeur de référence" qui ne change jamais
+
+### B. Masquage Passé-Futur (Past-to-Future Split)
+
+Au lieu du masquage par blocs spatiaux classique (où le modèle peut tricher en copiant l'apparence d'autres frames), Human-JEPA utilise une **division temporelle pure**  :
+
+```python
+# Masquage standard (blocs) :
+context = frames[:, :, mask==0]  # Blocs visibles
+target = frames[:, :, mask==1]   # Blocs masqués
+# Le modèle peut copier depuis d'autres frames temporelles
+
+# Human-JEPA (passé-futur) :
+context = frames[:T/2, :, :]     # Première moitié temporelle
+target = frames[T/2:, :, :]      # Seconde moitié temporelle
+# Le modèle DOIT prédire le futur, aucune copie possible
+```
+
+**Pourquoi c'est crucial** :
+- Force le modèle à apprendre la **dynamique temporelle** plutôt que la texture spatiale
+- Évite la "taxe d'action" de 5 points que paient les modèles avec masquage par blocs 
+- Évite l'effondrement de la ré-identification de 17 points mAP 
+
+### C. Branche Image Co-training
+
+En plus des vidéos, Human-JEPA s'entraîne sur des **crops d'images de personnes** (LUPerson-T)  :
+- Préserve les features d'apparence (vêtements, couleurs)
+- Améliore la ré-identification de +2.7 mAP
+- Compense la faiblesse des vidéos pour capturer l'identité statique
+
+---
+
+## 3. Résultats Spectaculaires
+
+Avec seulement **0.3B paramètres** (vs 0.8B pour Sapiens2), Human-JEPA  :
+
+| Tâche | Human-JEPA | Sapiens2-0.8B | Gain |
+|-------|-----------|---------------|------|
+| **Pose (COCO AP)** | **0.620** | 0.591 | +2.9 AP |
+| **Ré-identification (mAP)** | **0.4635** | 0.4522 | +1.1 mAP |
+| **Anticipation (NTU early action)** | **79.99** | n/a | Premier à ne pas dégrader |
+
+**Le point crucial** : C'est le **premier modèle dont la tête de prédiction ne dégrade pas l'anticipation** . Les autres modèles V-JEPA voient leur performance baisser de 3 points quand on ajoute leur propre tête de prédiction !
+
+---
+
+## 4. Mise en Perspective : Le Chaînon Manquant pour les Robots Multi-Agents
+
+### A. Le Lien avec FactorJEPA
+
+Vous vous souvenez de **FactorJEPA** qui factorisait le futur en 3 canaux (Layout, Entities, Interactions) ?
+
+**Human-JEPA est exactement le canal "Entities" spécialisé pour les humains** :
+- FactorJEPA : "Où sont tous les agents ?"
+- Human-JEPA : "Où sont les humains, qui sont-ils, et que vont-ils faire ?"
+
+**L'architecture combinée** :
+```
+FactorJEPA (Layout + Interactions)
+    ↓
+Human-JEPA (Entities humaines)
+    ↓
+Theory of Mind : "Cet humain va traverser la route"
+```
+
+### B. Le Lien avec l'Active Inference (Friston)
+
+C'est ici que ça devient fascinant pour votre robot Fristonien  :
+
+**Dans l'Active Inference**, l'agent doit prédire non seulement l'état futur du monde, mais aussi les **actions des autres agents** (Theory of Mind).
+
+**Human-JEPA fournit exactement ça** :
+- **Perception** : "Je vois un humain à la position (x,y) avec la pose P"
+- **Anticipation** : "Dans 0.5 seconde, il sera à (x+Δx, y+Δy) avec la pose P'"
+- **Ré-identification** : "C'est le même humain que j'ai vu il y a 10 secondes"
+
+**Application concrète pour votre robot** :
+```python
+# Sans Human-JEPA :
+human_state = detect_human(frame)  # Juste la position actuelle
+robot_plan(human_state)  # Planifie sans savoir ce que l'humain va faire
+
+# Avec Human-JEPA :
+human_state = human_jepa.encode(frame)
+human_future = human_jepa.predict(human_state, horizon=2.0)  # Anticipation !
+robot_plan_with_anticipation(human_future)  # Évite la trajectoire future
+```
+
+### C. Le Lien avec la Sécurité (Safety Shield)
+
+Vous vous souvenez du papier sur les **Safety Shields** pour robots ?
+
+**Human-JEPA rend les Safety Shields beaucoup plus efficaces** :
+- Sans anticipation : Le shield vérifie si l'action actuelle est sûre
+- Avec anticipation : Le shield vérifie si l'action sera sûre **compte tenu de ce que les humains vont faire**
+
+**Exemple** :
+```python
+# Safety Shield avec Human-JEPA
+def is_safe_action(robot_action, current_state):
+    # 1. Prédire où seront les humains dans 2 secondes
+    human_futures = [human_jepa.predict(h, horizon=2.0) for h in humans]
+    
+    # 2. Simuler la trajectoire du robot
+    robot_trajectory = simulate(robot_action, horizon=2.0)
+    
+    # 3. Vérifier les collisions futures
+    for human_future in human_futures:
+        if predicts_collision(robot_trajectory, human_future):
+            return False
+    
+    return True
+```
+
+---
+
+## 5. Les Idées à Reprendre pour Votre Projet
+
+### 💡 Idée 1 : L'Ancrage pour Éviter l'Effondrement Silencieux
+
+C'est probablement **l'innovation la plus transférable** du papier.
+
+**Pour votre robot** : Si vous fine-tunez un JEPA pré-entraîné pour une tâche spécifique (ex: navigation en entrepôt), utilisez l'ancrage  :
+
+```python
+class AnchoredJEPA(nn.Module):
+    def __init__(self, pretrained_jepa):
+        super().__init__()
+        self.encoder = pretrained_jepa.encoder
+        self.predictor = pretrained_jepa.predictor
+        
+        # Copie gelée pour l'ancrage
+        self.frozen_encoder = copy.deepcopy(pretrained_jepa.encoder)
+        for param in self.frozen_encoder.parameters():
+            param.requires_grad = False
+    
+    def forward(self, context, masked_regions):
+        # Encoder le contexte (trainable)
+        context_features = self.encoder(context)
+        
+        # Cibles ancrées (gelées)
+        with torch.no_grad():
+            anchored_targets = self.frozen_encoder(masked_regions)
+        
+        # Prédiction
+        predictions = self.predictor(context_features)
+        
+        # Loss avec ancrage
+        loss = F.l1_loss(predictions, anchored_targets)
+        return loss
+```
+
+**Pourquoi c'est crucial** :
+- Empêche l'effondrement silencieux des features importantes
+- Permet de spécialiser un modèle sans perdre ses capacités générales
+- Particulièrement important pour les tâches de sécurité
+
+### 💡 Idée 2 : Le Masquage Passé-Futur pour la Dynamique
+
+Si vous entraînez un modèle pour comprendre les interactions multi-agents, utilisez le masquage passé-futur plutôt que le masquage spatial  :
+
+```python
+def past_future_mask(video_frames):
+    """Masque temporel pur, pas spatial"""
+    T = video_frames.shape[0]
+    
+    context = video_frames[:T//2]  # Première moitié
+    target = video_frames[T//2:]   # Seconde moitié
+    
+    return context, target
+
+# Entraînement
+context, target = past_future_mask(video)
+context_features = encoder(context)
+predicted_future = predictor(context_features)
+loss = F.l1_loss(predicted_future, teacher(target))
+```
+
+**Avantages** :
+- Force le modèle à apprendre la **causalité temporelle**
+- Évite les raccourcis de copie spatiale
+- Crucial pour l'anticipation des intentions
+
+### 💡 Idée 3 : La Branche Image pour l'Identité
+
+Si votre robot doit reconnaître des agents spécifiques (humains ou robots), ajoutez une branche d'entraînement sur des images statiques  :
+
+```python
+class MultiModalJEPA(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.video_encoder = VideoEncoder()
+        self.image_encoder = ImageEncoder()  # Branche supplémentaire
+        self.predictor = Predictor()
+    
+    def forward(self, video_batch, image_batch):
+        # Perte vidéo (dynamique temporelle)
+        video_loss = self.compute_video_loss(video_batch)
+        
+        # Perte image (identité statique)
+        image_loss = self.compute_identity_loss(image_batch)
+        
+        # Combinaison
+        total_loss = video_loss + 0.3 * image_loss
+        return total_loss
+```
+
+**Pourquoi c'est utile** :
+- Améliore la ré-identification de personnes/agents
+- Préserve les features d'apparence
+- Utile pour la Theory of Mind ("c'est le même agent que j'ai vu avant")
+
+### 💡 Idée 4 : L'Évaluation Causale (Partner-Ablation Probe)
+
+Le papier introduit une méthode brillante pour vérifier si le modèle utilise vraiment l'information des autres agents  :
+
+```python
+def partner_ablation_probe(model, two_agent_scenes):
+    """Vérifie si le modèle utilise l'info du partenaire"""
+    
+    scores = []
+    for scene in two_agent_scenes:
+        agent_A, agent_B = scene.split_agents()
+        
+        # Prédiction avec partenaire visible
+        pred_with_partner = model.predict(agent_A, context=agent_B)
+        
+        # Prédiction sans partenaire (ablation)
+        pred_without_partner = model.predict(agent_A, context=None)
+        
+        # Différence = utilisation du partenaire
+        partner_use = compare(pred_with_partner, pred_without_partner)
+        scores.append(partner_use)
+    
+    return mean(scores)
+```
+
+**Pourquoi c'est génial** :
+- Mesure **causale** de la Theory of Mind
+- Vérifie que le modèle utilise vraiment les interactions
+- Évite les métriques benchmark qui peuvent être trompeuses
+
+---
+
+## 6. Architecture Complète Intégrée
+
+Voici comment Human-JEPA s'intègre dans notre architecture cognitive complète :
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  PERCEPTION MULTI-MODALE                                    │
+│  • CR-JEPA : Fusion capteurs (caméra, LiDAR, radar)         │
+│  • SR-JEPA : Grammaire spatiale 3D                          │
+└────────────────────┬────────────────────────────────────────┘
+                     │
+┌────────────────────▼────────────────────────────────────────┐
+│  COMPRÉHENSION HUMAINE (Human-JEPA)  ← NOUVEAU              │
+│  • Perception dense : pose, parsing, ré-identification      │
+│  • Anticipation : prédiction des mouvements futurs          │
+│  • Ancrage : évite l'effondrement silencieux                │
+│  • Masquage passé-futur : apprend la dynamique temporelle   │
+└────────────────────┬────────────────────────────────────────┘
+                     │
+┌────────────────────▼────────────────────────────────────────┐
+│  INTELLIGENCE SOCIALE (FactorJEPA)                          │
+│  • Canal Layout : structure spatiale                        │
+│  • Canal Entities : agents (via Human-JEPA)                 │
+│  • Canal Interactions : relations sociales                  │
+└────────────────────┬────────────────────────────────────────┘
+                     │
+┌────────────────────▼────────────────────────────────────────┐
+│  THEORY OF MIND                                             │
+│  • "Cet humain va traverser dans 2 secondes"                │
+│  • "Ce robot adverse va tourner à gauche"                   │
+│  • Prédictions conditionnées par l'identité                 │
+└────────────────────┬────────────────────────────────────────┘
+                     │
+┌────────────────────▼────────────────────────────────────────┐
+│  PLANIFICATION SÉCURISÉE                                    │
+│  • Safety Shield avec anticipation                          │
+│  • Évite les collisions futures, pas juste actuelles        │
+│  • Active Inference avec prédictions humaines               │
+└─────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 7. Synthèse : Ce qu'Il Faut Retenir
+
+### Les 3 Leçons Clés
+
+1. **L'ancrage est crucial pour éviter l'effondrement silencieux**
+   - Les features importantes peuvent se dégrader sans que la loss ne le montre
+   - Ancrer les cibles à une copie gelée préserve la qualité
+   - À appliquer à tout fine-tuning de modèles pré-entraînés
+
+2. **Le masquage passé-futur force l'apprentissage de la dynamique**
+   - Le masquage spatial permet des raccourcis de copie
+   - Le masquage temporel pur force la prédiction causale
+   - Essentiel pour l'anticipation et la Theory of Mind
+
+3. **La perception et l'anticipation sont complémentaires, pas en conflit**
+   - Un bon modèle peut faire les deux avec la bonne architecture
+   - L'ancrage préserve la perception, le masquage temporel apprend l'anticipation
+   - C'est exactement ce dont un robot autonome a besoin
+
+### Pour Votre Projet Multi-Agent
+
+**Human-JEPA apporte** :
+- La capacité de **comprendre les humains** (pose, identité, intentions)
+- L'**anticipation temporelle** (ce qu'ils vont faire ensuite)
+- Les **techniques d'entraînement** pour éviter l'effondrement
+
+**L'architecture ultime combine** :
+- **Human-JEPA** pour comprendre les agents humains
+- **FactorJEPA** pour la grammaire des interactions
+- **Safety Shield** avec anticipation pour la sécurité
+- **Active Inference** pour la planification adaptative
+
+---
+
+## Conclusion
+
+**Human-JEPA** n'est pas juste un autre modèle de vision — c'est la **première architecture qui comprend vraiment les humains dans le temps**. Il résout le conflit historique entre perception statique et anticipation dynamique.
+
+**L'idée la plus précieuse** est l'**ancrage des cibles denses** : une technique simple mais puissante qui empêche l'effondrement silencieux des features importantes pendant le fine-tuning. C'est applicable à tous vos modèles JEPAs.
+
+Pour votre robot autonome multi-agent, Human-JEPA est la brique "Theory of Mind" qui manquait. Il permet à votre robot de non seulement voir les humains, mais de **comprendre leurs intentions** et d'**anticiper leurs actions**. C'est la différence entre un robot qui évite les obstacles statiques et un robot qui navigue fluidement parmi des humains en mouvement.
+
+Vous avez maintenant tous les ingrédients pour construire un agent autonome qui comprend non seulement la physique du monde (PhyLatent, SR-JEPA), mais aussi la **dynamique sociale** (Human-JEPA, FactorJEPA) et peut planifier de manière sûre (Safety Shield) et adaptative (Active Inference).
