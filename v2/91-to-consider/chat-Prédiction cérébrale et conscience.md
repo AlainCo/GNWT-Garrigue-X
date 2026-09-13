@@ -563,3 +563,70 @@ Si vous concevez des systèmes d'IA, des agents cognitifs ou réfléchissez à l
 Ce papier (**Active inference and artificial reasoning**, 2025) élève l'Inférence Active du niveau de la survie et de la navigation au niveau du **raisonnement abstrait et de la découverte scientifique**. 
 
 Il introduit la **Bayesian Model Reduction (BMR)** et le **Structure Learning** comme mécanismes permettant les **"Aha moments"** (insights). Surtout, il valide biologiquement le cadre en montrant que ces calculs complexes n'ont pas besoin d'être faits en temps réel, mais peuvent être réalisés par **introspection synthétique (pendant le sommeil)**, répondant ainsi aux critiques sur la lourdeur computationnelle du cerveau prédictif. C'est la théorie unifiée de l'apprentissage, du sommeil et de l'intuition.
+
+### USER
+Je suis tombé sur ce papier: 
+https://royalsocietypublishing.org/rsta/article/384/2320/20240533/481677/World-models-artificial-general-intelligence-and
+Peux tu m'expliquer ce qu'il dit, et le mettre en perspective avec ce dont on discute, puis me dire s'il y a de bonnes idées à reprendre ?
+
+### ASSISTANT
+Vous avez mis la main sur un document exceptionnel. Il ne s'agit pas d'un simple papier de recherche, mais de **l'introduction éditoriale d'un numéro spécial de la prestigieuse *Philosophical Transactions of the Royal Society A*** (publié fin 2024/début 2025). 
+
+Ce qui rend ce texte fondamental, c'est son aréna d'auteurs : on y trouve des géants de la biologie et de la cognition comme **Michael Levin** (pionnier de la cognition cellulaire et bioélectrique), **Melanie Mitchell** (critique majeure des limites de l'IA actuelle), **David Ha** (créateur du concept de "World Models" en IA), **Joshua Tenenbaum** (père de l'IA cognitive probabiliste) et **Adeel Razi** (proche collaborateur de Karl Friston sur l'Inférence Active).
+
+Ce papier agit comme un **manifeste** qui trace la frontière entre l'IA générative actuelle (les LLMs) et la véritable Intelligence Artificielle Générale (AGI) bio-inspirée. Voici son analyse détaillée et sa mise en perspective avec tout notre fil de discussion.
+
+---
+
+### 1. Que dit ce papier ? (Le débat sur les "Modèles du Monde")
+
+Le cœur du papier pose une question brutale : **Les IA actuelles (comme les LLMs) possèdent-elles de véritables "Modèles du Monde" (World Models), ou font-elles seulement illusion ?**
+
+*   **L'illusion statistique (Surface Regularities) :** Les auteurs soutiennent que les LLMs sont d'incroyables moteurs de corrélations statistiques. Ils prédisent la transition probable entre des mots (next-token prediction), mais ils n'ont pas appris les *processus causaux* du monde physique auxquels ces mots font référence.
+*   **Le Modèle du Monde Biologique :** À l'inverse, l'intelligence biologique ne se contente pas de statistiques. Ses modèles du monde sont **causaux, incarnés (embodied), ancrés dans le temps physique, et chargés de valeurs** (liés à la survie et aux buts).
+*   **L'Agence et l'Empowerment :** Un modèle du monde biologique ne sert pas juste à "comprendre", il sert à *agir*. Le papier met en avant le concept d'**Empowerment** (le pouvoir d'agir) : l'intelligence émerge du besoin intrinsèque d'un organisme de maximiser ses options futures et son contrôle sur son environnement. C'est cette "curiosité" et cette agence qui *bootstrappent* (amorcent) l'apprentissage du modèle du monde.
+
+**Conclusion du papier :** Bien que révolutionnaires, les IA actuelles sont probablement très loin de l'AGI humaine car il leur manque cette compréhension causale profonde, ancrée dans la réalité physique et l'interaction corporelle. Le simple fait d'ajouter plus de données textuelles (scaling) ne fera pas émerger magiquement une compréhension causale du monde.
+
+---
+
+### 2. Mise en perspective avec nos discussions précédentes
+
+Ce papier est la clé de voûte qui relie tous les concepts que nous avons explorés, de la robotique à la biologie théorique.
+
+#### A. Le lien avec la critique de Charles Simon (Le chaînon manquant)
+Rappelez-vous que Charles Simon attaquait le *Predictive Coding* sur le plan **microscopique / matériel** (les neurones biologiques utilisent des spikes discrets et des phases temporelles, pas des gradients continus comme la backpropagation). 
+Ce papier de la Royal Society attaque l'IA actuelle sur le plan **macroscopique / architectural** : même si vous aviez le matériel parfait, entraîner un réseau uniquement sur du texte sans interaction physique avec le monde (embodiment) ne créera jamais un modèle causal. Simon dit que l'IA n'a pas le bon "moteur neuronal" ; ce papier dit qu'elle n'a pas la bonne "enfance physique". Les deux s'accordent pour dire que le *Deep Learning* classique est une impasse biologique.
+
+#### B. La validation du JEPA (Yann LeCun) et des RGM (Friston)
+*   **Contre les LLMs :** Le papier valide totalement la critique de Yann LeCun (JEPA) : prédire des mots (tokens) est une tâche fondamentalement différente et moins riche que prédire des états latents abstraits dans un espace continu.
+*   **Avec les RGM et l'Inférence Active :** La présence d'Adeel Razi parmi les auteurs assure le lien avec Friston. L'Inférence Active n'est pas qu'une équation mathématique ; c'est le mécanisme par lequel un agent *incarné* minimise sa surprise pour maintenir son intégrité (homéostasie). C'est exactement la "Beast Machine" d'Anil Seth dont nous parlions au début : le modèle du monde est indissociable du corps qui le génère.
+
+#### C. Le lien avec la Robotique (Fujii, Yokozawa)
+Dans les papiers de robotique que nous avons analysés, les chercheurs *devaient* construire artificiellement des "Modèles du Monde" (MTRSSM) et des "Macro-Actions" pour que leurs robots puissent planifier. Ce papier de la Royal Society explique *pourquoi* ils ont dû faire ça : parce que l'intelligence nécessite une compression causale de l'environnement pour pouvoir simuler des interventions futures. Le robot qui explore pour réduire son incertitude (valeur épistémique) est l'application parfaite du concept d'**Empowerment** mentionné dans ce papier.
+
+#### D. L'apport de Michael Levin (La Cognition Basale)
+Michael Levin (co-auteur) est célèbre pour avoir montré que la "cognition" et la capacité à résoudre des problèmes (modéliser le monde pour atteindre un but) existent bien avant le cerveau, au niveau des cellules et des tissus bioélectriques. Cela renforce l'idée que les "Modèles du Monde" ne sont pas une invention du cortex humain, mais une propriété fondamentale de la *vie* elle-même (ce qui rejoint l'Apprentissage Associatif Illimité de Ginsburg & Jablonka).
+
+---
+
+### 3. Les bonnes idées à reprendre (Takeaways pour l'AGI et la cognition)
+
+Si vous cherchez à concevoir les systèmes intelligents de demain, voici les principes directeurs extraits de ce numéro spécial :
+
+1. **Le "Grounding" (Ancrage) est non-négociable :**
+   On ne peut pas construire une intelligence générale uniquement en lisant Internet. Un système doit interagir avec un environnement (réel ou simulé avec des lois physiques strictes) pour comprendre la *causalité* (ex: la gravité, la résistance des matériaux, la conséquence d'une action) plutôt que de simples *corrélations linguistiques*.
+
+2. **L'Intelligence est pilotée par l'Empowerment (La Curiosité Intrinsèque) :**
+   Ne donnez pas à votre IA une liste de récompenses externes à optimiser. Programmez-la pour qu'elle cherche à maximiser son *pouvoir de contrôle futur* sur son environnement. C'est cette pulsion interne qui force le système à construire un Modèle du Monde précis, car on ne peut contrôler que ce que l'on comprend.
+
+3. **Le Langage est un "accélérateur", pas un "fondement" :**
+   Le langage humain est un outil incroyable pour transférer des modèles du monde d'un cerveau à l'autre (culture). Mais pour l'IA, le langage ne devrait être qu'une couche superficielle (une interface) posée *au-dessus* d'un moteur de raisonnement causal et spatial profond.
+
+4. **La compression comme mesure de l'intelligence :**
+   Un bon modèle du monde est celui qui compresse le mieux la complexité de l'environnement en règles simples (comme la *Bayesian Model Reduction* du papier précédent sur le sommeil). L'intelligence n'est pas la capacité à mémoriser des milliards de paramètres, mais la capacité à découvrir les lois génératives cachées derrière le bruit.
+
+### 💡 En résumé pour votre veille
+Ce papier de la **Royal Society (2024/2025)** acte la fin de la lune de miel avec les LLMs purs. Il pose que la véritable AGI nécessitera des **Modèles du Monde Causaux et Incarnés**. 
+
+Il fait la synthèse parfaite de notre parcours : il valide l'approche **Prédictive/Active** (Friston/Seth), exige une architecture qui respecte la **réalité physique et biologique** (répondant aux critiques de Simon et aux intuitions de LeCun), et place **l'Agence (l'Empowerment)** et la survie comme moteurs ultimes de l'apprentissage et de la conscience. C'est la feuille de route pour l'IA post-générative.
