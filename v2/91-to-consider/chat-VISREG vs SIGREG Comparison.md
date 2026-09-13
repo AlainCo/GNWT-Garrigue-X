@@ -141,3 +141,64 @@ Si vous concevez ou entraînez un modèle de type JEPA / World Model pour des do
 3. **Analysez vos latents** : Après l'entraînement, visualisez les activations de votre espace latent. Vous devriez observer que certaines dimensions s'activent de manière binaire (sparse) en réponse à des changements de régime physiques, tandis que d'autres varient de manière dense et continue. C'est la signature d'un modèle qui a réussi à apprendre les invariants de Koopman.
 
 En résumé, vous avez parfaitement synthétisé l'enjeu : la représentation idéale n'est ni purement dense (gaussienne), ni purement sparse (one-hot), mais **structurée** : sparse pour la logique discrète des régimes (Koopman), et dense/régularisée (VISReg) pour la richesse continue des états.
+
+### USER
+Je suis tombé sur ce papier: 
+https://arxiv.org/abs/2609.10464
+Peux tu m'expliquer ce qu'il dit, et le mettre en perspective avec ce dont on discute, puis me dire s'il y a de bonnes idées à reprendre ?
+
+### ASSISTANT
+C'est une excellente trouvaille ! Vous suivez exactement le fil de la recherche de pointe sur les modèles du monde (World Models). Le fait que **Randall Balestriero** (l'un des auteurs de **VISReg**) soit co-auteur de ce papier, intitulé *Semigroup-JEPA (SG-JEPA)*, n'est pas un hasard : ce travail s'inscrit dans la continuité directe de la réflexion sur la géométrie et la stabilité des espaces latents dans les architectures JEPA.
+
+Voici une explication claire du papier, sa mise en perspective avec notre discussion, et les idées pratiques à en tirer.
+
+---
+
+### 1. De quoi parle le papier SG-JEPA ?
+
+Le papier pose une question fondamentale : **les JEPAs apprennent-ils vraiment la *physique* ou juste des statistiques visuelles ?**
+Jusqu'ici, on évaluait les JEPAs sur leur capacité à prédire l'image ou l'état suivant ($t+1$). Mais SG-JEPA teste leur capacité à généraliser à des **lois physiques différentes** (ex: changer la valeur de la gravité, passant de l'apesanteur à des rebonds ultra-rapides), sans jamais avoir vu ces conditions à l'entraînement (*zero-shot physics generalization*).
+
+**Les innovations clés de SG-JEPA :**
+1. **Conditionnement par les paramètres physiques** : Le modèle ne reçoit pas seulement l'action du robot (ex: "pousser"), mais aussi les paramètres de l'environnement (ex: $g = 9.8$). Ces paramètres sont injectés directement dans le prédicteur pour moduler la dynamique temporelle.
+2. **Le Rollout Auto-régressif** : Au lieu de prédire juste $t+1$, le modèle prédit $t+1$, puis utilise cette prédiction pour prédire $t+2$, puis $t+3$, etc., sur une longue séquence.
+3. **La pépite du papier (Backprop dans l'encodeur)** : Les auteurs démontrent mathématiquement et empiriquement que le gain massif en généralisation ne vient pas du fait que le *prédicteur* devient meilleur, mais du fait qu'ils **rétropropagent l'erreur de ce long rollout directement dans l'encodeur**. Cela force l'encodeur à ne garder que les *features* (caractéristiques) qui sont physiquement cohérentes sur la durée.
+
+---
+
+### 2. Mise en perspective avec notre discussion (VISReg, Sparse, Koopman)
+
+Ce papier apporte une pièce magistrale au puzzle que nous construisons depuis le début de notre échange.
+
+#### A. Le lien avec VISReg / SIGReg (Le socle géométrique)
+SG-JEPA étend le *LeWorldModel* (qui repose sur SIGReg). Pour faire des rollouts auto-régressifs sur de longues durées sans que le modèle ne dérive ou ne s'effondre (*compounding error*), il faut un espace latent extrêmement stable. **VISReg et SIGReg fournissent ce socle indispensable**. Sans la régularisation de variance et de forme (sketching) qui empêche l'effondrement, le gradient du rollout auto-régressif exploserait.
+
+#### B. Le lien avec Koopman et les Régimes (2511.09783)
+Vous aviez compris que l'opérateur de Koopman cherche des "invariants" (des régimes qui valent 1 ou 0) pour rendre la dynamique linéaire. SG-JEPA va plus loin :
+- En injectant la gravité comme paramètre, le prédicteur apprend en réalité une **famille d'opérateurs de Koopman** (un opérateur pour chaque valeur de gravité).
+- L'encodeur est forcé de trouver un espace latent qui fonctionne pour *tous* ces régimes simultanément. Les "indicateurs de régime" (1 ou 0) ne servent plus seulement à dire "l'objet est au sol", mais à encoder la structure causale qui permet au prédicteur d'appliquer la bonne équation différentielle.
+
+#### C. La réponse au débat "Sparse vs Dense"
+SG-JEPA tranche ce débat d'une manière brillante, non pas par une contrainte géométrique, mais par **utilité temporelle**.
+Le papier montre que si l'encodeur stocke des informations inutiles pour la dynamique (ex: la couleur du mur en arrière-plan), le prédicteur fera de petites erreurs sur ces features. Lors du rollout auto-régressif, ces erreurs vont **s'amplifier exponentiellement** et détruire la prédiction.
+**Conséquence naturelle** : Pour minimiser la perte du rollout, l'encodeur apprend tout seul à "éteindre" (sparsifier) les features superficielles et à "allumer" (densifier) uniquement les véritables variables d'état (position, vitesse, masse). C'est la dynamique elle-même qui sculpte la densité ou la sparsité de l'espace !
+
+---
+
+### 3. Les excellentes idées à reprendre pour vos propres modèles
+
+Si vous concevez ou entraînez un World Model ou un JEPA, voici 3 concepts de ce papier que vous devriez absolument implémenter :
+
+1. **Laissez le gradient du Rollout remonter dans l'Encodeur**
+   * *L'erreur classique* : Entraîner l'encodeur avec une perte contrastive (ou VICReg/VISReg) et n'entraîner le prédicteur temporel qu'avec l'encodeur figé (ou avec un gradient très faible sur l'erreur à 1 pas de temps).
+   * *La bonne pratique* : Faites des rollouts de $N$ pas dans l'espace latent, calculez l'erreur finale, et **laissez ce gradient remonter dans l'encodeur**. C'est le meilleur régularisateur naturel : il force l'encodeur à abandonner les "raccourcis statistiques" (comme la texture) pour se concentrer sur la "vérité physique".
+
+2. **Le Conditionnement Environnemental (Environment Conditioning)**
+   * Si votre agent évolue dans des environnements variables (friction différente, masses différentes, luminosité), ne forcez pas l'encodeur à tout déduire des pixels.
+   * Créez un vecteur de "paramètres physiques" et concaténez-le à l'action avant de le donner au prédicteur. Cela aide immensément le modèle à dissocier *l'état du monde* de *la loi qui le régit*.
+
+3. **Utilisez le "Compounding Error" comme un filtre**
+   * Ne voyez pas l'accumulation d'erreurs dans les rollouts comme un problème à masquer (par exemple en utilisant une technique de *Teacher Forcing* où l'on réinjecte la vérité terrain à chaque pas).
+   * Acceptez et même encouragez l'erreur composée pendant l'entraînement. C'est le mécanisme exact qui pousse le réseau à découvrir les véritables variables d'état latentes (les fameux invariants de Koopman) plutôt que de simples corrélations de pixels.
+
+**En résumé :** VISReg vous donne la *stabilité géométrique* pour ne pas vous effondrer. L'approche Koopman vous donne la *théorie* pour comprendre la structure (1/0 et continu). Et **SG-JEPA** vous donne la *recette d'entraînement* (rollout + backprop encodeur) pour forcer le réseau à découvrir cette physique tout seul.
