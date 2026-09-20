@@ -202,3 +202,64 @@ Si vous concevez ou entraînez un World Model ou un JEPA, voici 3 concepts de ce
    * Acceptez et même encouragez l'erreur composée pendant l'entraînement. C'est le mécanisme exact qui pousse le réseau à découvrir les véritables variables d'état latentes (les fameux invariants de Koopman) plutôt que de simples corrélations de pixels.
 
 **En résumé :** VISReg vous donne la *stabilité géométrique* pour ne pas vous effondrer. L'approche Koopman vous donne la *théorie* pour comprendre la structure (1/0 et continu). Et **SG-JEPA** vous donne la *recette d'entraînement* (rollout + backprop encodeur) pour forcer le réseau à découvrir cette physique tout seul.
+
+### USER
+je suis tombé sur ce papier qui propose une méthode de régularisation différente de Sigreg, qui utilise le concept d'epiplexie que je ne connais pas.
+https://arxiv.org/html/2607.18433v1
+
+peux tu me décrire ce que dit ce papier, l'epiplexie notamment, mettre ce que dit ce papier en perspective avec ce dont on discute, puis me dire qu'il y a des idées à reprendre ?
+
+### ASSISTANT
+C'est une excellente trouvaille ! Ce papier, intitulé *"Intelligence from Learnable Novelty"*, change radicalement de perspective par rapport à notre discussion précédente. Alors que VISReg, SIGReg ou SG-JEPA se concentrent sur la **géométrie** de l'espace latent (dense vs sparse) ou la **dynamique** physique (opérateur de Koopman), ce papier s'attaque à la **théorie de l'information** : *que doit-on chercher à apprendre en premier lieu ?*
+
+Voici une analyse détaillée du papier, du concept d'**Épiplexie**, et comment cela complète parfaitement le puzzle que nous construisons.
+
+### 1. De quoi parle ce papier et qu'est-ce que l'Épiplexie ?
+
+Le papier part d'un constat sur les deux grandes écoles de l'apprentissage et de l'intelligence artificielle, qui échouent chacune d'une manière symétrique (en miroir) :
+- **La recherche de nouveauté (Novelty Search)** : Le modèle cherche à maximiser sa "surprise". **L'échec** : Il finit par regarder une "télévision neigeuse" (*Noisy TV*). Le bruit blanc est infiniment surprenant et nouveau à chaque frame, mais le modèle n'y apprend rien car il n'y a aucune structure.
+- **Le principe de l'énergie libre (Free-Energy Principle / Compression)** : Le modèle cherche à minimiser sa "surprise" (prédire parfaitement). **L'échec** : Il finit par s'enfermer dans une "chambre noire" (*Dark Room*). S'il ne se passe rien, tout est parfaitement prévisible (surprise = 0), mais le modèle n'apprend plus rien.
+
+**La solution : La décomposition MDL (Minimum Description Length)**
+Le papier démontre que la "surprise totale" d'un flux de données peut être divisée mathématiquement en deux parties distinctes :
+1. **Le Résidu (Le Bruit)** : La part d'entropie pure, aléatoire, incompressible (le bruit de la télé neigeuse).
+2. **Le Programme ($|M|$)** : La structure, les règles, les lois physiques sous-jacentes que l'observateur peut *réellement* extraire et compresser avec ses capacités de calcul limitées.
+
+**L'Épiplexie (Epiplexity)** est le nom donné à cette deuxième partie : **la nouveauté apprenable**.
+C'est la mesure exacte de la complexité structurelle que le modèle est *capable* d'absorber. Maximiser l'épiplexie permet d'éviter les deux pièges : le modèle ignore la télévision neigeuse (car son résidu est élevé mais son programme $|M|$ est nul) et refuse la chambre noire (car il n'y a rien à extraire).
+
+---
+
+### 2. Mise en perspective avec notre discussion (VISReg, Koopman, SG-JEPA)
+
+Ce papier apporte le **chaînon manquant théorique** à nos échanges précédents. Voici comment il s'articule avec les autres concepts :
+
+*   **Épiplexie vs VISReg / SIGReg (L'effondrement)** :
+    *   *L'effondrement (collapse)* d'un modèle vers un point unique est l'équivalent géométrique du problème de la **"chambre noire"**. Si toutes les images donnent le même vecteur latent, la surprise est nulle.
+    *   VISReg empêche cela en forçant géométriquement la variance (en "étalant" les points). L'épiplexie, elle, l'empêche *informationnellement* : elle récompense le modèle uniquement s'il trouve des structures (programmes) complexes et variées dans les données.
+*   **Épiplexie vs SG-JEPA et le "Noisy TV"** :
+    *   Dans SG-JEPA, on avait vu que les réseaux ont tendance à mémoriser des "raccourcis" (comme la texture d'un mur) qui sont en réalité du bruit haute fréquence. Lors du *rollout* auto-régressif, ce bruit s'amplifie et détruit la prédiction.
+    *   L'épiplexie modélise exactement cela : ces textures sont du **résidu incompressible**. En forçant le modèle à maximiser l'épiplexie, on le force *mathématiquement* à ignorer le bruit et à ne garder que les vraies variables d'état causales (la position, la vitesse) qui forment le "programme" $|M|$ du monde.
+*   **Épiplexie et les Invariants de Koopman (Régimes)** :
+    *   Nous avions vu (papier 2511.09783) que les JEPA découvrent des "invariants" (des dimensions qui valent 1 ou 0 pour indiquer un régime).
+    *   L'épiplexie explique *pourquoi* le réseau fait cela : découvrir qu'un système passe d'un régime A à un régime B selon une règle précise est **la manière la plus efficace de compresser de l'information**. Trouver les invariants de Koopman, c'est trouver le programme $|M|$ le plus court qui explique la dynamique. L'épiplexie est donc la fonction de perte naturelle qui pousse un réseau vers la découverte de ces régimes "sparse" (1 ou 0).
+
+---
+
+### 3. Idées pratiques à reprendre pour vos modèles
+
+Ce papier n'est pas seulement théorique, il propose des estimateurs différentiables (basés sur des *Reservoir Computers*, des réseaux récurrents très légers et figés) pour calculer l'épiplexie à la volée. Voici ce que vous pouvez en tirer :
+
+1.  **Le diagnostic "Dark Room / Noisy TV" (Outil de Debugging)**
+    *   *Si votre World Model s'effondre (tous les latents sont identiques)* : Vous êtes dans la **Chambre Noire**. Ajoutez une contrainte de type VISReg (variance) ou maximisez l'épiplexie de vos représentations.
+    *   *Si votre World Model hallucine du bruit et que ses prédictions lointaines explosent* : Vous êtes face à la **Télévision Neigeuse**. Le modèle sur-apprend le résidu. Utilisez le *rollout backprop* (façon SG-JEPA) ou pénalisez la complexité du modèle (MDL) pour forcer l'oubli du bruit.
+2.  **L'Exploration Intrinsèque (Curiosité Saine)**
+    *   Si vous entraînez un agent par renforcement (RL) qui doit explorer un environnement pour construire un modèle du monde, ne le récompensez pas juste pour la "nouveauté" (erreur de prédiction immédiate), sinon il ira secouer la caméra contre un mur blanc (bruit pur).
+    *   **Récompensez "l'apprenabilité" (Learnable Novelty / Épiplexie)** : Donnez une récompense maximale à l'agent lorsqu'il visite un état où son erreur de prédiction *diminue rapidement* au fil des epochs. C'est la signature d'une structure complexe mais compréhensible.
+3.  **Utiliser le "Reservoir Computing" comme sonde de complexité**
+    *   Le papier montre qu'on peut greffer un petit *Reservoir Computer* (réseau linéaire récurrent avec des poids aléatoires non entraînables) sur votre espace latent.
+    *   *Idée pratique* : Utilisez ce réservoir pour mesurer en temps réel la capacité prédictive de votre espace latent. Si le réservoir arrive à prédire la suite avec peu de neurones actifs, c'est que votre JEPA a trouvé une bonne représentation (un bon "programme $|M|$"). Vous pouvez utiliser cette métrique pour l'*Early Stopping* ou pour choisir les meilleurs hyperparamètres sans avoir besoin de labels de validation.
+4.  **Le filtrage MDL (Minimum Description Length)**
+    *   Au lieu de simplement minimiser l'erreur quadratique moyenne (MSE) entre la prédiction du JEPA et la cible, formulez une perte de type MDL : `Perte = Erreur de Reconstruction + Pénalité sur la complexité du réseau de prédiction`. Cela force le modèle à trouver des lois physiques (Koopman) simples et robustes, plutôt que des fonctions hautement non-linéaires et instables qui mémorisent le bruit.
+
+**En résumé :** Si VISReg vous donne la *stabilité géométrique*, SG-JEPA la *robustesse dynamique*, et l'approche Koopman la *structure logique (sparse/dense)*, **l'Épiplexie** vous donne le **compas informationnel** : elle garantit que le modèle investit sa capacité de calcul uniquement sur ce qui a du sens (la physique du monde) et ignore ce qui est inutile (le bruit ou la chambre noire).
