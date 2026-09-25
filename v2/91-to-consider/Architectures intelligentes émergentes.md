@@ -1,13 +1,4 @@
----
-title: "Architectures intelligentes émergentes"
-source: "https://chat.mistral.ai/chat/cdf4ee83-fd97-4f0b-883b-a449dd131a39"
-author:
-published:
-created: 2026-09-25
-description: "Vibe (anciennement Le Chat) est votre agent IA pour le travail et le code."
-tags:
-  - "clippings"
----
+
 Je l'intéresse à des architectures multi-agents, système de systèmes, bioinspirées, basées sur les IA, tentant d'exploiter des théories comme l'Active Inference, le global workspace de GNWT, le phi de l'IIT, JEPA et son évolution, les opérateurs de Koopman, l'épiplexité/épiplexie(je ne connait pas le mot en français). Le but serait de faire des systèmes réellement débrouillards dans le monde réel, dans des situations complexes, en synergie entre agents et avec les humains et même l'environnement. Tout est basé sur des papiers dispersés, mais que je trouve en fait connectés. et là je suis tombé sur des concepts reliés à l'Epiplexité, le framework EILT, la Syntropie... je ne suis pas très rassuré par ces concepts qui me semblent peut être fumeux, mais qui sait, je n'ai pas tout compris... ce qui m'intéresse ce sont les concepts, éventuellement théorique, mais opérationnels à terme, comme l'Epiplexité (qui a donné une idée d'architecture Jepa, en permettant une fonction de régularisation intéressante)... pour EILT et la Syntropie, je ne sais que penser... peux tu m'aider en m'expliquant ces concepts, les idées connexes, et voir si c'est sérieux.
 
 23 sept., 13:32
