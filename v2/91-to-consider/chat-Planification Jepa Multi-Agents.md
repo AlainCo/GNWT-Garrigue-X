@@ -3826,3 +3826,310 @@ Dans votre architecture, vous pourriez utiliser l'OPF avec $K = 4$ facteurs :
 La contrainte d'orthogonalité garantit que le facteur "trajectoire de l'humain" ne sera jamais confondu avec le facteur "position de l'obstacle". Cela rend votre modèle du monde **interprétable** et permet de la planification ciblée (ex: "Je modifie uniquement le facteur 4 pour tester une stratégie sociale, sans perturber les facteurs 1-3").
 
 **En résumé** : L'OPF n'est pas une révolution architecturale lourde. C'est une modification **chirurgicale du prédicteur** (on le remplace par K petits prédicteurs + des projecteurs orthogonaux) qui force le modèle à **démêler automatiquement les lois physiques** qui régissent la scène. L'encodeur ne change pas, la loss de base ne change pas, on ajoute juste une contrainte d'orthogonalité et des têtes factorisées. C'est élégant, léger, et redoutablement efficace.
+
+### USER
+Je suis tombé sur ce papier: https://arxiv.org/abs/2609.23881
+
+Peux tu m'expliquer ce qu'il dit, et le mettre en perspective avec ce dont on discute, puis me dire s'il y a de bonnes idées à reprendre ? 
+
+### ASSISTANT
+Excellente trouvaille ! **MotionJEPA** (Karmann et al., septembre 2026) ] attaque un problème très spécifique et critique des JEPAs que nous n'avions pas encore abordé en détail : **l'effondrement temporel des features** (*temporal feature collapse*).
+
+C'est un papier qui complète parfaitement **PhyLatent** (qui traitait de l'effondrement physique) et **SIGReg** (qui empêche l'effondrement global). Voici l'analyse complète.
+
+---
+
+## 1. Le Problème : Les JEPAs Sont "Paresseux" avec le Mouvement
+
+### Qu'est-ce que l'Effondrement Temporel ?
+
+Les JEPAs classiques (comme LeWorldModel avec SIGReg) ont un **biais inductif massif vers les features lentes** (*slow features*) . Concrètement :
+
+- Le modèle apprend à encoder parfaitement les éléments **statiques** de la scène (murs, sol, objets immobiles)
+- Mais il **supprime activement** les informations sur ce qui **change** (mouvements, déplacements, dynamiques)
+
+**Pourquoi ?** Parce que prédire "rien n'a changé" est beaucoup plus facile que prédire "l'objet s'est déplacé de 10cm vers la droite". Le modèle trouve un raccourci : ignorer le mouvement et se concentrer sur le statique.
+
+**La conséquence catastrophique pour votre robot** : Si votre JEPA ne encode pas le mouvement, il ne peut pas prédire où seront les autres agents dans le futur. Il devient aveugle à la dynamique du monde.
+
+### La Limite des Solutions Existantes
+
+Il existe deux approches pour contrer ce problème :
+
+1. **SIGReg (utilisé dans CR-JEPA)** : Empêche l'effondrement global en forçant une distribution isotrope, mais **ne garantit pas** que les features dynamiques soient préservées.
+
+2. **Inverse Dynamics Models (IDM)** : Forcent le modèle à prédire les actions entre deux frames, ce qui préserve l'information sur le mouvement. **Problème** : nécessite des **labels d'actions** (supervisé), ce qui limite la généralisation.
+
+---
+
+## 2. La Solution MotionJEPA : DISReg
+
+### L'Innovation : Prédire les Différences Temporelles dans l'Espace Latent
+
+MotionJEPA introduit **DISReg** (Difference Image and Single image embedding Regularization) , un régulariseur à deux composantes :
+
+#### Composante Statique (Slow Features)
+- Similaire à SIGReg
+- Force la distribution des embeddings d'images à être bien conditionnée
+- Encourage l'encodage des features lentes/stables
+- **But** : Préserver la structure de la scène
+
+#### Composante Dynamique (Fast Features) - **L'Innovation**
+- Utilise un **encodeur de différences** (`DiffEnc`) qui encode l'image différence : $o_{t+1} - o_t$
+- Utilise un **prédicteur de différences** (`DiffPred`) qui prédit cet embedding de différence à partir des embeddings d'états : $(z_t, z_{t+1}) \rightarrow \hat{d}_t$
+
+**L'équation clé** :
+```
+d_t = DiffEnc(o_{t+1} - o_t)           # Embedding réel de ce qui a changé
+d̂_t = DiffPred(z_t, z_{t+1})           # Prédiction de ce qui a changé
+
+Loss_dynamic = ||d_t - d̂_t||²
+```
+
+### Pourquoi C'est Génial ?
+
+1. **Pas besoin de labels d'actions** : Contrairement à IDM, DISReg n'a pas besoin de connaître les actions. Il apprend juste "qu'est-ce qui a changé visuellement" entre deux frames.
+
+2. **Forces les features dynamiques à exister** : Le modèle ne peut pas tricher en ignorant le mouvement, car il doit être capable de prédire l'embedding de la différence.
+
+3. **Équilibre statique/dynamique** : Les deux composantes travaillent ensemble pour créer une représentation complète.
+
+---
+
+## 3. Résultats Spectaculaires sous Distracteurs
+
+Le papier teste MotionJEPA sur des tâches de planification avec des **distracteurs statiques en arrière-plan** (ex: motifs complexes sur les murs qui ne bougent pas)  :
+
+| Méthode | Planning 25 steps (Mean %) | Planning 50 steps (Mean %) |
+|---------|---------------------------|---------------------------|
+| LeWM (baseline) | 20.4 | 11.8 |
+| IDM (Inverse Dynamics) | 77.2 | 59.3 |
+| **MotionJEPA (Ours)** | **81.8** | **70.3** |
+| MotionJEPA + IDM | **86.4** | **71.6** |
+
+**Ce que ça montre** :
+- Le baseline LeWM **s'effondre** complètement en présence de distracteurs (20% → 12%)
+- MotionJEPA maintient des performances élevées (82% → 70%)
+- La combinaison MotionJEPA + IDM est encore meilleure
+
+**Pourquoi les distracteurs posent problème ?** Parce qu'un JEPA "paresseux" va se concentrer sur les motifs statiques complexes de l'arrière-plan et ignorer le mouvement de l'objet cible. MotionJEPA force le modèle à encoder le mouvement, donc il reste focus sur ce qui change vraiment.
+
+---
+
+## 4. Mise en Perspective avec Notre Discussion
+
+### A. Complémentarité avec PhyLatent
+
+Vous vous souvenez de **PhyLatent** qui identifiait 3 types d'effondrements :
+1. **Physical Invariance Collapse** : Confondre changement d'apparence avec changement physique
+2. **Physical Identifiability Collapse** : Deux états différents mappés au même point
+3. **Counterfactual Dynamics Collapse** : Branches d'actions qui se croisent
+
+**MotionJEPA attaque un 4ème type** :
+4. **Temporal Feature Collapse** : Ignorer les features dynamiques au profit des features statiques
+
+**Ensemble, ils couvrent tous les angles** :
+- PhyLatent : "L'espace latent respecte-t-il la physique ?"
+- MotionJEPA : "L'espace latent encode-t-il le mouvement ?"
+
+### B. Lien avec CR-JEPA et SIGReg
+
+**CR-JEPA** utilise SIGReg pour empêcher l'effondrement global (tous les vecteurs au même point).
+
+**MotionJEPA** montre que SIGReg seul ne suffit pas : même avec une belle distribution isotrope, le modèle peut encore ignorer les features dynamiques.
+
+**Pour votre robot** : Vous avez besoin des **deux** :
+- SIGReg (ou équivalent) pour la structure globale
+- DISReg (ou équivalent) pour préserver le mouvement
+
+### C. Lien avec l'Active Inference et la Boucle OODA
+
+C'est ici que ça devient crucial pour votre projet multi-agent :
+
+**Dans la phase ORIENT de la boucle OODA**, votre robot doit mettre à jour son modèle du monde. Si son JEPA n'encode pas le mouvement :
+- Il ne peut pas prédire où seront les autres agents
+- Il ne peut pas calculer la valeur épistémique (gain d'information) sur les trajectoires futures
+- Sa planification (phase DECIDE) sera aveugle à la dynamique
+
+**Avec MotionJEPA** :
+- Le robot encode explicitement "l'agent A se déplace vers la gauche à vitesse v"
+- Il peut prédire où sera l'agent A dans 2 secondes
+- Il peut planifier des actions qui tiennent compte de cette trajectoire
+
+### D. Lien avec FactorJEPA
+
+**FactorJEPA** séparait le futur en 3 canaux : Layout, Entities, Interactions.
+
+**MotionJEPA** pourrait être vu comme une **factorisation à 2 canaux** :
+- Canal Statique (Slow Features) : Layout, objets immobiles
+- Canal Dynamique (Fast Features) : Mouvements, changements
+
+Les deux approches sont complémentaires : vous pourriez utiliser la factorisation de FactorJEPA **avec** le régulariseur DISReg de MotionJEPA pour chaque canal.
+
+---
+
+## 5. Les Idées à Reprendre pour Votre Robot Multi-Agent
+
+### 💡 Idée 1 : Le Module de Différences Temporelles (À Implémenter Absolument)
+
+C'est l'innovation la plus transférable. Ajoutez à votre JEPA un **module de prédiction de différences** :
+
+```python
+class MotionAwareJEPA(nn.Module):
+    def __init__(self, base_jepa):
+        super().__init__()
+        self.encoder = base_jepa.encoder
+        self.predictor = base_jepa.predictor
+        
+        # Nouveau : Module de différences
+        self.diff_encoder = nn.Sequential(
+            nn.Conv2d(3, 64, 3, padding=1),
+            nn.ReLU(),
+            nn.Conv2d(64, 128, 3, padding=1),
+            nn.ReLU(),
+            nn.AdaptiveAvgPool2d(1),
+            nn.Flatten()
+        )
+        
+        self.diff_predictor = nn.Sequential(
+            nn.Linear(2 * latent_dim, 256),
+            nn.ReLU(),
+            nn.Linear(256, diff_dim)
+        )
+    
+    def forward(self, obs_t, obs_t_plus_1):
+        # Embeddings d'états
+        z_t = self.encoder(obs_t)
+        z_t_plus_1 = self.encoder(obs_t_plus_1)
+        
+        # Embedding réel de la différence
+        diff_image = obs_t_plus_1 - obs_t
+        d_real = self.diff_encoder(diff_image)
+        
+        # Prédiction de la différence
+        d_pred = self.diff_predictor(torch.cat([z_t, z_t_plus_1], dim=-1))
+        
+        # Loss de différence
+        diff_loss = F.mse_loss(d_pred, d_real)
+        
+        # Loss JEPA standard
+        z_pred = self.predictor(z_t, action)
+        jepa_loss = F.mse_loss(z_pred, z_t_plus_1)
+        
+        return jepa_loss + 0.5 * diff_loss
+```
+
+**Pourquoi c'est crucial pour le multi-agent** :
+- Force le modèle à encoder les mouvements des autres agents
+- Permet de prédire les trajectoires futures
+- Améliore la robustesse aux distracteurs statiques
+
+### 💡 Idée 2 : Séparation Statique/Dynamique dans l'Espace Latent
+
+Vous pourriez structurer votre espace latent en **deux sous-espaces** :
+
+```python
+class DualSpaceJEPA(nn.Module):
+    def __init__(self, latent_dim=512):
+        super().__init__()
+        self.static_dim = latent_dim // 2  # Features lentes
+        self.dynamic_dim = latent_dim // 2  # Features rapides
+        
+        # Encodeur avec deux têtes
+        self.encoder = nn.Sequential(...)
+        self.static_head = nn.Linear(hidden, self.static_dim)
+        self.dynamic_head = nn.Linear(hidden, self.dynamic_dim)
+    
+    def encode(self, observation):
+        features = self.encoder(observation)
+        z_static = self.static_head(features)    # Murs, sol, objets fixes
+        z_dynamic = self.dynamic_head(features)  # Mouvements, changements
+        return torch.cat([z_static, z_dynamic], dim=-1)
+```
+
+**Avantages** :
+- Le planificateur peut raisonner séparément sur le statique et le dynamique
+- Vous pouvez appliquer des contraintes différentes à chaque sous-espace
+- Plus interprétable pour le débogage
+
+### 💡 Idée 3 : Combinaison avec Inverse Dynamics (Sans Labels)
+
+Le papier montre que **MotionJEPA + IDM** donne les meilleurs résultats .
+
+**Pour votre robot** :
+- Utilisez DISReg pour apprendre les différences temporelles (non supervisé)
+- Ajoutez un module IDM léger qui prédit les actions à partir des différences latentes
+- Cela crée une boucle vertueuse : le modèle apprend à la fois "qu'est-ce qui a changé" et "quelle action a causé ce changement"
+
+```python
+class MotionAndActionJEPA(nn.Module):
+    def __init__(self):
+        super().__init__()
+        # DISReg pour les différences
+        self.diff_encoder = ...
+        self.diff_predictor = ...
+        
+        # IDM pour les actions (optionnel, peut être ajouté plus tard)
+        self.action_predictor = nn.Sequential(
+            nn.Linear(2 * latent_dim, 256),
+            nn.ReLU(),
+            nn.Linear(256, action_dim)
+        )
+    
+    def forward(self, obs_t, obs_t_plus_1, action=None):
+        # ... code DISReg ...
+        
+        # Si on a les actions, ajouter la loss IDM
+        if action is not None:
+            a_pred = self.action_predictor(torch.cat([z_t, z_t_plus_1], dim=-1))
+            idm_loss = F.mse_loss(a_pred, action)
+            return jepa_loss + diff_loss + 0.3 * idm_loss
+        
+        return jepa_loss + diff_loss
+```
+
+---
+
+## 6. Synthèse : Ce qu'Il Faut Retenir
+
+### Les 3 Leçons Clés
+
+1. **Les JEPAs ont un biais catastrophique vers le statique**
+   - Sans régularisation explicite, ils ignorent le mouvement
+   - Cela les rend aveugles à la dynamique du monde
+   - Critique pour prédire les trajectoires d'autres agents
+
+2. **SIGReg seul ne suffit pas**
+   - Il empêche l'effondrement global mais pas l'effondrement temporel
+   - Vous avez besoin d'un régulariseur qui force explicitement l'encodage du mouvement
+
+3. **Prédire les différences temporelles est la clé**
+   - Pas besoin de labels d'actions
+   - Force le modèle à encoder ce qui change
+   - Améliore drastiquement la planification sous distracteurs
+
+### Pour Votre Projet Multi-Agent
+
+**MotionJEPA apporte** :
+- La capacité d'encoder les **mouvements des autres agents**
+- La robustesse aux **distracteurs statiques** (arrière-plans complexes)
+- Une meilleure **prédiction de trajectoires** pour la planification
+
+**L'architecture ultime combine** :
+- **CR-JEPA** pour la fusion multi-capteurs
+- **SIGReg** pour la structure globale de l'espace latent
+- **MotionJEPA (DISReg)** pour préserver les features dynamiques
+- **PhyLatent** pour respecter la physique
+- **FactorJEPA** pour la factorisation sémantique
+
+---
+
+## Conclusion
+
+**MotionJEPA** n'est pas juste une amélioration incrémentale — c'est la **pièce manquante** pour que votre JEPA encode vraiment la dynamique du monde.
+
+**L'idée la plus précieuse** est le **module de prédiction de différences temporelles** : une technique simple mais puissante qui force le modèle à encoder le mouvement sans avoir besoin de labels d'actions.
+
+Pour votre robot multi-agent, c'est **indispensable**. Sans ça, votre robot sera excellent pour reconnaître des scènes statiques, mais complètement aveugle aux mouvements des autres agents. Avec MotionJEPA, il pourra non seulement voir les autres agents, mais aussi **comprendre et prédire leurs trajectoires**, ce qui est la base de toute interaction sociale ou tactique.
+
+Vous avez maintenant tous les ingrédients pour construire un JEPA qui encode à la fois la structure statique du monde ET sa dynamique temporelle, avec des garanties mathématiques contre tous les types d'effondrements.
