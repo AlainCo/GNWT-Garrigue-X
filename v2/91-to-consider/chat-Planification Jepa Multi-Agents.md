@@ -4491,3 +4491,357 @@ Votre intuition était absolument juste. Voici comment tout s'emboîte :
 C'est exactement ce que fait un pilote de chasse expert : il a internalisé les "invariants" du combat aérien (les régimes dynamiques stables), et il prend des décisions qui le maintiennent dans les régimes favorables tout en forçant l'adversaire dans des régimes défavorables.
 
 Vous avez mis le doigt sur l'un des ponts théoriques les plus élégants de toute notre discussion. Bravo !
+
+### USER
+Je suis tombé sur ce papier: 
+https://arxiv.org/abs/2603.12231
+Peux tu m'expliquer ce qu'il dit, et le mettre en perspective avec ce dont on discute, puis me dire s'il y a de bonnes idées à reprendre ? 
+
+### ASSISTANT
+Excellente trouvaille ! **Temporal Straightening for Latent Planning** ] (Wang, LeCun et al., ICML 2026) apporte une pièce élégante et profondément complémentaire à notre puzzle. Ce papier résout un problème géométrique fondamental que tous les autres papiers contournent sans jamais l'attaquer frontalement : **la courbure catastrophique des trajectoires latentes**.
+
+---
+
+## 1. Le Problème : L'Espace Latent est un Labyrinthe Courbé
+
+### L'Intuition Géométrique
+
+Imaginez que vous devez marcher de Paris à Marseille. Dans la réalité physique, vous suivez une trajectoire relativement droite (l'autoroute A6). Mais si votre carte interne (votre espace latent JEPA) était **tordue comme un spaghetti**, la distance "à vol d'oiseau" sur la carte ne refléterait pas du tout la distance réelle à parcourir.
+
+**C'est exactement ce qui se passe avec les JEPAs classiques** (DINO-WM, LeWorldModel, etc.) :
+- Les encodeurs pré-entraînés (DINOv2, V-JEPA) produisent des **trajectoires latentes hautement courbées** 
+- La distance euclidienne entre $z_t$ et $z_{goal}$ dans l'espace latent **ne reflète pas** la distance géodésique réelle (le nombre d'actions nécessaires)
+- Le planificateur par gradient se perd dans un paysage de loss **non-convexe** avec de nombreux minima locaux
+
+### La Conséquence pour la Planification
+
+Les méthodes actuelles (CEM, MPPI) contournent ce problème en **échantillonnant massivement** des milliers de trajectoires au hasard. C'est efficace mais :
+- **Très coûteux** en calcul (9000+ rollouts par décision)
+- **Lent** (latence incompatible avec le temps réel)
+- **Sous-optimal** (on rate souvent la vraie meilleure trajectoire)
+
+---
+
+## 2. La Solution : Le Redressement Temporel (Temporal Straightening)
+
+### L'Inspiration Neuroscientifique
+
+Le papier s'inspire de l'**hypothèse du "perceptual straightening"** en neuroscience visuelle  : le cortex visuel humain transformerait les vidéos naturelles complexes (très courbées dans l'espace des pixels) en représentations internes plus droites et linéaires, facilitant ainsi la prédiction et l'inférence.
+
+### Le Régulariseur de Courbure (Élégant et Simple)
+
+L'idée est d'ajouter une contrainte géométrique pendant l'entraînement du JEPA :
+
+```python
+# Calcul des "vitesses latentes"
+v_t = z_{t+1} - z_t        # Vitesse à l'instant t
+v_{t+1} = z_{t+2} - z_{t+1}  # Vitesse à l'instant t+1
+
+# Similarité cosinus entre vitesses consécutives
+cosine_sim = (v_t · v_{t+1}) / (||v_t|| · ||v_{t+1}||)
+
+# Loss de courbure : on veut maximiser la similarité (minimiser l'angle)
+L_curv = 1 - cosine_sim
+
+# Loss totale
+L_total = L_pred + λ · L_curv
+```
+
+**Ce que ça fait** : Ça force les trajectoires latentes à être **localement droites** — les vecteurs vitesse consécutifs pointent dans la même direction.
+
+### Le Résultat Géométrique
+
+Après entraînement avec ce régulariseur  :
+- Les trajectoires latentes deviennent **beaucoup moins courbées**
+- La distance euclidienne dans l'espace latent **devient un bon proxy** pour la distance géodésique réelle
+- Le paysage de loss de planification devient **quasi-convexe**
+
+**Analogie** : C'est comme si on passait d'une carte routière médiévale (avec des routes sinueuses et imprécises) à une carte moderne avec des autoroutes droites. La distance à vol d'oiseau redevient un indicateur fiable de la distance réelle.
+
+---
+
+## 3. Les Résultats : La Planification par Gradient Devient Possible
+
+### Gains Spectaculaires
+
+Sur 4 environnements de robotique (Wall, PointMaze, PushT)  :
+- **Planification open-loop** : +20 à +60% de taux de succès
+- **MPC (Model Predictive Control)** : +20 à +30% de taux de succès
+- **Vitesse** : Le gradient descent pur remplace CEM/MPPI (beaucoup plus rapide)
+
+### Pourquoi le Gradient Descent Fonctionne Enfin
+
+Le papier prouve théoriquement (Theorem 4.4) que pour des dynamiques linéaires, si la transition est $\epsilon$-droite ($||A - I||_2 \leq \epsilon$), alors le **nombre de condition effectif** de la Hessienne de planification est borné par  :
+
+$$\kappa_{\text{eff}}(H) \leq \kappa(B)^2 \cdot e^{6\epsilon K}$$
+
+**Traduction** : Plus les trajectoires sont droites ($\epsilon$ petit), moins la Hessienne est mal conditionnée, plus le gradient descent converge vite et reliably.
+
+---
+
+## 4. Mise en Perspective : Le Chaînon Géométrique Manquant
+
+### A. Le Lien avec D-JEPA (Decision-Aligned)
+
+C'est la comparaison la plus éclairante :
+
+| Critère | **D-JEPA** | **Temporal Straightening** |
+|---------|-----------|----------------------------|
+| **Ce qu'il aligne** | L'espace latent sur les **décisions réussies** (ordinal evidence) | L'espace latent sur la **géométrie euclidienne** (faible courbure) |
+| **Méthode** | Déformation basée sur les préférences | Régularisation de courbure |
+| **Quand l'utiliser** | Après entraînement (calibration empirique) | Pendant entraînement (contrainte géométrique) |
+| **Effet** | "Cette trajectoire réussit, donc elle doit être proche du but" | "Cette trajectoire est droite, donc le gradient descent peut la suivre" |
+
+**Synthèse** : Ces deux méthodes sont **parfaitement complémentaires** :
+1. Temporal Straightening rend l'espace géométriquement simple (pendant l'entraînement)
+2. D-JEPA l'aligne sur la réalité physique (après entraînement)
+
+### B. Le Lien avec INTACT et HWM
+
+- **INTACT** mappe intention → action en une seule passe. Mais si l'espace latent est courbé, cette mapping est instable. Temporal Straightening **stabilise** INTACT en rendant l'espace plus lisse.
+- **HWM** fait de la planification hiérarchique. Temporal Straightening améliore **chaque niveau** de la hiérarchie en rendant les rollouts plus fiables.
+
+### C. Le Lien avec MotionJEPA
+
+- **MotionJEPA** force l'encodage des features dynamiques (ce qui bouge)
+- **Temporal Straightening** force la géométrie des trajectoires (comment ça bouge)
+
+Les deux sont orthogonaux et peuvent être combinés.
+
+### D. Le Lien avec l'Active Inference (Friston)
+
+C'est ici que ça devient profond :
+
+**Dans le FEP, l'agent minimise l'Énergie Libre par inférence variationnelle (gradient descent).**
+
+Si le paysage d'énergie libre est **non-convexe et courbé** (comme avec DINOv2 brut), l'inférence variationnelle :
+- Convergence lentement
+- Reste coincée dans des minima locaux
+- Produit des actions sous-optimales
+
+**Avec Temporal Straightening** :
+- Le paysage devient quasi-convexe
+- L'inférence variationnelle converge rapidement
+- Les actions sont optimales
+
+**C'est exactement ce que Friston prédit** : le cerveau apprend des représentations qui **facilitent l'inférence**. Le cortex visuel "redresse" les trajectoires perceptuelles pour que l'inférence bayésienne soit tractable.
+
+### E. Le Lien avec la Boucle OODA (Boyd)
+
+**Étape DECIDE** : Choisir la meilleure action parmi des milliers de possibilités.
+
+- **Sans straightening** : Le planificateur doit échantillonner massivement (CEM) → lent
+- **Avec straightening** : Le gradient descent converge en quelques itérations → rapide
+
+**Tempo OODA** : Temporal Straightening **accélère** l'étape DECIDE, permettant au robot de "rester dans la boucle" de l'adversaire.
+
+### F. Le Lien avec Koopman
+
+Le papier mentionne explicitement que temporal straightening est **différent** des méthodes de Koopman  :
+- **Koopman** cherche des observables dont l'évolution est **linéaire**
+- **Temporal Straightening** régularise la **géométrie des trajectoires** (faible courbure)
+
+Un système linéaire peut produire des trajectoires courbées (oscillations, spirales). Temporal straightening force les trajectoires à être droites, même si la dynamique sous-jacente est non-linéaire.
+
+---
+
+## 5. Les 3 Idées d'Or à Reprendre
+
+### 💡 Idée 1 : Le Régulariseur de Courbure (À Implémenter Partout)
+
+C'est probablement la contribution la plus transférable. Ajoutez ce régulariseur à **n'importe quel JEPA** :
+
+```python
+class StraightenedJEPA(nn.Module):
+    def __init__(self, base_jepa, lambda_curv=0.1):
+        super().__init__()
+        self.encoder = base_jepa.encoder
+        self.predictor = base_jepa.predictor
+        self.lambda_curv = lambda_curv
+    
+    def curvature_loss(self, z_t, z_t_plus_1, z_t_plus_2):
+        """Force les trajectoires latentes à être droites"""
+        v_t = z_t_plus_1 - z_t
+        v_t_plus_1 = z_t_plus_2 - z_t_plus_1
+        
+        # Similarité cosinus entre vitesses consécutives
+        cosine_sim = F.cosine_similarity(v_t, v_t_plus_1, dim=-1)
+        
+        # On veut maximiser la similarité (minimiser 1 - cos)
+        return (1 - cosine_sim).mean()
+    
+    def forward(self, obs_t, obs_t_plus_1, obs_t_plus_2, action):
+        # Encoder les observations
+        z_t = self.encoder(obs_t)
+        z_t_plus_1 = self.encoder(obs_t_plus_1)
+        z_t_plus_2 = self.encoder(obs_t_plus_2)
+        
+        # Prédiction JEPA standard
+        z_pred = self.predictor(z_t, action)
+        pred_loss = F.mse_loss(z_pred, z_t_plus_1.detach())
+        
+        # Régularisation de courbure
+        curv_loss = self.curvature_loss(z_t, z_t_plus_1, z_t_plus_2)
+        
+        return pred_loss + self.lambda_curv * curv_loss
+```
+
+**Pourquoi c'est crucial** :
+- Coût computationnel quasi-nul (juste un cosinus)
+- Compatible avec TOUS les autres JEPAs (orthogonal)
+- Permet de remplacer CEM par du gradient descent (10-100x plus rapide)
+
+### 💡 Idée 2 : L'Agrégation Apprenante pour Features Spatiales
+
+Le papier montre que pour les features spatiales (pas juste un vecteur global), il faut une **tête d'agrégation apprenante**  :
+
+```python
+class AggregationHead(nn.Module):
+    def __init__(self, spatial_dim, hidden_dim=128):
+        super().__init__()
+        self.mlp = nn.Sequential(
+            nn.Linear(spatial_dim, hidden_dim),
+            nn.ReLU(),
+            nn.Linear(hidden_dim, hidden_dim)
+        )
+    
+    def forward(self, spatial_features):
+        # spatial_features: [batch, num_patches, dim]
+        # Appliquer MLP à chaque patch
+        transformed = self.mlp(spatial_features)
+        # Moyenner pour obtenir un vecteur global
+        return transformed.mean(dim=1)
+
+# Utilisation dans curvature_loss
+agg_head = AggregationHead(spatial_dim=384)
+v_t_global = agg_head(v_t_spatial)
+v_t_plus_1_global = agg_head(v_t_plus_1_spatial)
+curv_loss = 1 - F.cosine_similarity(v_t_global, v_t_plus_1_global)
+```
+
+**Pourquoi** : Les patches individuels capturent des variations locales (mouvement d'objets, occlusions). L'agrégation apprend à extraire le **mouvement global** de la scène.
+
+### 💡 Idée 3 : La Planification par Gradient (Plus Besoin de CEM)
+
+Avec un espace latent redressé, vous pouvez faire de la planification par **gradient descent pur**  :
+
+```python
+def gradient_descent_planning(
+    jepa_model, 
+    current_obs, 
+    goal_obs, 
+    horizon=25,
+    lr=0.01,
+    num_steps=100
+):
+    """Planification par gradient descent (rapide !)"""
+    
+    # Initialiser les actions aléatoirement
+    actions = torch.randn(horizon, action_dim, requires_grad=True)
+    optimizer = torch.optim.Adam([actions], lr=lr)
+    
+    # Encoder l'observation courante et le but
+    z_current = jepa_model.encoder(current_obs)
+    z_goal = jepa_model.encoder(goal_obs)
+    
+    for step in range(num_steps):
+        # Rollout avec les actions courantes
+        z_pred = z_current
+        for t in range(horizon):
+            z_pred = jepa_model.predictor(z_pred, actions[t])
+        
+        # Loss : distance au but
+        loss = F.mse_loss(z_pred, z_goal)
+        
+        # Backward
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+    
+    return actions.detach()
+```
+
+**Avantages vs CEM** :
+- **10-100x plus rapide** (quelques dizaines d'itérations vs 9000 rollouts)
+- **Plus stable** (convergence garantie si l'espace est droit)
+- **Différentiable** (peut être intégré dans un pipeline end-to-end)
+
+---
+
+## 6. Architecture Complète Intégrée
+
+Voici comment Temporal Straightening s'intègre dans notre stack complet :
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  PERCEPTION (CR-JEPA / UniJEPA / Human-JEPA)                │
+│  • Encode la scène multi-capteurs                           │
+│  • Extrait les concepts sémantiques                         │
+└────────────────────┬────────────────────────────────────────┘
+                     │
+┌────────────────────▼────────────────────────────────────────┐
+│  MODÈLE DU MONDE (JEPA + Temporal Straightening)  ← NOUVEAU │
+│  • Prédicteur JEPA standard                                 │
+│  • Régulariseur de courbure (L_curv)                        │
+│  • Trajectoires latentes DROITES                            │
+│  • Distance euclidienne ≈ distance géodésique               │
+└────────────────────┬────────────────────────────────────────┘
+                     │
+┌────────────────────▼────────────────────────────────────────┐
+│  ALIGNEMENT DÉCISIONNEL (D-JEPA)                            │
+│  • Calibration sur preuves ordinales                        │
+│  • Déformation finale de l'espace latent                    │
+└────────────────────┬────────────────────────────────────────┘
+                     │
+┌────────────────────▼────────────────────────────────────────┐
+│  PLANIFICATEUR (Gradient Descent)                           │
+│  • Plus besoin de CEM/MPPI                                  │
+│  • Convergence rapide grâce à l'espace droit                │
+│  • Compatible avec Active Inference (FEP)                   │
+└─────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 7. Synthèse : Ce qu'Il Faut Retenir
+
+### Les 3 Leçons Clés
+
+1. **La géométrie de l'espace latent est aussi importante que sa sémantique**
+   - Un espace sémantiquement riche mais géométriquement courbé est inutilisable pour la planification
+   - Le redressement temporel est une contrainte géométrique simple mais puissante
+
+2. **Le gradient descent peut remplacer CEM/MPPI**
+   - Avec un espace droit, la planification par gradient devient fiable et rapide
+   - C'est 10-100x plus rapide que l'échantillonnage massif
+
+3. **C'est orthogonal à toutes les autres méthodes**
+   - Peut être combiné avec PhyLatent, MotionJEPA, D-JEPA, etc.
+   - Coût computationnel quasi-nul
+
+### Pour Votre Projet Multi-Agent
+
+**Temporal Straightening apporte** :
+- Une **planification plus rapide** (gradient descent vs CEM)
+- Une **meilleure convergence** (espace quasi-convexe)
+- Une **compatibilité native avec l'Active Inference** (paysage d'énergie libre lisse)
+
+**L'architecture ultime combine** :
+- **Temporal Straightening** pour la géométrie (pendant l'entraînement)
+- **D-JEPA** pour l'alignement décisionnel (après entraînement)
+- **Gradient descent** pour la planification (au lieu de CEM)
+- **Active Inference** pour l'équilibre exploration/exploitation
+
+---
+
+## Conclusion
+
+**Temporal Straightening** n'est pas juste une amélioration incrémentale — c'est la **pièce géométrique manquante** du puzzle. Il résout le problème fondamental de la courbure des trajectoires latentes qui empoisonne la planification depuis le début.
+
+**L'idée la plus précieuse** est le **régulariseur de courbure** : une ligne de code qui force les trajectoires à être droites, rendant la planification par gradient possible et remplaçant les méthodes d'échantillonnage coûteuses.
+
+Pour votre robot autonome multi-agent, c'est **indispensable**. Avec Temporal Straightening + D-JEPA, vous obtenez un espace latent qui est à la fois :
+- **Géométriquement simple** (droit, donc facile à optimiser)
+- **Décisionnellement aligné** (calibré sur la réalité physique)
+
+C'est exactement ce que fait le cerveau humain : il apprend des représentations qui facilitent l'inférence. Vous avez maintenant tous les ingrédients pour construire un agent qui planifie aussi vite et aussi bien qu'un pilote de chasse.
