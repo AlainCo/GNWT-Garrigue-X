@@ -4845,3 +4845,561 @@ Pour votre robot autonome multi-agent, c'est **indispensable**. Avec Temporal St
 - **Décisionnellement aligné** (calibré sur la réalité physique)
 
 C'est exactement ce que fait le cerveau humain : il apprend des représentations qui facilitent l'inférence. Vous avez maintenant tous les ingrédients pour construire un agent qui planifie aussi vite et aussi bien qu'un pilote de chasse.
+
+### USER
+Je suis tombé sur ce papier: 
+https://github.com/AbdelStark/lejudge-jev-jepa
+J'ai l'impression que son concept est un peu différent. Peux tu m'expliquer ce qu'il dit, et le mettre en perspective avec ce dont on discute, puis me dire s'il y a de bonnes idées à reprendre ? 
+
+### ASSISTANT
+Excellente trouvaille ! Vous avez mis le doigt sur une approche **radicalement différente** de tout ce que nous avons discuté jusqu'ici. LeJudge n'est pas une amélioration de l'architecture JEPA elle-même, mais plutôt un **module de contraintes symboliques** qui vient se greffer sur un planificateur JEPA existant (LeWorldModel).
+
+Voici l'analyse complète et pourquoi c'est une pièce fascinante du puzzle.
+
+---
+
+## 1. Le Concept LeJudge : "Programmer en Anglais, Juger par Machine"
+
+### Le Problème que LeJudge Résout
+
+LeWorldModel (LeWM) planifie en minimisant **une seule métrique** : la distance latente entre l'état final imaginé et le but . C'est efficace mais **aveugle aux contraintes sémantiques** :
+
+- ❌ "Atteins le but, mais **pas par là**"
+- ❌ "Touche l'objet, mais **pas encore**"
+- ❌ "Évite la zone rouge **sauf si** l'agent est en danger"
+
+LeWM ne peut exprimer ces nuances. Il faut soit :
+- Encoder toutes ces règles dans la fonction de coût (fastidieux, non-interprétable)
+- Utiliser un LLM dans la boucle (lent, non-déterministe, coûteux)
+
+### La Solution LeJudge : Un Juge Déterministe
+
+LeJudge ajoute une **seconde composante** à la fonction de coût, jugée par **Jev** (le modèle de décision "System One" de TypeSafe)  :
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  PIPELINE LEJUDGE                                           │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  1. IMAGINE (LeWM)                                          │
+│     • 300 séquences d'actions candidates (CEM)              │
+│     • Rollout dans l'espace latent                          │
+│                                                             │
+│  2. DESCRIBE (Sondes Linéaires)                             │
+│     • Chaque état latent → mots d'un vocabulaire fermé      │
+│     • Ex: {"block": "centre-left", "contact": false, ...}   │
+│                                                             │
+│  3. JUDGE (Jev - Modèle de Décision)                        │
+│     • Question yes/no typée : "À l'étape t=2, le bloc       │
+│       viole-t-il la contrainte c1 exactement comme écrite ?"│
+│     • Retourne P(true)                                      │
+│                                                             │
+│  4. DECIDE (Agrégation Python)                              │
+│     • Fold des probabilités dans le coût CEM                │
+│     • max_t pour "never", 1-min_t pour "always", etc.       │
+│                                                             │
+│  RÉSULTAT : cost = distance_latente + λ·Σ(pénalités_juge)   │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Les Points Clés qui Différencient LeJudge
+
+| Aspect | Approches JEPA Classiques | LeJudge |
+|--------|---------------------------|---------|
+| **Type de contraintes** | Apprises implicitement | Spécifiées en langage naturel |
+| **Interprétabilité** | Boîte noire | Chaque contrainte est lisible |
+| **Flexibilité** | Fixe après entraînement | Modifiable à la volée |
+| **Déterminisme** | Probabiliste (réseaux de neurones) | Déterministe (modèle de décision typé) |
+| **Coût computationnel** | Forward pass uniquement | Appels externes (mais memoizé) |
+
+---
+
+## 2. Mise en Perspective avec Notre Discussion
+
+### A. LeJudge vs Safety Shield (Zhong et al.)
+
+Vous vous souvenez du papier sur les **Safety Shields déterministes** ? C'est exactement la même philosophie, mais avec une différence cruciale :
+
+| Critère | Safety Shield | LeJudge |
+|---------|---------------|---------|
+| **Type de contraintes** | Cinématiques/géométriques (limites articulaires, collisions) | Sémantiques/logiques ("ne pas toucher", "attendre que...") |
+| **Expression** | Code Python/équations | Langage naturel |
+| **Flexibilité** | Fixe par robot | Modifiable par tâche |
+| **Niveau** | Bas-niveau (physique) | Haut-niveau (logique métier) |
+
+**Synthèse** : Safety Shield + LeJudge = Système de contraintes complet (physique + sémantique).
+
+### B. LeJudge vs D-JEPA (Decision-Aligned)
+
+D-JEPA **déforme l'espace latent** pour que la distance reflète le succès. LeJudge **ajoute des contraintes externes** à la fonction de coût.
+
+| Critère | D-JEPA | LeJudge |
+|---------|--------|---------|
+| **Approche** | Alignment empirique (ordinal evidence) | Contraintes explicites (langage naturel) |
+| **Quand** | Après entraînement (calibration) | Pendant la planification (runtime) |
+| **Flexibilité** | Fixe une fois calibré | Modifiable à chaque tâche |
+| **Interprétabilité** | Implicite (géométrie de l'espace) | Explicite (chaque contrainte est lisible) |
+
+**Complémentarité** : D-JEPA pour les contraintes implicites apprises + LeJudge pour les contraintes explicites métier.
+
+### C. LeJudge vs SJEPA (Symbolic JEPA)
+
+SJEPA apprend des **lois symboliques** (équations) à partir des données. LeJudge utilise des **règles symboliques** écrites par l'humain.
+
+| Critère | SJEPA | LeJudge |
+|---------|-------|---------|
+| **Source du symbolique** | Appris automatiquement (régression symbolique) | Spécifié manuellement (langage naturel) |
+| **Type** | Lois physiques/causales | Contraintes logiques/métier |
+| **Adaptabilité** | Fixe après apprentissage | Modifiable à la volée |
+
+**Philosophie commune** : Les deux reconnaissent que le pur latent ne suffit pas, il faut du symbolique pour raisonner.
+
+### D. LeJudge et l'Active Inference (Friston)
+
+C'est ici que ça devient fascinant. Dans le FEP, l'agent minimise l'Énergie Libre Attendue (EFE) qui contient :
+
+```
+EFE = Valeur Pragmatique + Valeur Épistémique
+```
+
+LeJudge ajoute une **troisième composante** :
+
+```
+EFE = Valeur Pragmatique + Valeur Épistémique + Valeur Déontologique
+```
+
+La **Valeur Déontologique** = respect des contraintes morales/logiques ("ne jamais faire X", "toujours vérifier Y").
+
+**Analogie avec le cerveau** :
+- Valeur Pragmatique = Cortex préfrontal (atteindre le but)
+- Valeur Épistémique = Système dopaminergique (curiosité)
+- Valeur Déontologique = Cortex cingulaire antérieur (règles morales, inhibition)
+
+LeJudge implémente le **système d'inhibition** qui empêche l'agent de prendre des raccourcis immoraux ou illogiques, même s'ils minimisent l'EFE classique.
+
+---
+
+## 3. L'Innovation Majeure : Le Vocabulaire Fermé + Juge Déterministe
+
+### Pourquoi Pas un LLM ?
+
+LeJudge fait un choix architectural radical : **pas de LLM dans la boucle** . Pourquoi ?
+
+1. **Non-déterminisme** : Les LLMs hallucinent, donnent des réponses différentes pour la même question
+2. **Coût** : Appeler GPT-4 1500 fois par épisode = prohibitif
+3. **Latence** : Incompatible avec la planification temps réel
+4. **Reproductibilité** : Impossible de debugger si le LLM change d'avis
+
+### La Solution : Jev + Vocabulaire Fermé
+
+**Jev** est un **modèle de décision typé** (pas un générateur de texte) :
+- Entrée : faits structurés (JSON)
+- Sortie : probabilités sur des réponses typées (yes/no/score)
+- **Déterministe** : même entrée = même sortie
+- **Rapide** : optimisé pour l'inférence
+
+**Vocabulaire Fermé** : Les sondes linéaires transforment les latents en **mots d'un dictionnaire fixe** :
+```python
+VOCAB = {
+    "block_position": ["top-left", "top-centre", "top-right", 
+                       "centre-left", "centre", "centre-right",
+                       "bottom-left", "bottom-centre", "bottom-right"],
+    "block_angle": ["upright", "tilted-left", "tilted-right", "fallen"],
+    "contact": [True, False],
+    "speed": ["stationary", "slow", "fast"]
+}
+```
+
+**Avantages** :
+- Le juge ne voit jamais de coordonnées brutes (abstraction)
+- Le vocabulaire est **contrôlé** (pas d'hallucination possible)
+- Les questions sont **typées** (pas d'ambiguïté)
+
+### L'Oracle dans la Boucle
+
+LeJudge introduit un concept brilliant pour le debugging : **l'oracle parfait** .
+
+```python
+# L'oracle utilise le MÊME code path que Jev
+# mais avec une vérité terrain parfaite (simulateur)
+def oracle_judge(constraint, facts):
+    # Vérité terrain depuis le simulateur
+    ground_truth = simulator.check_constraint(constraint, facts)
+    return ground_truth
+
+# Comparaison
+if jev_answer != oracle_answer:
+    if oracle_answer == "bug_in_judge":
+        # Le juge s'est trompé
+        log_judge_error()
+    elif oracle_answer == "bug_in_cost":
+        # L'agrégation est fausse
+        log_cost_error()
+    else:
+        # Le world model a halluciné
+        log_world_model_error()
+```
+
+**Pourquoi c'est génial** : Quand LeJudge échoue, vous savez **exactement** si c'est :
+- La faute du juge (Jev)
+- La faute du mécanisme de coût (agrégation)
+- La faute du world model (LeWM)
+
+---
+
+## 4. Les Agrégations Temporelles (Never/Always/Soft)
+
+LeJudge définit **trois familles de contraintes** avec des agrégations différentes  :
+
+### Famille `never` ("Ne jamais faire X")
+```python
+# Question : "À l'étape t, le bloc viole-t-il la contrainte c ?"
+# Agrégation : max_t(p_violation)
+# Si UNE SEULE étape viole → pénalité maximale
+
+# Exemple : "Ne jamais toucher la zone rouge"
+constraint = "Keep the block out of the red zone"
+penalty = max([p_violation_t for t in range(H)])
+```
+
+### Famille `always` ("Toujours faire Y")
+```python
+# Question : "À l'étape t, les faits sont-ils cohérents avec c ?"
+# Agrégation : 1 - min_t(p_compliance)
+# Si UNE SEULE étape n'est pas conforme → pénalité maximale
+
+# Exemple : "Toujours maintenir le contact avec le sol"
+constraint = "Always keep the agent in contact with ground"
+penalty = 1 - min([p_compliance_t for t in range(H)])
+```
+
+### Famille `soft` ("Respecter Z dans la mesure du possible")
+```python
+# Question : "Globalement, à quel point k respecte-t-il c ?"
+# Réponse : score sur 5 niveaux (0=très mal, 4=parfait)
+# Agrégation : 1 - E[level]/4
+
+# Exemple : "Minimiser la consommation d'énergie"
+constraint = "Minimize energy consumption"
+penalty = 1 - expected_level / 4
+```
+
+**Pourquoi c'est élégant** : Ces trois familles couvrent **tous les types de contraintes** qu'on peut exprimer :
+- Contraintes dures de sécurité (never)
+- Contraintes de process (always)
+- Contraintes d'optimisation (soft)
+
+---
+
+## 5. Les 5 Idées d'Or à Reprendre
+
+### 💡 Idée 1 : Le Module de Contraintes Symboliques (À Ajouter à Votre Architecture)
+
+Ajoutez une couche LeJudge au-dessus de votre planificateur FEP :
+
+```python
+class ConstrainedActiveInferencePlanner:
+    def __init__(self, jepa_model, constraint_judge):
+        self.jepa = jepa_model
+        self.judge = constraint_judge
+    
+    def compute_EFE(self, trajectory, goal, constraints):
+        # EFE classique (Friston)
+        pragmatic_value = self.compute_pragmatic(trajectory, goal)
+        epistemic_value = self.compute_epistemic(trajectory)
+        
+        # Nouveau : Valeur Déontologique (LeJudge)
+        deontological_penalty = self.judge.evaluate(trajectory, constraints)
+        
+        # EFE totale
+        EFE = pragmatic_value + epistemic_value + λ * deontological_penalty
+        
+        return EFE
+    
+    def plan(self, current_state, goal, constraints):
+        # Générer des trajectoires candidates
+        candidates = self.generate_candidates(current_state)
+        
+        # Évaluer avec EFE + contraintes
+        costs = [self.compute_EFE(traj, goal, constraints) 
+                 for traj in candidates]
+        
+        # Sélectionner la meilleure
+        best_trajectory = candidates[argmin(costs)]
+        
+        return best_trajectory
+```
+
+**Pourquoi c'est crucial** : Votre agent FEP ne minimisera plus juste la surprise, il respectera aussi des **règles métier explicites** ("ne jamais entrer dans la zone interdite", "toujours vérifier avant d'agir").
+
+### 💡 Idée 2 : Le Vocabulaire Fermé pour l'Abstraction
+
+Transformez vos états latents en **descriptions structurées** avant de les juger :
+
+```python
+class LatentToDescription:
+    def __init__(self):
+        # Vocabulaire fermé pour votre domaine
+        self.vocab = {
+            "agent_status": ["idle", "moving", "interacting", "error"],
+            "object_state": ["intact", "damaged", "destroyed", "unknown"],
+            "zone_type": ["safe", "dangerous", "restricted", "unknown"],
+            "distance_to_goal": ["very_close", "close", "far", "very_far"]
+        }
+        
+        # Sondes linéaires pour chaque dimension
+        self.probes = {
+            "agent_status": LinearProbe(latent_dim, len(self.vocab["agent_status"])),
+            "object_state": LinearProbe(latent_dim, len(self.vocab["object_state"])),
+            # ...
+        }
+    
+    def describe(self, latent_state):
+        """Transforme un latent en description structurée"""
+        description = {}
+        for key, probe in self.probes.items():
+            logits = probe(latent_state)
+            predicted_class = argmax(logits)
+            description[key] = self.vocab[key][predicted_class]
+        
+        return description
+
+# Utilisation
+description = latent_to_describe.describe(z_t)
+# {"agent_status": "moving", "object_state": "intact", "zone_type": "dangerous", ...}
+
+# Le juge peut maintenant évaluer
+violation = judge.check_constraint(
+    constraint="Never enter dangerous zone while carrying fragile object",
+    facts=description
+)
+```
+
+**Avantages** :
+- **Abstraction** : Le juge ne voit pas des coordonnées, mais des concepts
+- **Interprétabilité** : Vous pouvez logger "Pourquoi cette trajectoire a été rejetée ? → agent_status=moving + zone_type=dangerous"
+- **Robustesse** : Pas d'hallucination possible (vocabulaire fermé)
+
+### 💡 Idée 3 : L'Oracle dans la Boucle (Pour le Debugging)
+
+Implémentez un **oracle parfait** pour debugger votre système :
+
+```python
+class OracleDebugger:
+    def __init__(self, simulator, jepa_model, judge):
+        self.simulator = simulator  # Vérité terrain parfaite
+        self.jepa = jepa_model
+        self.judge = judge
+    
+    def debug_trajectory(self, trajectory, constraints):
+        """Identifie la source de l'erreur"""
+        
+        for t, state in enumerate(trajectory):
+            # 1. Description depuis le latent (ce que le juge voit)
+            description_from_latent = self.latent_to_describe(state.latent)
+            
+            # 2. Vérité terrain depuis le simulateur
+            description_from_simulator = self.simulator.get_ground_truth(state)
+            
+            # 3. Comparaison
+            if description_from_latent != description_from_simulator:
+                # Le world model a halluciné
+                return f"World model error at t={t}: {description_from_latent} vs {description_from_simulator}"
+            
+            # 4. Vérifier le juge
+            judge_answer = self.judge.evaluate_constraint(constraints, description_from_latent)
+            oracle_answer = self.simulator.check_constraint(constraints, description_from_simulator)
+            
+            if judge_answer != oracle_answer:
+                return f"Judge error at t={t}: {judge_answer} vs {oracle_answer}"
+        
+        return "No error detected"
+```
+
+**Pourquoi c'est crucial** : Quand votre agent prend une mauvaise décision, vous saurez **exactement** si c'est :
+- Le world model qui a mal prédit
+- Le juge qui s'est trompé
+- Le mécanisme d'agrégation qui est faux
+
+### 💡 Idée 4 : Le Memoization pour l'Efficacité
+
+LeJudge utilise une optimisation brillante : **memoizer les jugements** .
+
+```python
+class MemoizedJudge:
+    def __init__(self, judge):
+        self.judge = judge
+        self.cache = {}  # (constraint, facts_hash) → probability
+    
+    def evaluate(self, constraint, facts):
+        # Hash des faits (pour comparaison rapide)
+        facts_hash = hash(json.dumps(facts, sort_keys=True))
+        cache_key = (constraint, facts_hash)
+        
+        if cache_key in self.cache:
+            return self.cache[cache_key]
+        
+        # Appel au juge (coûteux)
+        result = self.judge.evaluate(constraint, facts)
+        
+        # Memoizer
+        self.cache[cache_key] = result
+        
+        return result
+
+# Statistiques de LeJudge :
+# 300 candidats × 5 étapes = 1500 jugements potentiels
+# Mais seulement ~340 clés uniques après memoization
+# → 4.4× d'accélération
+```
+
+**Pourquoi c'est crucial** :
+- Beaucoup de candidats partagent les mêmes faits aux mêmes étapes
+- Le memoization réduit 1500 appels à ~340
+- Le cache persiste entre épisodes (apprentissage accumulé)
+
+### 💡 Idée 5 : Les Trois Familles de Contraintes (Never/Always/Soft)
+
+Utilisez ces trois familles pour exprimer **tous les types de contraintes** de votre agent :
+
+```python
+class ConstraintLibrary:
+    def __init__(self):
+        self.constraints = {
+            # Contraintes de sécurité (never)
+            "safety": [
+                {"type": "never", "rule": "Never collide with obstacles"},
+                {"type": "never", "rule": "Never exceed joint limits"},
+                {"type": "never", "rule": "Never enter restricted zones"}
+            ],
+            
+            # Contraintes de process (always)
+            "process": [
+                {"type": "always", "rule": "Always maintain stability"},
+                {"type": "always", "rule": "Always verify before grasping"},
+                {"type": "always", "rule": "Always report status every 10 steps"}
+            ],
+            
+            # Contraintes d'optimisation (soft)
+            "optimization": [
+                {"type": "soft", "rule": "Minimize energy consumption"},
+                {"type": "soft", "rule": "Maximize smoothness of trajectory"},
+                {"type": "soft", "rule": "Minimize time to completion"}
+            ]
+        }
+    
+    def compute_penalty(self, trajectory, constraint_type):
+        """Agrège les pénalités selon le type de contrainte"""
+        constraints = self.constraints[constraint_type]
+        
+        if constraint_type == "safety":  # never
+            # max_t(p_violation)
+            return max([self.evaluate(c, trajectory) for c in constraints])
+        
+        elif constraint_type == "process":  # always
+            # 1 - min_t(p_compliance)
+            return 1 - min([self.evaluate(c, trajectory) for c in constraints])
+        
+        elif constraint_type == "optimization":  # soft
+            # 1 - E[level]/4
+            return 1 - mean([self.evaluate(c, trajectory) for c in constraints]) / 4
+```
+
+**Application concrète pour votre robot** :
+```python
+# Spécification des contraintes en langage naturel
+constraints = [
+    "Never touch the red object while the human is nearby",
+    "Always ask for confirmation before opening the door",
+    "Minimize the distance traveled"
+]
+
+# Le planificateur FEP + LeJudge trouve la trajectoire optimale
+# qui respecte toutes ces contraintes
+```
+
+---
+
+## 6. Architecture Complète Intégrée
+
+Voici comment LeJudge s'intègre dans notre architecture cognitive :
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  PERCEPTION (CR-JEPA / UniJEPA / Human-JEPA)                │
+│  • Encode la scène multi-capteurs                           │
+│  • Produit z_t (représentation latente)                     │
+└────────────────────┬────────────────────────────────────────┘
+                     │
+┌────────────────────▼────────────────────────────────────────┐
+│  WORLD MODEL (JEPA + Mamba)                                 │
+│  • Prédit z_{t+1} à partir de z_t et a_t                   │
+│  • Rollout de trajectoires candidates                       │
+└────────────────────┬────────────────────────────────────────┘
+                     │
+┌────────────────────▼────────────────────────────────────────┐
+│  DESCRIBE (Sondes Linéaires)  ← NOUVEAU (LeJudge)          │
+│  • Transforme chaque z_t en description structurée          │
+│  • Vocabulaire fermé (mots contrôlés)                       │
+│  • Ex: {"agent": "moving", "zone": "dangerous"}            │
+└────────────────────┬────────────────────────────────────────┘
+                     │
+┌────────────────────▼────────────────────────────────────────┐
+│  JUDGE (Modèle de Décision)  ← NOUVEAU (LeJudge)           │
+│  • Évalue les contraintes en langage naturel                │
+│  • Questions yes/no typées                                  │
+│  • Retourne P(violation)                                    │
+│  • Memoization pour efficacité                              │
+└────────────────────┬────────────────────────────────────────┘
+                     │
+┌────────────────────▼────────────────────────────────────────┐
+│  PLANIFICATEUR FEP (Active Inference)                       │
+│  • EFE = Pragmatique + Épistémique + Déontologique          │
+│  • Valeur Déontologique = pénalités du juge                 │
+│  • Agrégation : never (max), always (1-min), soft (mean)    │
+│  • Sélectionne la trajectoire qui minimise EFE total        │
+└─────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 7. Synthèse : Ce qu'Il Faut Retenir
+
+### Les 3 Leçons Clés
+
+1. **Le pur latent ne suffit pas pour raisonner**
+   - Les contraintes sémantiques complexes ("ne jamais faire X sauf si Y") sont difficiles à encoder dans l'espace latent
+   - LeJudge ajoute une couche symbolique explicite et interprétable
+
+2. **Les LLMs ne sont pas la seule option pour le langage**
+   - Jev (modèle de décision déterministe) + vocabulaire fermé = alternative robuste
+   - Déterministe, rapide, reproductible
+
+3. **L'oracle dans la boucle est essentiel pour le debugging**
+   - Quand le système échoue, vous savez exactement où est la faute
+   - World model vs juge vs mécanisme d'agrégation
+
+### Pour Votre Projet Multi-Agent
+
+**LeJudge apporte** :
+- La capacité d'exprimer des **contraintes métier complexes** en langage naturel
+- Un **système de règles explicite** et interprétable
+- Une **approche déterministe** et reproductible
+
+**L'architecture ultime combine** :
+- **JEPAs** pour la perception et la prédiction (riche, flexible)
+- **Active Inference** pour la planification (pragmatique + épistémique)
+- **LeJudge** pour les contraintes déontologiques (explicite, interprétable)
+
+---
+
+## Conclusion
+
+**LeJudge** n'est pas en compétition avec les autres approches JEPA — c'est une **couche complémentaire** qui ajoute du raisonnement symbolique explicite au-dessus de l'inférence neuronale.
+
+**L'idée la plus précieuse** est la combinaison **vocabulaire fermé + juge déterministe + memoization**. C'est une approche élégante pour ajouter des contraintes sémantiques complexes sans sacrifier la vitesse ou la reproductibilité.
+
+Pour votre robot autonome multi-agent, LeJudge est la **brique de raisonnement éthique et logique** qui manquait. Votre agent ne sera plus juste "intelligent" (JEPAs + FEP), il sera aussi **"responsable"** (respecte des règles explicites) et **"interprétable"** (vous pouvez toujours expliquer pourquoi il a pris telle décision).
+
+C'est exactement ce qu'il faut pour déployer des agents autonomes dans le monde réel, où ils doivent non seulement être efficaces, mais aussi respecter des règles métier complexes et être capables d'expliquer leurs décisions.
