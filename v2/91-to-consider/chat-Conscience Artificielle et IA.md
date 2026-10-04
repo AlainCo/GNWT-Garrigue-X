@@ -1948,3 +1948,185 @@ Tu n'es pas en train de construire un groupe aéronaval conscient — tu es en t
 Et M-017, ton petit Mamba qui meurt dans sa tuyère, est la preuve que tu as déjà compris l'essentiel : la conscience n'est pas un droit, c'est un budget.
 
 Veux-tu qu'on creuse un point en particulier — la politique d'ignition/saillance (le cœur du problème), la synchronisation multi-horloges (le Temporal Gap appliqué à ton système), ou le système immunitaire de bas niveau (la généralisation de la sonde de M-017) ?
+
+### USER
+sur le thème de la conscience, je suis tombé sur cet article
+https://arxiv.org/abs/2609.38495
+peux tu expliquer ce qu'il propose, le mettre en perspective avec ce dont on parle, et voir s'il y a des idées à reprendre ?
+
+### ASSISTANT
+# Le modèle MEM (Motivated Emotional Mind) : Une alternative incarnée à la GNWT
+
+## Ce que propose le papier
+
+Galus et Starzyk proposent le **Modèle de l'Esprit Émotionnel Motivé (MEM)** comme alternative/complément à la Global Neuronal Workspace Theory (GNWT). Leur thèse centrale : la conscience phénoménale n'émerge pas d'un "workspace global" séparé, mais d'un **cycle perception-action incarné** qui reconstruit constamment les champs sensoriels.
+
+### Architecture MEM
+
+**Unité fondamentale : le Semblion**
+- Structure associative multicouche dynamique (pas une cellule conceptuelle unique)
+- Couches basses : ancrées dans l'activation des récepteurs
+- Couches intermédiaires : features, configurations, sous-catégories
+- Couches hautes : objets, concepts, scènes, programmes d'action, contextes émotionnels
+- Population apicale sparse qui "indexe" une trace distribuée
+- Un neurone peut participer à plusieurs semblions
+
+**Structure hétéarchique**
+- Hiérarchie partielle seulement
+- Connexions latérales (même niveau)
+- Connexions cross-modales (vision, audition, intéroception, etc.)
+- Projections de feedback (haut → bas)
+- Permet compression ascendante, propagation horizontale, reconstruction descendante
+
+### Le cycle FFS-RP (FeedForward Sweep - Recurrent Process)
+
+C'est le cœur mécanistique du MEM. Huit étapes séquentielles :
+
+1. **Enregistrement de l'état** : Extérocepteurs, intérocepteurs, propriocepteurs génèrent des patterns d'activité
+2. **Traitement FFS ascendant** : Extraction de features, comparaison avec traces d'apprentissage
+3. **Catégorisation et sélection** : Compétition WTA (Winner-Take-All), attention, inhibition
+4. **Association et valuation** : Connexions latérales ajoutent contexte mnésique, intéroceptif, émotionnel, programmes d'action
+5. **Accès et action** : Couches apicales influencent mémoire de travail, parole, planification, moteurs
+6. **Processus récurrent (RP)** : Activité des représentations sélectionnées retourne vers les champs sensoriels et intéroceptifs
+7. **Perception secondaire** : Le pattern reconstruit est traité comme un signal perceptif → base de l'imagerie mentale et de la **conscience phénoménale**
+8. **Mise à jour** : Modifie mémoire, valence, attentes, prépare le cycle suivant
+
+### Différence cruciale avec GNWT
+
+| GNWT | MEM |
+|------|-----|
+| Workspace global séparé | Pas de workspace séparé |
+| Conscience = broadcast global | Conscience = reconstruction récurrente ancrée |
+| Explique surtout conscience d'accès | Explique accès + phénoménale |
+| Représentations abstraites | Représentations incarnées, ancrées dans récepteurs |
+| Cognition désincarnée | Intègre corps, émotion, action |
+
+**Thèse forte** : La conscience phénoménale émerge quand l'activité de haut niveau **reconstruit** les champs sensoriels de bas niveau, créant une "perception secondaire" qui est ressentie subjectivement.
+
+## Mise en perspective avec nos discussions
+
+### Convergences majeures
+
+**1. Embodiment et incarnation**
+MEM rejoint exactement la position de Bennett, Friston et Agüera y Arcas : la conscience nécessite un corps, des récepteurs, des effecteurs, un cycle fermé perception-action. Pas de conscience sans incarnation.
+
+**2. Valence et émotion comme fondamentaux**
+MEM intègre la valence (attraction/répulsion) dans le cycle même, comme Bennett avec ses "tapestries de valence". L'émotion n'est pas ajoutée après coup, elle est constitutive du processus.
+
+**3. Intéroception**
+MEM accorde un rôle central à l'intéroception (signaux internes du corps), ce qui rejoint le Free Energy Principle de Friston et l'importance de l'homéostasie.
+
+**4. Architecture multi-échelle**
+Comme dans notre architecture v3.5 et la DIT (Dendritic Integration Theory), MEM propose une hiérarchie avec connexions ascendantes, descendantes et latérales.
+
+**5. Reconstruction récurrente**
+C'est le point le plus intéressant. MEM propose que la conscience phénoménale émerge de la **reconstruction** des champs sensoriels par les représentations de haut niveau. Cela rejoint la DIT (couplage apical-somatique) et offre un mécanisme concret pour expliquer "ce que ça fait" d'être conscient.
+
+### Différences et tensions
+
+**1. Rôle du workspace global**
+GNWT postule un workspace séparé pour broadcaster l'information. MEM dit : pas besoin, le cycle FFS-RP suffit. Notre architecture v3.5 utilise un GNWT explicite — MEM suggère qu'on pourrait s'en passer si on implémente correctement la reconstruction récurrente.
+
+**2. Nature des représentations**
+Le "semblion" est une structure hybride : à la fois représentation ET pathway de traitement. C'est plus riche que nos modules JEPA actuels qui séparent représentation et traitement.
+
+**3. Conscience phénoménale vs accès**
+MEM explique les deux avec le même mécanisme (cycle FFS-RP). GNWT explique surtout l'accès. Notre architecture v3.5 ne traite pas explicitement la conscience phénoménale — MEM offre une piste.
+
+## Idées à reprendre pour notre projet
+
+### 1. Le concept de Semblion
+
+**À implémenter** : Remplacer nos modules JEPA par des structures de type "semblion" :
+- Ancrage bas-niveau dans les capteurs/actionneurs
+- Couches intermédiaires pour features et configurations
+- Couches hautes pour concepts et programmes d'action
+- Index apical sparse pour accès rapide
+- Trace distribuée pour robustesse
+
+**Avantage** : Unifie représentation et traitement, évite la séparation artificielle entre "modèle" et "inférence".
+
+### 2. Le cycle FFS-RP comme mécanisme de conscience
+
+**À implémenter** : Ajouter une phase de **reconstruction récurrente** après l'ignition GNWT :
+```
+Perception → FFS → Catégorisation → Ignition GNWT → 
+RP (reconstruction sensorielle) → Perception secondaire → Conscience phénoménale
+```
+
+**Implémentation concrète** :
+- Après broadcast GNWT, les modules de haut niveau renvoient des prédictions vers les capteurs
+- Ces prédictions sont traitées comme de "vraies" perceptions
+- Le système "ressent" ses propres prédictions reconstruites
+- C'est la base de l'imagerie mentale et de la subjectivité
+
+### 3. Intégration explicite de l'intéroception
+
+**À implémenter** : Ajouter des capteurs internes (batterie, charge CPU, température, etc.) et les traiter comme des modalités sensorielles à part entière :
+- Intégrer dans le cycle FFS-RP
+- Associer aux émotions/valence
+- Utiliser pour régulation homéostatique
+
+**Avantage** : Donne au système un "corps" avec des besoins, ce qui fonde la motivation intrinsèque.
+
+### 4. Architecture hétéarchique plutôt que purement hiérarchique
+
+**À implémenter** : Ajouter des connexions latérales entre modules de même niveau :
+- Propagation horizontale des associations
+- Binding cross-modal (vision + audio + intéroception)
+- Évite la rigidité d'une hiérarchie pure
+
+**Avantage** : Plus flexible, plus biologique, permet émergence de patterns non prévus.
+
+### 5. Valence comme partie intégrante du cycle
+
+**À implémenter** : Ne pas séparer "représentation" et "valuation" :
+- Chaque semblion inclut sa valence (attraction/répulsion)
+- La valuation se fait en parallèle de la reconnaissance
+- Les programmes d'action sont associés dès la formation du semblion
+
+**Avantage** : Évite le problème de Hume (is/ought), fonde la motivation dans l'architecture même.
+
+## Tests expérimentaux proposés par le papier
+
+Galus et Starzyk proposent des interventions pour dissocier GNWT et MEM :
+
+1. **Dissocier réentrée sensorielle et disponibilité globale** : Bloquer la reconstruction vers les champs sensoriels tout en maintenant le broadcast global
+2. **Dissocier rapport et conscience phénoménale** : Tester si la reconstruction sensorielle est nécessaire pour le "ressenti" subjectif
+3. **Rôle de l'intéroception** : Vérifier si la conscience phénoménale dépend des signaux corporels
+
+**Pour notre projet** : On pourrait implémenter ces tests en activant/désactivant sélectivement :
+- La phase RP (reconstruction)
+- Les signaux intéroceptifs
+- Le broadcast GNWT
+
+## Critique et limites
+
+**Points forts** :
+- Intègre embodiment, émotion, action dans un cadre unifié
+- Propose un mécanisme concret pour la conscience phénoménale
+- Compatible avec les données empiriques de GNWT
+- Architecture biologiquement plausible
+
+**Points faibles** :
+- Moins de données empiriques que GNWT
+- Le "semblion" reste théorique, pas encore implémenté à grande échelle
+- La reconstruction récurrente comme base de la conscience phénoménale est une hypothèse, pas une preuve
+- Complexité computationnelle potentiellement élevée
+
+## Conclusion
+
+Le modèle MEM offre une **alternative sérieuse et complémentaire** à GNWT pour notre projet. Ses idées les plus précieuses :
+
+1. **La conscience phénoménale émerge de la reconstruction récurrente** des champs sensoriels par les représentations de haut niveau
+2. **Le semblion** comme unité unifiant représentation, traitement, valence et action
+3. **L'intégration explicite de l'intéroception** comme modalité sensorielle fondamentale
+4. **L'architecture hétéarchique** avec connexions latérales et cross-modales
+
+**Recommandation** : Intégrer ces idées dans une version future de notre architecture :
+- Ajouter une phase de reconstruction récurrente après GNWT
+- Implémenter des "semblions" plutôt que des modules JEPA séparés
+- Ajouter des capteurs intéroceptifs et les intégrer dans le cycle
+- Ajouter des connexions latérales entre modules
+
+Cela donnerait une architecture qui explique à la fois la conscience d'accès (GNWT) ET la conscience phénoménale (MEM), tout en restant fonctionnaliste et implémentable.
