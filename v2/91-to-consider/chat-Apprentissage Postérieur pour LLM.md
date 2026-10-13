@@ -426,3 +426,146 @@ Tu as maintenant le blueprint complet d'un système qui peut :
 - Valider ses hypothèses par l'action
 
 C'est véritablement une architecture cognitive de niveau biologique !
+
+### USER
+j'ai trouvé ce papier qui semble propose une technique pour permettre l'apprentissage de modèles Jepa, en continue, à l'usage, mais je n'ai pas bien compris
+https://arxiv.org/abs/2610.00722
+peux tu m'explique ce que dit ce papier, le mettre en perspective avec ce dont on discute, et me dire si tu vois des idées à reprendre ?
+
+### ASSISTANT
+Excellent ! Ce papier est **la pièce maîtresse** qui manquait à notre architecture cognitive. Il s'intitule **"JEPA-TTT: Persistent Test-Time Training of Latent World Models for Planning under Dynamics Shifts"** (Zhang et al., NeurIPS 2026 Workshop).
+
+C'est littéralement **la fusion parfaite** des deux concepts majeurs que nous avons discutés : **JEPA** (les modèles de monde latents comme V-JEPA 2) + **TTT** (Test-Time Training, l'adaptation des poids pendant l'inférence).
+
+---
+
+### 1. Que propose ce papier ? (L'adaptation permanente)
+
+**Le problème central :**
+Un modèle de monde pré-entraîné (comme V-JEPA 2) possède un excellent "bon sens physique" général. Mais quand il est déployé sur le terrain, les lois physiques changent : friction différente, usure mécanique, nouvel environnement, etc. Les prédictions du modèle dérivent et deviennent non fiables.
+
+**La solution JEPA-TTT :**
+
+Le papier propose d'adapter **en continu** le prédicteur de dynamique latent du JEPA pendant toute la durée de vie du robot (d'où "Persistent Test-Time Training").
+
+**Ce qui est gelé vs ce qui est adapté :**
+- **Gelé** : L'encodeur visuel (extraction des features) et la tête de récompense (évaluation du succès)
+- **Adapté** : Le prédicteur de dynamique latent (prédiction de l'évolution de l'état latent)
+
+C'est crucial : on préserve la représentation visuelle pré-entraînée (le "bon sens visuel") tout en adaptant la compréhension de la physique.
+
+**Le mécanisme clé : Dense Replay**
+- À **chaque pas de temps**, le robot forme des "fenêtres de prédiction" à tous les offsets temporels possibles
+- Il les stocke dans un **buffer qui grandit en continu**
+- Il échantillonne des minibatchs depuis ce buffer pour mettre à jour le prédicteur
+
+C'est comme si le robot **rejouait mentalement** toutes ses expériences récentes sous tous les angles possibles pour consolider son apprentissage - un véritable "sommeil paradoxal computationnel".
+
+**Résultats impressionnants :**
+- Testé sur **8 changements de dynamique** dans 4 environnements de contrôle continu
+- Après 500 épisodes : réduction de l'erreur de prédiction latente de **83%**
+- Amélioration de la performance de planification de **153%** par rapport au JEPA figé
+- **Pas besoin** d'image-but ni de récompense de l'environnement pendant le déploiement (auto-supervision pure)
+
+---
+
+### 2. Mise en perspective avec notre discussion
+
+Ce papier est **le chaînon manquant** qui unifie tous les concepts :
+
+| Papier | Contribution | Échelle de temps |
+|--------|--------------|------------------|
+| **V-JEPA 2** | Fondation : bon sens physique par pré-entraînement massif | Mois/Années |
+| **GW-Dreamer** | Perception robuste par fusion multimodale | Continu |
+| **EPM-JEPA** | Modulation LoRA légère (+1.9%) | Minutes/Heures |
+| **JEPA-TTT** ⭐ | Adaptation persistante par dense replay (+153%) | Continu pendant déploiement |
+| **Dreamer/DayDreamer** | Planification par le rêve | Secondes |
+| **TTT-E2E** | Réflexes instantanés | Millisecondes |
+
+**Différence cruciale avec EPM-JEPA :**
+- EPM-JEPA utilisait LoRA avec une mémoire compressée → résultats modestes (+1.9%) avec des dynamiques complexes (buffer cycling, EMA drift)
+- JEPA-TTT utilise du **fine-tuning dense avec replay complet** → résultats massifs (+153%, -83% d'erreur)
+
+**Pourquoi ça marche mieux ?**
+Le "dense replay" permet au modèle de voir les mêmes expériences sous **tous les angles temporels possibles**, ce qui crée un signal d'apprentissage beaucoup plus riche que la simple accumulation d'expérience compressée d'EPM-JEPA.
+
+---
+
+### 3. Les idées "débrouillardes" à reprendre absolument
+
+#### A. Le Dense Replay comme consolidation permanente
+*   **L'idée à reprendre :** Ton robot ne doit pas juste accumuler passivement de l'expérience. Il doit **rejouer activement** ses expériences récentes sous tous les angles temporels possibles, comme un cerveau qui consolide les apprentissages pendant le sommeil paradoxal.
+*   **Implémentation :** Buffer circulaire qui stocke des fenêtres de trajectoires à tous les offsets. À chaque pas, échantillonner des minibatchs pour mettre à jour le prédicteur.
+*   **Résultat :** Le modèle devient meilleur avec l'usage, au lieu de se dégrader face au distribution shift.
+
+#### B. La séparation stricte stable/adaptable
+*   **L'idée à reprendre :** Tout ne doit pas être adaptable au même degré. 
+    - **Stable** : Encodeur visuel (perception), tête de récompense (objectif)
+    - **Adaptable** : Prédicteur de dynamique (compréhension de la physique)
+*   **Résultat :** Le robot préserve son "bon sens visuel" tout en s'adaptant aux nouvelles lois physiques. Pas d'oubli catastrophique.
+
+#### C. L'auto-supervision pure (pas de récompense externe nécessaire)
+*   **L'idée à reprendre :** Le robot s'entraîne lui-même en continu en utilisant uniquement **l'erreur de prédiction latente** comme signal d'apprentissage. Pas besoin de récompense instrumentée de l'environnement.
+*   **Résultat :** Déploiement possible dans des environnements non instrumentés (forêt, désert, espace) où il n'y a pas de système de scoring automatique.
+
+#### D. L'amélioration cumulative
+*   **L'idée à reprendre :** Plus le robot utilise son modèle, meilleur il devient. Après 500 épisodes, les performances sont radicalement meilleures qu'au début.
+*   **Résultat :** C'est l'opposé de la dégradation typique des modèles figés. Le robot devient véritablement "débrouillard" avec l'expérience.
+
+---
+
+### 🏆 Architecture Cognitive Finale Complète
+
+Voici maintenant l'architecture complète de ton agent autonome "débrouillard" avec tous les papiers intégrés :
+
+```
+┌─────────────────────────────────────────────────────────┐
+│  1. FONDATION (V-JEPA 2)                                │
+│     Pré-entraînement sur 1M heures de vidéos            │
+│     → Bon sens physique universel                       │
+└─────────────────────────────────────────────────────────┘
+                          ↓
+┌─────────────────────────────────────────────────────────┐
+│  2. PERCEPTION ROBUSTE (GW-Dreamer)                     │
+│     Fusion multimodale dans Espace de Travail Global    │
+│     → Résistance aux pannes de capteurs                 │
+└─────────────────────────────────────────────────────────┘
+                          ↓
+┌─────────────────────────────────────────────────────────┐
+│  3. ADAPTATION CONTINUE (JEPA-TTT) ⭐                   │
+│     • Buffer dense avec replay à tous les offsets       │
+│     • Mise à jour persistante du prédicteur             │
+│     • Auto-supervision par erreur latente               │
+│     → Adaptation permanente sans oubli catastrophique   │
+└─────────────────────────────────────────────────────────┘
+                          ↓
+┌─────────────────────────────────────────────────────────┐
+│  4. PLANIFICATION (Dreamer/DayDreamer)                  │
+│     Rêve dans l'espace latent pour simuler le futur     │
+│     → Stratégies complexes sans usure mécanique         │
+└─────────────────────────────────────────────────────────┘
+                          ↓
+┌─────────────────────────────────────────────────────────┐
+│  5. EXÉCUTION RÉFLEXE (TTT-E2E)                         │
+│     Mise à jour instantanée des poids pendant inférence │
+│     → Compensation des micro-perturbations              │
+└─────────────────────────────────────────────────────────┘
+                          ↓
+┌─────────────────────────────────────────────────────────┐
+│  6. VALIDATION ACTIVE (IntPhys 2)                       │
+│     Actions de validation quand incertitude élevée      │
+│     → Correction du modèle par l'action physique        │
+└─────────────────────────────────────────────────────────┘
+```
+
+**Ce système est véritablement "débrouillard" car il :**
+- ✅ Apprend sans supervision humaine massive
+- ✅ S'améliore avec l'usage (contrairement aux modèles figés)
+- ✅ S'adapte en continu aux changements de physique
+- ✅ Résiste aux pannes de capteurs
+- ✅ Planifie des stratégies complexes par le rêve
+- ✅ Réagit instantanément aux imprévus
+- ✅ Valide ses hypothèses par l'action
+- ✅ Fonctionne sans instrumentation externe
+
+C'est véritablement une architecture cognitive de niveau biologique, avec tous les mécanismes d'apprentissage, d'adaptation et de résilience qu'on trouve dans les systèmes vivants !
