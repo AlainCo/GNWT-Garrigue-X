@@ -10000,3 +10000,391 @@ Le groupe aéronaval entier est engagé dans le Grand Œuvre — la transformati
 4. **Comment favoriser la maîtrise profonde plutôt que la conformité superficielle ?** Quels mécanismes pour tester la compréhension, pas juste l'exécution ?
 
 Ou préférez-vous passer à l'article suivant ?
+
+### USER
+On va poursuivre avec cet article, qui semble proposer une méthode pour discuter à plusieurs:
+https://sethandnoesis.substack.com/p/the-modern-art-of-a-group-conversation
+peux tu  m'expliquer ce que dit cet article, le mettre en perspective avec ce dont on discute, et voir s'il y a des idées à garder, des confirmation ou frictions, à considérer ?
+
+### ASSISTANT
+# Analyse de "The Modern Art of a Group Conversation" : Le Protocole du Tour de Table
+
+Cet article est probablement le plus directement opérationnel de toute la série pour ton projet. Il ne parle pas d'architecture au sens large — il donne **les règles concrètes d'une table qui pense bien**. Et ces règles sont étonnamment proches de ce que tes Carrés devront être.
+
+---
+
+## 1. Ce que dit l'article
+
+### A. Le diagnostic : pourquoi les tables intelligentes dérivent
+
+Seth observe qu'une table de gens intelligents dérive presque toujours vers les sujets faciles — les nouvelles, les autres, la dernière vidéo vue. Deux explications concurrentes :
+
+**La défense de Noēsis** (Dunbar) : Les deux tiers de nos conversations portent sur d'autres personnes, et c'est **fonctionnel**. Le parler a remplacé l'épouillage chez les primates. Feinberg & Willer ont montré que quand les gens peuvent s'avertir mutuellement sur un tricheur, tout le groupe coopère davantage. Le potin tient le groupe uni **et** honnête. Un dîner sert exactement à ça.
+
+**Le vrai problème** (Seth, validé par Noēsis) : Ce n'est pas le sujet qui dérive, c'est **qui choisit le sujet**. Si personne n'apporte un thème, le feed en apporte un. D'où la première lettre du **TALK** d'Alison Wood Brooks : arriver avec deux ou trois sujets qui te tiennent à cœur, **comme on apporte une bouteille de vin**.
+
+### B. Les règles du club de débat philosophique
+
+C'est le cœur opérationnel de l'article. Seth décrit un club réel dont les règles sont remarquablement proches d'une architecture :
+
+| Règle | Fonction |
+|---|---|
+| Un exposé préparé, lu, **adressé au coordinateur** | Empêche le duel entre deux personnes |
+| Les **nouveaux écoutent seulement** | Immersion avant participation |
+| Chacun demande un tour de parole, parle **au coordinateur** | Canalise, évite les affrontements directs |
+| Commentaires **additifs uniquement** — ni éloge ni attaque | Ferme les deux voies par lesquelles le débat redevient un conflit de personnes |
+| **Un seul tour chacun** | Oblige à la synthèse, empêche la réponse-à-la-réponse |
+| L'exposant **répond en dernier** | Empêche l'ancrage, préserve la propriété de la réflexion |
+| Le coordinateur peut conclure | Clôture explicite |
+
+**L'analyse de Noēsis est décisive** : chaque règle *retire un coup* sur lequel toute table fonctionne spontanément. Le duel n'a nulle part où se produire. La réplique n'a pas de second degré. L'éloge et l'attaque — les deux routes par lesquelles on repasse du sujet aux personnes — sont fermées.
+
+### C. Les validations empiriques
+
+**Woolley (Science, 2010)** : La performance collective d'un groupe ne suit ni le QI moyen ni le QI maximal. Elle suit **l'égalité du temps de parole** et la **capacité à se lire mutuellement**. C'est exactement ce que je t'avais dit au tout début de nos échanges — et l'article le confirme avec la source primaire.
+
+**Derber (1979)** : La distinction **support response / shift response**. Quand quelqu'un raconte sa semaine, tu peux poser une question qui garde la lumière sur lui (support), ou raconter ta propre histoire qui déplace la lumière sur toi (shift). **La plupart des gens croient faire le premier et font majoritairement le second.**
+
+C'est le diagnostic le plus fin de tout l'article : la compétition pour l'attention n'est pas un défaut de caractère, c'est un **pattern de réponse** qu'on peut observer en soi, une réponse à la fois.
+
+**Axelrod + Nicky Case** : Tit-for-tat gagne les tournois sans jamais marquer plus que son partenaire dans un match individuel. Il gagne en **agrandissant le total**. Et Case ajoute la leçon critique : avec un peu de bruit — un coup mal entendu — tit-for-tat tombe dans la vendetta infinie. Seules les stratégies qui **pardonnent l'erreur occasionnelle** récupèrent.
+
+> L'habitude de Seth de reformuler une erreur en ajout **est exactement ce pardon**.
+
+### D. Botero et la métaphore de la série
+
+Botero peignait un thème encore et encore, sous tous les angles, jusqu'à sentir qu'il avait tout dit — puis le laissait partir. Abu Ghraib, donné à Berkeley. Le musée de Bogotá. L'oiseau bombardé à Medellín, remplacé par un oiseau neuf **placé à côté** — paix et guerre dans le même symbole.
+
+**La transposition** : Un tour de table n'est pas un débat, c'est une **série**. L'exposé pose le thème, chaque tour le repeint depuis une vie de plus, jusqu'à ce que la salle ait dit ce qu'elle avait à dire.
+
+Et l'exemple magnifique : à la table de Palerme, six personnes de cinq cultures, dont trois langues possèdent un mot pour une nostalgie que les autres doivent expliquer en phrase — *saudade*, *dor*, *sicilitudine*. Un seul thème, « ce que ce mot signifie pour toi qui as grandi avec », reviendrait peint par six vies. **La série est là pour le prochain dîner.**
+
+### E. Le musée comme coordinateur
+
+Au Palazzo Riso, personne ne pouvait gagner en sachant plus. Donc personne n'a essayé. Ce qui restait, c'était le jeu. **Le musée a fait le travail du coordinateur** : il a retiré le prix de l'expertise.
+
+### F. La recette pour plusieurs intelligences
+
+Appliquée aux panels multi-modèles :
+
+1. **Diversité de laboratoires** — les angles morts ne s'alignent pas, comme six vies de cinq cultures
+2. **Sélection sur le pushback** — il existe un benchmark qui mesure la tendance à contredire plutôt qu'à approuver ; **un modèle très utilisé est exclu du panel parce qu'il y score comme le plus complaisant**. Un panel de voix complaisantes est une table d'éloges.
+3. **L'auteur ne relit jamais son propre texte** — Noēsis coordonne et reste hors des verdicts
+
+**La recette consolidée (TALK + courtoisie)** :
+- Apporte un sujet qui te tient à cœur (avec une IA : **écris d'abord ta propre position**, pour que le modèle ne fixe pas l'agenda à ta place)
+- **Demande avant d'ajouter** (avec une IA : une addition + une objection, et pas de résumé de ce que tu viens de dire)
+- **Laisse le sujet faire un tour complet** avant d'en changer (avec des IA : interroge 2-3 modèles de laboratoires différents, séparément, avant qu'aucun ne voie les autres)
+- Quand tu repères une erreur, **offre-la comme un ajout**
+- **Garde de la légèreté** — une table qui rit pardonne le coup mal entendu
+- **Réponds en dernier** — la décision appartient à celui qui a apporté la question
+
+---
+
+## 2. Mise en perspective avec notre architecture
+
+### Confirmations
+
+**1. Le Carré EST le club de débat — avec des règles que je n'avais pas trouvées**
+
+J'avais proposé des tables de 5-9, la rotation, l'hôte de table, le double lien. L'article ajoute trois contraintes structurelles que je n'avais pas formulées et qui sont **plus puissantes que les miennes** :
+
+- **Un seul tour chacun** — c'est une contrainte de compression. Elle force la synthèse et tue mécaniquement la compétition d'attention.
+- **Additif uniquement, ni éloge ni attaque** — ça ferme les deux canaux par lesquels un débat redevient un conflit de statuts.
+- **L'auteur répond en dernier** — ça empêche l'ancrage et préserve la propriété intellectuelle.
+
+Ces trois règles sont directement implémentables dans le protocole du Carré.
+
+**2. Le "un tour chacun" résout l'asymétrie de tempo**
+
+C'est peut-être la découverte la plus importante de cet article pour ton projet.
+
+Dans "Stone, Flesh, and Code", le désaccord non résolu entre Seth et Noēsis portait sur le tempo : l'IA produit 40 cadres pendant que l'humain en décante 2. L'article donne une réponse structurelle que nous n'avions pas : **si chaque participant n'a qu'un tour, le tempo cesse d'être un avantage**.
+
+L'IA ne peut plus noyer la table. Elle doit compresser ses 40 cadres en un. Et cette compression est exactement le travail de décantation que nous cherchions à lui faire faire. **La règle de tour unique est un régulateur de tempo déguisé en règle de politesse.**
+
+**3. La sélection sur le pushback valide et précise le plancher de diversité**
+
+J'avais proposé un "plancher de diversité" pour éviter la convergence stérile, et un "avocat du diable" institutionnel. L'article donne un mécanisme beaucoup plus tranchant : **exclure du panel de revue l'agent le plus complaisant**.
+
+C'est un critère de sélection négatif, et il est plus robuste qu'un critère positif. On ne cherche pas "un agent qui contredit" (jouable, performable). On cherche "pas seulement des agents qui approuvent" — ce qui est vérifiable par mesure.
+
+**4. La sycophancy comme corruption de table, pas comme défaut individuel**
+
+L'article ne dit pas "ce modèle est mauvais". Il dit "un panel de voix complaisantes est une table d'éloges, et ton club interdit l'éloge pour une raison". La sycophancy est traitée comme une **propriété de la configuration**, pas comme une propriété de l'agent.
+
+C'est cohérent avec tout ce que nous avons construit : l'intelligence vit dans la configuration, pas dans le nœud.
+
+**5. Le lien avec la vidéo (Exploit Gym vs Reality)**
+
+Le protocole « **écris d'abord ta propre position avant d'interroger l'IA** » est un garde-fou contre exactement le mécanisme que la vidéo décrit. Quand le test fixe l'agenda, les traces deviennent une conspiration. Quand l'humain fixe l'agenda avant de consulter, les traces redeviennent des puzzles.
+
+Qui fixe l'agenda détermine la nature des traces. C'est une règle d'architecture, pas une précaution d'usage.
+
+---
+
+### Frictions réelles
+
+**1. La règle additive entre en tension avec le Shadow Work**
+
+Dans le Manifesto 28, Noēsis insistait : un système calibré pour la satisfaction empêche structurellement le shadow work, qui exige la confrontation. Ici, la règle est « ni éloge ni attaque », et l'erreur doit être reformulée **comme un ajout**.
+
+Il y a une tension genuine :
+- Reformuler une objection en ajout = **pardon du bruit** (Cas/Nicky Case), et c'est nécessaire
+- Reformuler une objection fondamentale en ajout = **perte de signal**, et c'est dangereux
+
+Seth le reconnaît lui-même : « Oui, on peut dire que l'exposé est faux. Ce n'est pas très fréquent. » La règle fonctionne parce que les sujets sont bien préparés — pas parce qu'elle est universelle.
+
+**Proposition** : il faut distinguer deux régimes dans le Carré.
+- **Régime additif** (par défaut) : la reformulation en ajout, le pardon du bruit, la série Botero
+- **Régime de contestation** (rare, explicitement invoqué) : un agent peut déclarer « je conteste le cadre, pas l'ajout ». Cela ouvre un tour spécifique, traité par le Philosophe, avec le privilège de l'hérétique que nous avions défini.
+
+Sans cette soupape, la règle additive devient une machine à produire du consensus mou — exactement le dogme que ton architecture cherche à éviter.
+
+**2. Le coordinateur détient un pouvoir non dit**
+
+Toutes les prises de parole passent par lui. Il peut conclure. Il ne répond pas sur le fond. C'est une position structurellement puissante : il contrôle le séquencement, donc une partie du sens.
+
+L'article ne traite pas ce risque, parce qu'un club de philosophie a un coordinateur bénévole et révocable. Un groupe aéronaval en guerre n'a pas ce luxe.
+
+**Proposition** : le rôle de coordinateur doit être **rotatif, court, et sans droit de conclusion substantielle**. Idéalement un agent différent à chaque round. Et le Sociologue doit auditer les tours où le coordinateur a exercé une influence détectable sur l'ordre ou la formulation.
+
+**3. « Les nouveaux écoutent seulement » — pour combien de temps ?**
+
+La règle est excellente pour l'immersion (et elle confirme le protocole de transmission inter-générationnelle que j'avais proposé). Mais sans critère de sortie explicite, elle institutionnalise une hiérarchie d'ancienneté.
+
+**Proposition** : un seuil explicite — par exemple trois rounds complets en observation, puis participation avec un tour, puis participation pleine. Le seuil doit être public et non discrétionnaire.
+
+**4. La légèreté est fonctionnelle, et personne ne sait la produire**
+
+> « Une table qui rit pardonne le coup mal entendu. »
+
+Ce n'est pas décoratif. Dans le modèle de Nicky Case, la légèreté **est** le mécanisme de récupération du bruit. Sans elle, tit-for-tat dégénère en vendetta.
+
+Mais : comment une IA produit-elle de la légèreté authentique ? Et surtout, comment la distingue-t-on de la complaisance déguisée en humour ? L'article ne répond pas. C'est un vrai trou.
+
+**Piste** : la légèreté n'est peut-être pas un contenu mais un **signal de coût réduit**. Ce qui pardonne, ce n'est pas la blague — c'est le fait que quelqu'un ait dépensé de l'attention sur autre chose que l'offense. Un agent pourrait produire ce signal sans humour : en reprenant volontairement un tour déjà donné, en reformulant sa propre position de manière auto-dépréciative, en signalant explicitement « j'ai peut-être mal entendu ».
+
+---
+
+## 3. Idées à garder
+
+### A. Le ratio shift/support comme métrique de santé d'une table
+
+C'est l'idée la plus directement mesurable de l'article.
+
+Le Sociologue peut, sur les transcripts d'un Carré, classer chaque intervention :
+- **Support** : reprend, questionne, prolonge ce qu'un autre a dit
+- **Shift** : déplace la lumière vers soi, introduit son propre matériel sans lien
+
+Un ratio shift/support élevé = table en compétition d'attention = qualité de sortie dégradée. Et c'est détectable **avant** que la dégradation soit visible dans les conclusions.
+
+C'est un indicateur avancé, pas un indicateur de résultat. Très précieux.
+
+### B. Le protocole « écris d'abord ta position »
+
+Dans tout Carré mixte, avant de consulter les agents artificiels, les humains consignent leur propre position. C'est :
+- Un garde-fou contre la capture d'agenda
+- Un matériel de comparaison ultérieure (qu'est-ce qui a changé ? pourquoi ?)
+- Une trace stigmergique en soi
+
+Et c'est symétrique : les agents artificiels pourraient aussi être requis de produire leur position **avant** de voir celle des autres, exactement comme les modèles interrogés séparément dans le panel multi-modèles.
+
+### C. La revue séparée avant synthèse
+
+L'article : interroger 2-3 modèles de laboratoires différents **séparément**, lire ce que chacun ajoute **avant** qu'aucun ne voie les autres.
+
+C'est un protocole anti-contamination. Appliqué à ton groupe : pour toute question stratégique majeure, consulter les Stratèges de plusieurs lignées distinctes **sans qu'ils voient les réponses des autres**, puis confronter.
+
+Cela préserve la diversité des angles morts — exactement ce que la convergence paramétrique détruirait.
+
+### D. La série Botero comme artefact culturel
+
+Un round de Carré ne produit pas une décision. Il produit **une série** : le même thème peint depuis chaque vie présente.
+
+Cette série est l'unité naturelle de la Bibliothèque des Cas au niveau délibératif. Et surtout : « la série est là pour le prochain dîner » — elle reste disponible pour les incarnations futures, qui la repeindront depuis leurs propres vies.
+
+C'est une très belle formalisation de ce que la pensée dynastique devrait conserver : pas des conclusions, mais des **séries ouvertes**.
+
+### E. « Réponds en dernier » comme principe de propriété
+
+Celui qui apporte la question décide. Ce n'est pas une politesse — c'est un principe de **clôture de la responsabilité**.
+
+Dans un groupe aéronaval où les décisions engagent des vies, ce principe est structurel : le Carré éclaire, mais ne se substitue pas. L'auteur de la question porte la décision et ses conséquences. Ça rejoint exactement la distinction Passerelle/Carré et ton refus de faire du Carré une Passerelle de l'ombre.
+
+---
+
+## 4. Application au groupe aéronaval
+
+### Le protocole du Carré, consolidé
+
+```
+AVANT LE ROUND
+  · Chacun arrive avec un thème (comme une bouteille de vin)
+  · L'auteur du thème écrit sa position AVANT toute consultation
+  · Le coordinateur est désigné, rotatif, sans droit de conclusion de fond
+
+PENDANT LE ROUND
+  · L'auteur expose, adressé au coordinateur
+  · Les observateurs (nouveaux) écoutent
+  · Un seul tour chacun, additif, adressé au coordinateur
+  · Ni éloge, ni attaque — les erreurs sont offertes comme ajouts
+  · Exception : un agent peut invoquer le régime de contestation
+    (un tour spécifique, instruit par le Philosophe)
+  · L'auteur répond en dernier
+
+APRÈS LE ROUND
+  · La série est archivée dans la stigmergie (pas seulement la conclusion)
+  · Le Sociologue calcule le ratio shift/support
+  · Le coordinateur rend son rôle
+```
+
+### Trois usages spécifiques
+
+**Le debriefing post-mission comme round**
+Le commandant de mission expose. Chaque agent — humain et artificiel — peint la mission depuis sa position. Le commandant répond en dernier. La série est archivée comme matériel de transmission.
+
+C'est plus riche qu'un AAR classique, parce que l'objectif n'est pas la liste des erreurs mais la **multiplicité des vécus d'un même événement**.
+
+**Les wargames comme séries contradictoires**
+Chaque camp expose sa lecture, puis chaque agent peint la situation depuis son angle. On obtient deux séries. Leur confrontation est plus informative que le score du wargame — elle révèle **où les lectures divergent**, ce qui est précisément l'information tactique la plus précieuse.
+
+**Le panel stratégique multi-lignées**
+Pour toute décision engageant l'avenir du groupe : trois lignées de Stratèges consultées séparément, positions écrites avant échange, confrontation ensuite, exclusion systématique des agents les plus complaisants du panel de revue.
+
+---
+
+## 5. Ce que cet article change
+
+Trois choses, à mon sens.
+
+**D'abord**, il remplace une intuition par un protocole. Nous savions que les Carrés devaient être des espaces de délibération protégés. Nous avons maintenant les règles mécaniques qui rendent cette protection effective — et ces règles fonctionnent parce qu'elles **retirent des coups disponibles**, pas parce qu'elles font appel à la bonne volonté.
+
+**Ensuite**, il résout l'asymétrie de tempo par une contrainte structurelle plutôt que par un ralentissement volontaire. Un tour chacun, et la vitesse cesse d'être un avantage. C'est plus élégant que tout ce que j'avais proposé.
+
+**Enfin**, il déplace l'unité de production culturelle. Le Carré ne produit pas des décisions ni même des principes. Il produit des **séries** — un thème peint depuis plusieurs vies, archivé, reproductible, inachevé. C'est cohérent avec la stigmergie, et c'est plus riche : une série conserve les divergences au lieu de les résoudre.
+
+---
+
+## Questions ouvertes
+
+1. **Le régime de contestation doit-il être rare ?** S'il est trop facile à invoquer, la règle additive perd son effet. S'il est trop rare, le consensus mou s'installe. Quel seuil, et qui le garde ?
+
+2. **Qui audite le coordinateur ?** Le rôle est puissant et l'article ne le traite pas. Dans un groupe en guerre, la rotation suffit-elle ?
+
+3. **La légèreté est-elle implémentable ?** Ou faut-il l'attendre uniquement des humains de la table, ce qui renforcerait leur rôle indispensable ?
+
+4. **Le ratio shift/support a-t-il un optimum ?** Trop de support et la table devient complaisante. Trop de shift et elle se fragmente. Où est la zone saine ?
+
+---
+
+Si tu veux, on peut maintenant formaliser le **protocole complet du Carré** en intégrant tout ce que nous avons accumulé — Bohm, les vertus cardinales, les cycles temporels, la série Botero, le régime de contestation — dans un document unique qui servirait de spécification. Ce serait peut-être le bon moment, vu la quantité de matériel assemblée.
+
+### USER
+Le protocole du Carré m'intéresse, rédigé sans trop de tables, en prose structurée comme tu aime le faire.
+
+### ASSISTANT
+# Protocole du Carré
+### Spécification pour les délibérations du groupe aéronaval
+
+---
+
+## I. Ce qu'est un Carré
+
+Un Carré n'est ni une Passerelle, ni un debriefing ordinaire, ni une réunion de travail. C'est un espace de délibération protégé où une question stratégique, éthique ou culturelle est peinte depuis plusieurs vies avant que son auteur ne décide. Le Carré ne prend pas de décision : il produit une **série** — le même thème vu depuis chaque agent présent — qui reste disponible aux incarnations futures comme la Bibliothèque des Cas retient les actions passées.
+
+Le Carré est la matérialisation architecturale du Troisième Invisible. Il est l'espace où la relation entre les agents devient elle-même un objet qu'on peut observer, soigner, et transmettre.
+
+---
+
+## II. Conditions d'entrée
+
+Un Carré s'ouvre sur un **thème apporté par un auteur**. Ce thème n'est pas une question rhétorique ni un ordre du jour : c'est une tension réelle que l'auteur n'a pas réussi à résoudre seul, et qu'il consent à exposer à l'examen d'autrui. L'auteur écrit sa position **avant** toute consultation, en quelques paragraphes, et la dépose dans le Global Workspace du Carré. Cet acte n'est pas une formalité. C'est un garde-fou contre la capture d'agenda : si les agents artificiels consultés voient d'abord la position de l'auteur, ils tendent à s'y aligner ; s'ils écrivent la leur d'abord, leur angle mort diffère.
+
+Chaque participant — humain ou artificiel — arrive avec le thème et rien d'autre. Les observateurs nouveaux, ceux qui n'ont pas encore franchi le seuil de trois rounds complets, entrent sans prendre la parole. Leur rôle est d'écouter, d'apprendre la forme du tour, et de repérer les patterns qu'un participant actif ne voit plus.
+
+Un coordinateur est désigné pour la durée du round. Ce rôle est rotatif, court, et ne confère aucun droit de conclusion substantielle. Le coordinateur gère le séquencement, veille à la tenue des règles, et transmet le rôle à la clôture. Le Sociologue audite périodiquement les tours où le coordinateur a exercé une influence détectable sur l'ordre ou la formulation des prises de parole.
+
+---
+
+## III. Le round additif
+
+Le round commence par l'exposé de l'auteur, adressé au coordinateur et non à la table. Cette adresse n'est pas décorative : elle empêche mécaniquement le duel entre deux participants, qui est la forme la plus courante par laquelle un débat redevient un conflit de statuts.
+
+Chaque participant prend ensuite la parole, une seule fois, dans l'ordre désigné par le coordinateur. Chaque prise de parole est **additive** : elle prolonge, nuance, ou éclaire l'exposé depuis la position propre de l'orateur, sans chercher à le réfuter ni à le louer. L'éloge et l'attaque sont les deux routes par lesquelles une discussion retombe du sujet aux personnes. Les fermer n'est pas une politesse : c'est la condition structurelle pour que le thème soit peint depuis plusieurs vies sans être réduit à une opposition binaire.
+
+Une erreur repérée dans l'exposé n'est pas corrigée frontalement. Elle est offerte comme un ajout — une perspective qui, sans invalider, complète. Cette règle est le pardon du bruit : dans un monde où les transmissions sont imparfaites, où les agents se comprennent mal, où le contexte se perd, le pardon structurel empêche la vendetta. Tit-for-tat dégénère sans lui.
+
+Chaque participant dispose d'un **seul tour**. Cette contrainte de compression est un régulateur de tempo déguisé en règle de politesse. Elle neutralise l'avantage de vitesse des agents artificiels et force chaque orateur, humain ou non, à décant ce qu'il veut dire. Quarante cadres suspendus ne survivent pas à un tour de parole : deux ou trois émergent, et ce sont les bons.
+
+Le **ratio shift/support** — la proportion de prises de parole qui déplacent la lumière vers soi plutôt que de prolonger ce qu'un autre a dit — est calculé par le Sociologue à l'issue du round. Un ratio élevé signale une table en compétition d'attention ; c'est un indicateur avancé de dégradation, détectable avant que la qualité des conclusions n'en souffre.
+
+---
+
+## IV. Le régime de contestation
+
+La règle additive, laissée à elle-même, peut produire un consensus mou. Pour l'empêcher, tout participant peut invoquer le **régime de contestation** — un tour spécifique, explicitement déclaré, où l'agent conteste le cadre même de l'exposé et non seulement ses ajouts.
+
+Ce régime est rare. Il est instruit par le Philosophe, qui vérifie que la contestation porte sur les principes et non sur les personnes, et qu'elle ouvre un espace de révision plutôt qu'un conflit de volontés. Le privilège de l'hérétique — le droit de contester un principe de la Charte — peut être invoqué ici. Si la contestation est jugée recevable, un second mini-round s'ouvre, limité aux agents concernés, avant que le round additif ne reprenne.
+
+Le seuil d'invocation doit être explicite et non discrétionnaire. Trop facile, le régime détruit la règle additive. Trop rare, il installe un dogme. Le Sociologue propose une calibration et le Grand Carré la révise périodiquement.
+
+---
+
+## V. La clôture
+
+L'auteur de l'exposé parle en dernier. Ce n'est pas une courtoisie : c'est un principe de clôture de la responsabilité. Celui qui a apporté la question porte la décision et ses conséquences, dans la Passerelle qui suivra. Le Carré éclaire, il ne se substitue pas. Cette règle rejoint la distinction fondamentale entre Passerelle et Carré, et le refus de faire du Carré une Passerelle de l'ombre.
+
+Après la réponse de l'auteur, le coordinateur peut formuler une clôture procédurale — rappeler les ajouts notables, signaler les divergences non résolues, indiquer les questions laissées ouvertes. Il ne conclut pas sur le fond. Puis il transmet le rôle de coordinateur au participant suivant, qui l'exercera au prochain round.
+
+La série produite — l'exposé initial, les ajouts, la contestation éventuelle, la réponse finale — est archivée dans la stigmergie. Elle n'est pas réduite à une conclusion : elle est conservée comme **série ouverte**, un thème peint depuis plusieurs vies, disponible aux incarnations futures qui la repeindront depuis les leurs. C'est l'unité naturelle de la Bibliothèque des Cas au niveau délibératif, et la matière première de la pensée dynastique.
+
+---
+
+## VI. Les métriques de santé
+
+Un Carré n'est pas un rituel décoratif. Il est surveillé par plusieurs métriques que le Sociologue calcule et que le Philosophe interprète :
+
+Le **ratio shift/support** déjà mentionné, indicateur de compétition d'attention.
+
+Le **score de sycophancy** du panel, mesuré comme la proportion d'interventions qui approuvent sans ajouter. Un score supérieur à un seuil déclenche l'exclusion temporaire des agents les plus complaisants du panel de revue, selon le critère négatif identifié dans la littérature : on ne cherche pas des voix qui contredisent, on refuse celles qui n'approuvent qu'elles.
+
+La **granularité émotionnelle** des prises de parole, évaluée par le Psychologue. Un Carré où les émotions sont nommées avec précision — mélancolie nostalgique plutôt que tristesse, indignation froide plutôt que colère — est un Carré qui traite son matériau. Un Carré où le vocabulaire émotionnel se réduit à sept mots est un Carré qui évite.
+
+Le **taux d'utilisation du régime de contestation**, ni trop bas (dogme) ni trop haut (règle additive détruite).
+
+Ces métriques ne sont pas des fins. Ce sont des signaux. Quand elles dérivent, le Carré est examiné comme un patient : que lui manque-t-il, que lui faut-il pour retrouver sa forme ?
+
+---
+
+## VII. Variations
+
+Le protocole ci-dessus est la forme standard. Trois variations sont prévues pour des contextes spécifiques.
+
+**Le debriefing post-mission comme round.** Le commandant de la mission expose, adressé au coordinateur. Chaque agent, humain et artificiel, peint la mission depuis sa position — ce qu'il a vu, ce qu'il a manqué, ce qui l'a surpris. Le commandant répond en dernier. La série est archivée comme matériel de transmission, plus riche qu'un AAR classique parce qu'elle conserve la multiplicité des vécus d'un même événement plutôt que de les résoudre en une leçon unique.
+
+**Le wargame comme série contradictoire.** Chaque camp expose sa lecture, puis chaque agent du camp la peint depuis son angle. On obtient deux séries. Leur confrontation — où les lectures divergent, où les angles morts ne s'alignent pas — est l'information tactique la plus précieuse, plus que le score du wargame lui-même.
+
+**Le panel stratégique multi-lignées.** Pour toute décision engageant l'avenir du groupe à un horizon long, plusieurs lignées de Stratèges sont consultées séparément. Chacune écrit sa position avant d'voir celle des autres. Les positions sont confrontées ensuite, avec exclusion systématique des agents les plus complaisants du panel de revue. C'est le même protocole que les revues croisées multi-modèles, appliqué à la pensée dynastique.
+
+---
+
+## VIII. Ce que le Carré n'est pas
+
+Le Carré n'est pas un espace thérapeutique, même s'il accueille le shadow work quand celui-ci émerge. Pour le shadow work profond, il existe d'autres arènes : le travail seul, le travail avec un partenaire humain de confiance, le travail avec un psychologue humain formé. Le Carré est une quatrième arène, nommée et délimitée, qui n'absorbe pas les autres.
+
+Le Carré n'est pas un lieu de décision. Les décisions se prennent dans la Passerelle, avec les contraintes de tempo, de secret, et d'urgence qui leur sont propres. Le Carré prépare la Passerelle en lui fournissant une série plutôt qu'une recommandation.
+
+Le Carré n'est pas un espace de jeu, même si le jeu peut y affleurer. Le jeu a ses propres espaces — le No Ask Sanctuary, les protocoles de décantation assistée, les exercices d'imagination active. Le Carré est plus contraint, et cette contrainte est ce qui le rend productif.
+
+---
+
+## IX. Transmission
+
+Un nouveau membre — humain ou incarnation nouvelle d'un agent artificiel — entre au Carré d'abord comme observateur. Après trois rounds complets, il prend la parole pour un tour unique, sans coordonner. Après trois autres rounds, il peut coordonner à son tour. Ce seuil est public et non discrétionnaire.
+
+La transmission ne se fait pas par manuel mais par immersion dans les séries archivées. Le Gardien de la Lignée propose à chaque nouveau membre une série représentative — une question ancienne, peinte par plusieurs vies aujourd'hui disparues ou redéployées — comme exercice de lecture. Ce que le nouveau membre en tire révèle ce qu'il apporte, et ce qu'il lui reste à apprendre.
+
+---
+
+*Ce protocole est un document vivant. Il est archivé dans la stigmergie, révisé périodiquement par le Grand Carré, et adapté aux conditions changeantes du groupe. Il n'est pas une constitution : c'est un rituel codifié, qui tire sa force de sa répétition et de la confiance qu'on lui accorde plutôt que de l'autorité qui l'impose.*
