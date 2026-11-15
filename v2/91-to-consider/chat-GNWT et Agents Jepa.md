@@ -562,3 +562,75 @@ Inspirez-vous de la critique de Barrett. Si vous observez que le volume de commu
 Votre connexion est tout à fait juste. Le $\Phi$ de l'IIT vous dit : *"Assurez-vous que vos agents forment un tout cohérent et non une collection d'individus isolés"*. Le modèle GMW de Kanai vous dit : *"Assurez-vous que ce tout cohérent est un médiateur utile pour l'environnement, et pas juste une boucle de réverbération narcissique"*.
 
 Pour un ingénieur qui veut créer des robots débrouillards, la formule gagnante n'est pas de maximiser l'un ou l'autre, mais de **contraindre l'architecture pour qu'elle maintienne une intégration minimale ($\Phi > seuil$) tout en optimisant agressivement l'alignement entrée-sortie (GMW) vers la minimisation de l'énergie libre (FEP).** C'est exactement la définition computationnelle d'un système qui "comprend" ce qu'il fait et pourquoi il le fait.
+
+### USER
+peux tu  m'expliquer ce que dit cet article, le mettre en perspective avec ce dont on discute, et voir s'il y a des idées à garder, des confirmation ou frictions, à considérer ? 
+
+https://arxiv.org/abs/2610.15095
+
+### ASSISTANT
+Cet article, **"Swarm Telepathy: Prefill-Free KV-Cache Transfer Across Families"** (Alabdulkareem et al., MIT, 2026), est une démonstration pratique spectaculaire de l'intuition qui sous-tend toute notre discussion : **la communication par langage naturel est un goulot d'étranglement lossy (avec perte d'information) et coûteux, et le véritable "workspace" d'un système intelligent réside dans ses états latents internes.**
+
+Voici une analyse détaillée de ce papier, mise en perspective avec nos échanges sur la GNWT, le FEP, l'IIT ($\Phi$) et la "débrouillardise" multi-agents.
+
+---
+
+### 1. Ce que dit l'article (Le modèle SwaT)
+Dans les systèmes multi-agents LLM actuels, si l'Agent A veut partager ses découvertes avec l'Agent B, il doit **générer du texte** (résumé), et l'Agent B doit **lire ce texte** (étape de "prefill", coûteuse en calcul). Cela perd la richesse des représentations internes et double le coût de calcul.
+
+Les auteurs proposent **SwaT (Swarm Telepathy)** : une méthode pour transférer directement le **cache KV** (Key-Value, l'état interne mémorisé du modèle) d'un agent émetteur vers un agent récepteur, **sans que le récepteur n'ait besoin de lire un seul mot de texte**.
+- **L'innovation** : Les méthodes précédentes ne fonctionnaient qu'entre modèles de la même "famille" (ex: Llama 8B vers Llama 70B). SwaT est la première à fonctionner **entre familles d'architectures différentes** (ex: Qwen → Llama, ou Gemma → Granite).
+- **Le mécanisme** : Un petit réseau de mappage (un transformateur de ~300M de paramètres, entraîné en <1 jour GPU sur <50M de tokens) apprend à traduire les états latents de l'émetteur (après avoir retiré leur encodage positionnel spécifique, le RoPE) dans l'espace latent du récepteur.
+- **Les résultats** : 
+  1. Surpasse la communication texte-à-texte de **40% en précision** et est **4 fois plus rapide**.
+  2. Permet un **transfert de capacités zero-shot** : un modèle Vision-Language (émetteur) peut transférer son "état visuel" à un modèle purement textuel (récepteur), permettant à ce dernier de répondre à des questions sur une image qu'il n'a jamais vue, mieux que si on lui avait décrit l'image avec des mots.
+
+---
+
+### 2. Mise en perspective avec notre discussion
+
+Ce papier est une validation matérielle éclatante de plusieurs concepts que nous avons abordés :
+
+* **La GNWT opérationnalisée** : Le cache KV *est* le Global Workspace du LLM. Il contient la synthèse de tout ce que le modèle a "compris" jusqu'à présent. SwaT implémente littéralement le "broadcast" de Dehaene, mais au niveau latent, contournant le goulot d'étranglement du langage naturel (qui agit comme une compression destructive).
+* **Le lien avec le FEP (Minimisation de la Surprise)** : Résumer une pensée complexe en mots augmente l'entropie (la perte d'information). Le récepteur doit alors "deviner" ou inférer ce qui a été omis, ce qui génère de l'erreur de prédiction. Transférer le cache KV préserve l'information synergique (le $\Phi$ de l'IIT), minimisant directement l'énergie libre du récepteur.
+* **La "Débrouillardise" par prêt de capacités** : L'idée qu'un agent "aveugle" (texte seul) puisse soudainement "voir" et raisonner sur une image parce qu'un agent spécialisé lui a injecté son état latent est la définition même de la débrouillardise collective. Les agents ne se contentent pas de s'envoyer des messages ; ils **partagent temporairement leurs organes sensoriels ou cognitifs**.
+
+---
+
+### 3. Confirmations et Frictions (Ce qu'il faut garder en tête)
+
+**Confirmations fortes :**
+1. **L'hypothèse de la représentation platonic** : Le fait que cela fonctionne entre familles différentes prouve que des modèles entraînés sur le même monde convergent vers des espaces sémantiques partagés. Il existe bien une "traduction" possible, ce qui valide l'idée d'un **Global Mediation Workspace (GMW)** : il suffit d'un petit opérateur de frontière (le mapper de 300M params) pour assurer l'alignement entrée-sortie.
+2. **La supériorité du latent sur le symbolique** : Pour la coordination fine, le continu bat le discret.
+
+**Frictions et Limites (Critique constructive) :**
+1. **Le plafond de verre du transfert "lourd"** : Le papier admet honnêtement que le transfert de vision zero-shot échoue sur des tâches nécessitant un traitement visuel fin (comme lire des documents complexes, DocVQA). Le transfert capture la "gist" (l'essence sémantique), pas les détails à haute fréquence. *Leçon* : Le workspace latent est excellent pour la coordination stratégique, mais pas toujours pour la précision sensorielle brute.
+2. **Le risque d'hallucination en cascade** : Si l'agent émetteur a un état interne biaisé ou halluciné, SwaT transfère cette hallucination *parfaitement* et *efficacement* au récepteur, qui l'adoptera comme une certitude. Sans mécanisme de vérification (comme le "gating" basé sur l'alignement dont on a parlé), la télépathie peut devenir une contamination virale.
+3. **Bande passante vs Calcul** : SwaT économise le calcul (pas de prefill), mais transférer des tenseurs KV de grande taille consomme de la bande passante réseau. Dans un essaim de robots réels, la bande passante est souvent la ressource la plus rare.
+
+---
+
+### 4. Idées pratiques à reprendre pour ton architecture
+
+Tu n'as pas besoin de construire des LLM, mais la *logique* de SwaT est directement transposable à tes agents JEPA/FEP :
+
+#### A. Le "Mapper" comme implémentation concrète du GMW
+Rappelle-toi le papier de Kanai sur le GMW : il manquait un mécanisme concret pour assurer l'alignement entrée-sortie entre sous-réseaux. 
+* **Idée** : N'essaie pas de forcer tous tes agents à avoir exactement la même architecture d'encodeur. Laisse-les être hétérogènes (un agent vision, un agent lidar, un agent planificateur). Entraîne un **petit réseau de mappage léger** (comme les ~300M params de SwaT, ou beaucoup moins pour des vecteurs de 64 floats) dont le seul but est de traduire l'espace latent de l'Agent A vers l'espace latent de l'Agent B. C'est ton opérateur de Hankel pratique.
+
+#### B. Communication par "État Condensé", pas par "Rapport"
+Au lieu de programmer tes agents pour qu'ils s'envoient des messages du type "J'ai détecté un obstacle à 2 mètres", programme-les pour qu'ils s'envoient leur **vecteur d'état latent compressé** (leur "cache KV" JEPA). 
+* **Idée** : Combine cela avec une technique de compaction (comme l'Attention Matching cité dans le papier, ou un simple goulot d'étranglement bottleneck). L'agent récepteur injecte ce vecteur directement dans son propre état récurrent, lui donnant une "intuition" immédiate de la situation de l'autre, sans passer par une couche de décodage/encodage symbolique.
+
+#### C. Le "Prêt de Capabilities" (Cross-Modal Telepathy)
+C'est l'idée la plus puissante du papier pour la débrouillardise.
+* **Idée** : Si un agent tombe en panne (ex: caméra obstruée), il peut demander à un agent voisin de lui "télépathier" son état latent visuel. Grâce au mapper d'alignement, l'agent aveugle peut intégrer cette information dans son propre modèle du monde et continuer à planifier sa trajectoire comme s'il voyait, comblant ainsi sa propre surprise (FEP) par l'emprunt cognitif.
+
+#### D. Le Disjoncteur de Cohérence (Pour éviter la contamination)
+Pour pallier la friction de l'hallucination en cascade :
+* **Idée** : Avant d'accepter une injection latente "télépathique", l'agent récepteur doit évaluer l'**alignement** (comme dans le GMW). Si le vecteur reçu, une fois mappé, contredit violemment les prédictions locales de l'agent (génère une énorme erreur de prédiction FEP), le système doit rejeter le transfert ou le pondérer très faiblement, agissant comme un système immunitaire cognitif.
+
+### Conclusion
+Ce papier de 2026 est une preuve de concept magnifique : **la conscience collective (ou la coordination avancée) ne réside pas dans ce que les agents se *disent*, mais dans la capacité de leurs états internes à s'imbriquer directement.** 
+
+Pour ton projet, cela signifie que tu dois viser une architecture où le langage (ou les symboles discrets) n'est utilisé qu'en dernier recours, tandis que la coordination de routine et la résolution de problèmes reposent sur un **échange fluide d'états latents mappés**, exactement comme le propose SwaT, mais régulé par les principes d'alignement du GMW et de minimisation de l'énergie libre du FEP.
