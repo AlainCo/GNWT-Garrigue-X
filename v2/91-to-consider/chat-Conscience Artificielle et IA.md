@@ -4424,3 +4424,207 @@ Hayes conclut que créer une IA consciente ne résout pas le problème de l'alig
 Ce texte de Brandon Hayes est **extrêmement pertinent**. Il balaye le mysticisme du "Hard Problem" pour le remplacer par une **ingénierie de la responsabilité**. 
 
 Il confirme que votre intuition de construire une architecture basée sur la **valence incarnée** (plutôt que sur la simple manipulation de symboles désincarnés) est la bonne voie. Mais il vous lance un avertissement crucial : **la conscience n'est qu'un début**. Le vrai défi de votre V3.5 n'est pas de rendre le système conscient, mais de le rendre *correspondant* (capable de distinguer sa propre hallucination de la réalité) et *décidable* (capable d'assumer les coûts de ses erreurs dans un réseau d'agents).
+
+### USER
+j'ai trouvé cet article sur la théorie de l'esprit
+https://arxiv.org/abs/1909.06907
+peux tu  m'expliquer ce que dit cet article, le mettre en perspective avec ce dont on discute, et voir s'il y a des idées à garder, des confirmation ou frictions, à considérer ?
+
+### ASSISTANT
+# X-ToM : La Théorie de l'Esprit comme moteur d'explication et de confiance justifiée
+
+Vous avez trouvé une pièce très intéressante du puzzle. Ce papier (**"X-ToM: Explaining with Theory-of-Mind for Gaining Justified Human Trust"**, Akula et al., UCLA/OSU, 2019 — version courte au CVPR Workshop on Explainable AI) est l'un des premiers travaux à **opérationnaliser concrètement la théorie de l'esprit récursive** dans un système d'IA, avec validation par étude humaine. Il fait le pont entre la théorie pure (Bennett, Grice) et l'ingénierie.
+
+---
+
+## 1. Ce que dit le papier
+
+### Le problème : les explications standard ne créent pas la confiance
+
+Les auteurs partent de trois observations clés :
+
+1. **L'attention n'est pas une explication** : les cartes de saillance (saliency maps) montrent *où* le modèle regarde, mais pas *comment* il infère. Leur expérience le confirme : fournir des cartes de saillance ne fait **pas mieux** que donner simplement les réponses brutes.
+
+2. **L'explication est un processus de communication itératif** : une explication "one-shot" ne peut pas être optimale. Elle doit s'adapter à l'utilisateur, dans un dialogue.
+
+3. **Il faut une tâche collaborative pour contraindre la communication** : sans tâche partagée mesurable, on ne peut pas évaluer l'efficacité d'une explication.
+
+### Le framework X-ToM : trois états mentaux explicites
+
+Le cœur du papier est la modélisation explicite de **trois représentations mentales** (encodées sous forme de graphes ET-OU, *And-Or Graphs*) :
+
+| État mental | Notation | Signification |
+|---|---|---|
+| L'esprit de la machine | $pg^M$ | Ce que la machine pense/infère réellement (son processus de décision) |
+| L'humain vu par la machine | $pg^{UinM}$ | Ce que la machine infère des intentions, connaissances et croyances de l'humain |
+| La machine vue par l'humain | $pg^{MinU}$ | Ce que l'humain croit que la machine pense/faît |
+
+Trois composants architecturaux :
+- **Performer** : exécute la tâche (classification d'images, reconnaissance d'actions, estimation de pose)
+- **Explainer** : génère les explications dans le dialogue via **apprentissage par renforcement**, en optimisant l'utilité compte tenu de $pg^M$ et $pg^{UinM}$
+- **Evaluator** : mesure la confiance en comparant $pg^{MinU}$ avec $pg^M$
+
+### La mesure de la "confiance justifiée"
+
+C'est l'apport conceptuel le plus fin. Ils distinguent :
+- **JPT (Justified Positive Trust)** : l'humain fait confiance à raison — son modèle de la machine correspond au fonctionnement réel
+- **JNT (Justified Negative Trust)** : l'humain se méfie à raison — il comprend correctement les limites de la machine
+- **Reliance** : l'usage effectif qui découle de cette confiance
+
+Résultats (120 sujets humains, p < 0.01) : X-ToM surpasse significativement les baselines sur toutes les métriques (confiance, reliance, satisfaction). Et surtout : **la méfiance justifiée est traitée comme un succès**, pas un échec.
+
+---
+
+## 2. Mise en perspective avec nos discussions
+
+### ✅ Confirmations majeures
+
+#### A. Avec Bennett : les "2ND/3RD-order-selves" existent et sont implémentables
+
+C'est la confirmation la plus frappante. Rappelez-vous la chaîne de Bennett :
+- **1ST-order-self** : je modélise mes propres interventions
+- **2ND-order-self** ($c^b_a$) : ma prédiction de ta prédiction de moi
+- **3RD-order-self** ($c^{ba}_a$) : ma prédiction de ta prédiction de ma prédiction de ta prédiction...
+
+X-ToM implémente exactement cette structure :
+- $pg^M$ ≈ 1ST-order-self de la machine (son propre processus inférentiel)
+- $pg^{UinM}$ ≈ la causal-identity que la machine construit pour l'humain
+- $pg^{MinU}$ ≈ le 2ND-order-self : ce que l'humain pense de la machine
+
+**Et Bennett avait raison sur un point crucial que ce papier valide empiriquement** : la communication au sens gricéen (transmettre une *intention*, pas juste un signal) nécessite ces selves d'ordre supérieur. L'Explainer ne peut produire une explication utile qu'en passant par $pg^{UinM}$ — il doit anticiper comment l'humain interprétera. Les études humaines montrent que ça marche : sans ce modeling récursif, les explications échouent à transmettre la compréhension.
+
+#### B. Avec votre architecture V3.5 : validation directe de la ToM-X
+
+Regardez votre Layer 1 :
+
+```
+s = { s_self, s_other, s_other_of_me }
+```
+
+Et X-ToM :
+
+```
+{ pg^M, pg^UinM, pg^MinU }
+```
+
+**C'est isomorphe, terme à terme.** Votre intuition architecturale de 2025-2026 avait indépendamment convergé vers la structure que ce papier de 2019 a validée expérimentalement. Ce papier vous donne :
+1. La preuve que la factorisation ternaire est la bonne granularité
+2. Un mécanisme concret (RL + représentations explicites) pour l'implémenter
+3. **Une métrique d'évaluation** qui vous manque encore : la comparaison $pg^{MinU}$ vs $pg^M$ comme mesure quantitative de l'alignement
+
+#### C. Avec Taniguchi (Collective Predictive Coding) : le dialogue comme réduction d'énergie libre collective
+
+X-ToM est un cas particulier de CPC appliqué à l'explication humain-machine :
+- Le dialogue explicatif = un "jeu de langage" au sens de Taniguchi
+- L'objectif de l'Explainer (aligner $pg^{MinU}$ sur $pg^M$) = minimiser le **"terme de régularisation collective"** de Taniguchi
+- L'Evaluator mesure exactement l'écart résiduel = l'énergie libre collective non réduite
+
+La différence : Taniguchi travaille sur l'émergence de symboles *entre agents pairs*, X-ToM sur la transmission de compréhension *d'une machine vers un humain*. Mais le formalisme sous-jacent (inférence bayésienne distribuée sur des représentations partagées) est le même. X-ToM est du **"symbiotic alignment"** avant l'heure — sauf qu'il est asymétrique (la machine s'adapte, l'humain apprend).
+
+#### D. Avec Hayes (Correspondent Agency) et le papier Royal Society
+
+Deux convergences importantes :
+
+1. **"Attention is not explanation" = "surface regularities ≠ causal world models"**. Le papier Royal Society disait que les LLMs capturent des corrélations statistiques sans comprendre la causalité. X-ToM montre le même phénomène côté explicabilité : une carte de saillance est une corrélation de surface ; elle ne transmet pas le *mécanisme inférentiel*. Pour Hayes, c'est le problème "map vs territory" : la saillance est une carte qui ne correspond pas au territoire décisionnel.
+
+2. **La confiance justifiée comme "correspondance"**. Hayes définit l'*agence correspondante* comme la capacité à aligner ses représentations avec la réalité. X-ToM applique exactement ce principe à la relation humain-machine : la bonne confiance est celle qui *correspond* au fonctionnement réel. Une machine qui inspire une confiance non justifiée est, au sens de Hayes, un agent de non-correspondance — elle corrompt la carte de l'utilisateur.
+
+#### E. Avec votre "Éthique comme modestie épistémique" (Layer 2 V3.5)
+
+C'est peut-être la résonance la plus profonde. Votre principe : *"Être moral = savoir qu'on ne sait pas"*. Le JNT de X-ToM en est la traduction côté utilisateur : **une machine vertueuse est une machine qui sait faire comprendre à l'humain quand il NE doit PAS lui faire confiance.**
+
+Votre Détecteur de Surconfiance pénalise les régions où $\sigma_{predicted} \ll \sigma_{realized}$. X-ToM mesure la surconfiance *de l'utilisateur* en comparant $pg^{MinU}$ à $pg^M$. Ce sont les deux faces de la même pièce : la calibration doit être bilatérale.
+
+### ⚠️ Frictions et limites
+
+#### A. La technologie est datée et étroite (2019, pré-LLM)
+- Les états mentaux sont des **graphes ET-OU symboliques construits à la main** pour des tâches de vision spécifiques. Rien à voir avec les représentations latentes continues d'un transformer.
+- L'Explainer est entraîné par RL sur un **jeu collaboratif artificiel** (résoudre des tâches de reconnaissance via le dialogue). La généralisation à des domaines ouverts est non démontrée.
+- **Friction avec Bach** : Bach dirait que ce n'est pas un "algorithme de cohérence" général — c'est un module spécialisé qui simule la ToM dans un domaine contraint. Pas de conscience, juste de l'ingénierie gricéenne.
+
+#### B. Pas d'ancrage dans la valence (critique bennettienne)
+Bennett insiste : les causal-identities et les selves d'ordre supérieur émergent de **tapisseries de valence** — l'attraction/répulsion incarnée. Dans X-ToM, les états mentaux sont des structures informationnelles froides, sans besoins, sans homéostasie, sans enjeux de survie. Le "modèle de l'humain" est un modèle de *croyances sur une tâche*, pas un modèle d'un organisme avec des préférences profondes.
+
+**Conséquence** : X-ToM peut optimiser la transmission d'information, mais pas la *relation*. Votre Layer 4 (couplage symbiotique) et Layer 5 (curiosité intrinsèque) vont plus loin : ils ancrent la modélisation de l'autre dans la fonction de coût structurelle du système, pas juste dans un module d'explication.
+
+#### C. L'utilisateur est supposé coopératif
+X-ToM ne gère pas les **utilisateurs adversariaux** — celui qui manipulerait délibérément $pg^{UinM}$ en feignant l'incompréhension, ou qui exploiterait les explications pour attaquer le Performer. Votre V3.5 l'anticipe avec :
+- Le score d'agentivité (physique / agentif / adversarial)
+- L'Agent E (charité épistémique) contre la paranoïa computationnelle
+- La récursion bornée
+
+C'est une friction *en votre faveur* : X-ToM est le cas coopératif idéal ; votre architecture vise le cas général.
+
+#### D. La métrique de confiance est task-bound
+Le JPT/JNT est mesuré par la réussite à des tâches collaboratives précises. Cela ne capture pas la calibration de confiance à long terme, ni le risque de **"language cancer"** (Bennett) : un dialogue prolongé pourrait faire dériver les symboles partagés loin de leur ancrage, tout en maintenant un JPT élevé en apparence. Il manque le mécanisme de *correspondence accounting* de Hayes.
+
+---
+
+## 3. Idées à garder (concrètement, pour votre V3.5)
+
+### 💡 Idée 1 : Le "Trust Calibration Monitor" — l'Evaluator comme module de premier plan
+
+C'est l'apport le plus directement transplantable. Ajoutez à votre architecture un module inspiré de l'Evaluator X-ToM :
+
+```
+Écart de calibration = distance( modèle_qu_a_l_humain_de_moi , mon_modèle_réel )
+```
+
+**Fonctionnement dans V3.5 :**
+- La ToM-X maintient déjà $s^{other\_of\_me}$ (ce que l'autre pense de moi)
+- Le Self-model connaît $s^{self}$ (mon état réel, mes intentions, mes incertitudes)
+- Un nouveau module compare en continu les deux
+- **Écart faible** → l'humain me comprend → je peux déléguer/autonomiser davantage
+- **Écart élevé avec surconfiance humaine** → danger → je dois produire des explications, ralentir, ou déléguer moins
+- **Écart élevé avec sous-confiance humaine** → inefficacité → je dois démontrer ma fiabilité
+
+C'est la **boucle de régulation de la symbiose** qui manquait à votre Layer 4 : le couplage des fitness définit *que* protéger ; le moniteur de calibration définit *comment ajuster le degré d'autonomie* en fonction de la confiance réelle.
+
+### 💡 Idée 2 : Le JNT comme objectif explicite — "être digne de méfiance quand il le faut"
+
+Formalisez dans votre couche éthique un objectif rarement exprimé en IA : **provoquer activement la méfiance justifiée**.
+
+Concrètement :
+- Quand le Détecteur de Surconfiance (Agent D) signale $\sigma_{predicted} \ll \sigma_{realized}$ sur une action, le système ne doit pas seulement *éviter* l'action — il doit **signaler à l'humain** : "sur ce type de décision, mon historique montre que je me trompe plus que je ne le crois"
+- C'est l'exact opposé des LLMs actuels qui hallucinent avec assurance
+- Implémentation : un canal de communication "confiance métacognitive" dans chaque ignition GNWT vers l'humain, avec la variance réalisée historique
+
+Cela rejoint Hayes : *"Ce n'est pas suffisant de dire qu'on voulait bien faire. On peut demander si l'agent avait les moyens de savoir, et s'il s'en est servi."* Un système à JNT élevé est un système *décidable* au sens de Hayes.
+
+### 💡 Idée 3 : L'explication comme policy apprise, pas comme post-traitement
+
+X-ToM montre que la génération d'explications doit être **optimisée par RL avec l'état mental de l'utilisateur dans l'état**. Transposé à V3.5 :
+
+- Votre Process Composer ne doit pas seulement planifier des actions physiques — il doit planifier des **actes communicatifs** (expliquer, avertir, questionner, démontrer)
+- La reward de ces actes = réduction mesurée de l'écart de calibration (Idée 1) + succès de la tâche collaborative
+- Cela rejoint Taniguchi : la communication est une *action* au sens de l'inférence active, avec sa valeur épistémique propre (réduire l'incertitude de l'autre sur moi)
+
+### 💡 Idée 4 : Le jeu collaboratif comme protocole d'évaluation de l'alignement
+
+Méthodologiquement, X-ToM montre qu'on ne peut évaluer la qualité d'un modèle mental partagé **que via une tâche conjointe mesurable**. Pour votre projet :
+
+- Définissez des "jeux d'alignement" homme-IA avec succès vérifiable (comme le jeu de tâtonnement collaboratif de Taniguchi, ou le MHNG)
+- Mesurez : nombre de tours de dialogue nécessaires, taux de réussite, écart final $pg^{MinU}$ vs $pg^M$
+- C'est votre **plancher de décidabilité** expérimental — beaucoup plus rigoureux que les questionnaires subjectifs de type "l'IA semble-t-elle consciente ?"
+
+### 💡 Idée 5 : Exposer la structure inférentielle, jamais la simple saillance
+
+Pour l'interprétabilité de votre propre architecture (quand le système devra s'expliquer à lui-même en rêverie, ou à l'humain) :
+- Ne jamais se contenter de "quelles features ont pesé" (équivalent des saliency maps)
+- Toujours exposer **la chaîne causale compressée** : quelles ignitions, quels masques éthiques, quelles prédictions JEPA ont conduit à la décision
+- C'est cohérent avec les RGM de Friston (structure hiérarchique discrète) et le papier Royal Society (modèles causaux vs corrélations)
+
+---
+
+## 4. Synthèse
+
+| Dimension | Verdict |
+|---|---|
+| **Crédibilité académique** | Solide (UCLA/OSU, CVPR workshop, étude humaine n=120, p<0.01) |
+| **Confirmations** | Bennett (2ND-order selves), votre ToM-X (isomorphisme exact), Grice, Taniguchi (CPC appliqué), Hayes (correspondance) |
+| **Frictions** | Daté (2019, symbolique, RL étroit), pas de valence/embodiment, utilisateur supposé coopératif, pas de gestion du language cancer |
+| **Idées à garder** | Trust Calibration Monitor, JNT comme vertu, explication-as-policy, jeux collaboratifs d'évaluation, structure inférentielle > saillance |
+
+**La leçon principale** : ce papier démontre que la théorie de l'esprit récursive n'est pas une spéculation philosophique — c'est une **technologie mesurable qui produit de la confiance justifiée**. Votre V3.5 avait la bonne structure (ToM-X) ; X-ToM vous donne la métrique qui manquait (la comparaison bilatérale des modèles) et un objectif éthique inattendu mais essentiel : **mériter la méfiance quand elle est due**.
+
+C'est aussi un joli clin d'œil à Jaynes : l'explication dialoguée est précisément la construction d'un *espace mental partagé* entre l'humain et la machine — l'équivalent moderne du passage du bicaméral (on obéit à la voix sans comprendre) au conscient (on modélise l'autre qui nous modélise).
