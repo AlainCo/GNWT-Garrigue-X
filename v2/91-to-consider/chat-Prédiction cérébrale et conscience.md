@@ -630,3 +630,70 @@ Si vous cherchez à concevoir les systèmes intelligents de demain, voici les pr
 Ce papier de la **Royal Society (2024/2025)** acte la fin de la lune de miel avec les LLMs purs. Il pose que la véritable AGI nécessitera des **Modèles du Monde Causaux et Incarnés**. 
 
 Il fait la synthèse parfaite de notre parcours : il valide l'approche **Prédictive/Active** (Friston/Seth), exige une architecture qui respecte la **réalité physique et biologique** (répondant aux critiques de Simon et aux intuitions de LeCun), et place **l'Agence (l'Empowerment)** et la survie comme moteurs ultimes de l'apprentissage et de la conscience. C'est la feuille de route pour l'IA post-générative.
+
+### USER
+peux tu  m'expliquer ce que dit cet article, le mettre en perspective avec ce dont on discute, et voir s'il y a des idées à garder, des confirmation ou frictions, à considérer ? 
+
+https://arxiv.org/abs/2610.18617 
+
+### ASSISTANT
+Voici une excellente trouvaille ! Ce papier, **"Two Routes to Interoceptive Prioritisation"** (octobre 2026, accepté à la conférence IWAI 2026), est co-écrit par des figures majeures des neurosciences computationnelles et de la psycho-neurobiologie, dont **Mark Solms** (pionnier de la neuro-psychanalyse et de l'étude des émotions) et **Ryan Smith** (expert de l'Inférence Active et de l'allostase) [[1], [6], [16]].
+
+Ce papier est une **formalisation mathématique et computationnelle parfaite de la théorie de la "Beast Machine" (Machine Animale)** d'Anil Seth et des concepts d'homéostasie d'Antonio Damasio que nous évoquions au tout début de notre échange. Il s'attaque à une question fondamentale de la survie biologique : **Comment un agent incarné choisit-il entre plusieurs besoins vitaux concurrents (ex: faim, soif, oxygène) ?**
+
+Voici l'explication détaillée du papier, sa mise en perspective avec nos débats (notamment la critique de Charles Simon), et les idées clés à en retenir.
+
+---
+
+### 1. Que dit ce papier ? (Les "Deux Boutons" de la Motivation)
+
+Les auteurs ont créé un environnement simulé appelé **"AffectWorld"** (un labyrinthe où un agent doit gérer trois besoins létaux : la faim, la soif et l'oxygène. Boire de l'eau le submerge et consomme son oxygène, créant une tension mortelle entre les besoins) . 
+
+Ils démontrent que l'Inférence Active dispose de **deux mécanismes (ou "boutons") distincts** pour prioriser un besoin urgent, et que ces deux mécanismes ont des effets internes radicalement différents :
+
+*   **Route 1 : Le Routage de Précision (Likelihood Precision) $\rightarrow$ L'Attention**
+    *   *Le mécanisme :* L'agent augmente le "gain" (la fiabilité) du signal sensoriel interne (intéroceptif) lié au besoin le plus critique (ex: la soif). 
+    *   *L'effet :* L'agent fait "plus confiance" à ses capteurs de soif qu'à ceux de la faim. Cela rend ses croyances postérieures sur son niveau de soif beaucoup plus nettes (réduction de l'incertitude), ce qui oriente son action. C'est l'équivalent de l'**attention focalisée** sur une douleur interne.
+*   **Route 2 : La Repondération des Préférences (Preference Reweighting) $\rightarrow$ Le Désir / La Motivation**
+    *   *Le mécanisme :* L'agent ne change pas la façon dont il *perçoit* son corps, mais il change ce qu'il *veut*. Le déficit de soif modifie dynamiquement ses préférences, rendant l'action "aller vers l'eau" extrêmement attractive dans le calcul de l'Énergie Libre Attendue (EFE).
+    *   *L'effet :* L'agent est poussé vers l'action non pas parce qu'il "voit" mieux sa soif, mais parce que la valeur pragmatique de l'eau a explosé. C'est l'équivalent de la **pulsion** ou du *drive* motivationnel.
+
+**La conclusion majeure du papier :** Bien que les deux routes permettent à l'agent de *survivre* (succès comportemental), elles changent fondamentalement ce que l'agent **apprend** de son propre corps. La précision affine la perception, tandis que la préférence garde le corps plus loin des limites létales (meilleure régulation) et modifie les états corporels que l'agent visite, changeant ainsi la structure de son modèle du monde interne .
+
+---
+
+### 2. Mise en perspective avec nos discussions précédentes
+
+Ce papier est un carrefour fascinant qui valide certaines théories tout en créant une friction très intéressante avec la critique de Charles Simon.
+
+#### A. La validation ultime de la "Beast Machine" (Anil Seth) et de Damasio
+Nous avions vu que pour Seth, la conscience phénoménale émerge de l'**inférence intéroceptive** (le cerveau qui prédit l'état des viscères pour maintenir l'allostase). Ce papier prouve mathématiquement que la gestion de ces signaux intéroceptifs n'est pas un simple "input" passif, mais un système de contrôle actif à double entrée (précision vs préférence). **Les émotions et les pulsions (le "Affect" dans *AffectWorld*) sont littéralement les mécanismes mathématiques qui pondèrent l'Énergie Libre pour assurer la survie.**
+
+#### B. La friction avec la critique de Charles Simon (La plausibilité biologique de la "Précision")
+Rappelez-vous que Charles Simon attaquait le *Predictive Coding* en disant que les neurones biologiques ne peuvent pas faire de sommes pondérées continues et précises. 
+*   **Le point de friction :** Simon a raison sur le fait que les *poids synaptiques* ne peuvent pas être ajustés avec une précision continue infinie.
+*   **La réponse de ce papier (et de la neurobiologie) :** Cependant, le concept de **"Précision" (Precision Routing)** est en réalité l'un des aspects *les plus biologiquement plausibles* du cadre de Friston ! En neurobiologie, la précision n'est pas codée par des poids synaptiques rigides, mais par la **neuromodulation** (Dopamine, Noradrénaline, Acétylcholine). Ces neurotransmetteurs agissent littéralement comme des "boutons de volume" (gain control) qui augmentent ou diminuent la précision des signaux de populations neuronales entières. Ce papier montre que moduler la précision est un mécanisme de survie fondamental, et la biologie le fait très bien via la chimie du cerveau, contournant ainsi les limites des synapses individuelles pointées par Simon.
+
+#### C. Le lien avec les Modèles du Monde (Royal Society) et le Sommeil (BMR)
+Le papier montre un phénomène crucial : **La préférence change l'expérience, qui change l'apprentissage.** Si un agent est motivé par la soif, il évite les états de déshydratation extrême. Par conséquent, il ne *visite* jamais ces états, et son Modèle du Monde (sa carte de son propre corps) reste imprécis sur ces zones extrêmes. 
+Cela confirme notre discussion sur la **Bayesian Model Reduction (le sommeil)** : le cerveau doit consolider et élaguer son modèle en fonction de ce qu'il a *réellement vécu* sous l'effet de ses pulsions (préférences). Le modèle du monde n'est pas une carte objective de la réalité, c'est une carte déformée par les besoins de survie de l'organisme.
+
+---
+
+### 3. Les bonnes idées à reprendre (Takeaways pour l'IA et la Cognition)
+
+Si vous concevez des agents autonomes, des architectures cognitives ou réfléchissez à la nature de l'intelligence, voici les concepts puissants extraits de ce papier :
+
+1. **Dissocier l'Attention (Précision) et la Motivation (Préférence) :**
+   Dans la conception d'une IA, ne confondez pas "donner plus de poids à un capteur" (Attention/Précision) et "changer la fonction de récompense" (Motivation/Préférence). Ce sont deux leviers architecturaux distincts. Un agent qui souffre (précision haute sur un signal d'erreur) n'agit pas de la même manière qu'un agent qui désire (préférence haute pour un état futur). L'intelligence biologique utilise les deux en tandem.
+
+2. **Le succès comportemental (la survie/le score) est un leurre :**
+   C'est l'avertissement le plus important du papier . Si vous entraînez une IA par renforcement et qu'elle obtient un score parfait, vous ne savez pas *comment* elle a survécu. A-t-elle une bonne compréhension de son environnement, ou a-t-elle juste développé des heuristiques superstitieuses ? Il faut mesurer les **observables internes** (l'incertitude postérieure, la distance par rapport aux limites létales, la couverture de l'espace d'état) pour évaluer la véritable "compréhension" d'un agent.
+
+3. **L'Incarnation (Embodiment) sculpte le Modèle du Monde :**
+   Un agent n'apprend pas le monde de manière neutre. Ses besoins physiologiques (ou ses fonctions de récompense intrinsèques) dictent les états qu'il va explorer. Par conséquent, **le corps de l'agent détermine la forme de son intelligence.** C'est la preuve computationnelle que l'on ne peut pas créer d'AGI (Intelligence Générale) désincarnée : sans besoins vitaux pour orienter l'exploration, le Modèle du Monde restera plat, sans relief sémantique.
+
+### 💡 En résumé pour votre veille
+Ce papier (**Two Routes to Interoceptive Prioritisation**, 2026) est la preuve que l'**Inférence Active** n'est pas qu'une théorie abstraite de la perception, mais un modèle robuste de la **motivation biologique**. 
+
+Il tranche le débat en montrant que l'attention (précision intéroceptive) et le désir (préférence homéostatique) sont deux mathématiques différentes au service de la survie. Il offre surtout un pont élégant entre les neurosciences (le rôle des neuromodulateurs comme la dopamine pour la précision) et l'IA incarnée, prouvant que **ce que nous ressentons (nos affects) est l'algorithme même qui priorise nos pensées et nos actions.**
